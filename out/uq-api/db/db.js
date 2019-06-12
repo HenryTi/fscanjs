@@ -54,7 +54,7 @@ class Db {
     }
     call(proc, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(this.dbName, '.', proc, ': ', params.join(','));
+            //console.log(this.dbName, '.', proc, ': ', params.join(','))
             return yield this.dbServer.call(this.dbName, proc, params);
         });
     }

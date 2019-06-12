@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request");
 const db_1 = require("./uq-api/db");
+const sleep_1 = require("./sleep");
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
 const financeAnalysisSeasonUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=2&code=';
 const financeAnalysisYearUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=1&code=';
@@ -33,10 +34,25 @@ function scanEastmoney() {
             }
         }
         let count = ret.length;
-        let i;
+        let i, j;
+        let retryArr = [];
         for (i = 0; i < count; ++i) {
             let value = ret[i];
-            yield f.processOne(value);
+            let r = yield f.processOne(value);
+            if (r != 1) {
+                retryArr.push(value);
+            }
+        }
+        count = retryArr.length;
+        for (i = 0; i < count; ++i) {
+            let value = retryArr[i];
+            for (j = 0; j < 10; ++j) {
+                yield sleep_1.sleep(3000);
+                let r = yield f.processOne(value);
+                if (r == 1) {
+                    break;
+                }
+            }
         }
     });
 }
@@ -49,18 +65,64 @@ class FechStockContents {
         return __awaiter(this, void 0, void 0, function* () {
             let { id, 市场, 代码 } = item;
             let scode = 市场 + 代码;
-            let url = capitalStockStructureUrl + scode;
-            let capitals = yield this.fetch(url);
-            yield this.saveCapitalStockStructure(id, capitals);
-            url = financeAnalysisYearUrl + scode;
-            let financeYearContent = yield this.fetch(url);
-            yield this.saveFinanceAnalysis(id, financeYearContent);
-            url = financeAnalysisSeasonUrl + scode;
-            let financeContent = yield this.fetch(url);
-            yield this.saveFinanceAnalysisSeason(id, financeContent);
+            try {
+                let url = capitalStockStructureUrl + scode;
+                let capitals = yield this.fetchJson(url);
+                if (capitals === null || capitals === undefined) {
+                    capitals = yield this.fetchJson(url);
+                }
+                if (capitals === null || capitals === undefined) {
+                    capitals = yield this.fetchJson(url);
+                }
+                yield this.saveCapitalStockStructure(id, capitals, scode);
+                url = financeAnalysisYearUrl + scode;
+                let financeYearContent = yield this.fetchJson(url);
+                if (financeYearContent === null || financeYearContent === undefined) {
+                    financeYearContent = yield this.fetchJson(url);
+                }
+                if (financeYearContent === null || financeYearContent === undefined) {
+                    financeYearContent = yield this.fetchJson(url);
+                }
+                yield this.saveFinanceAnalysis(id, financeYearContent, scode);
+                url = financeAnalysisSeasonUrl + scode;
+                let financeSeasonContent = yield this.fetchJson(url);
+                if (financeSeasonContent === null || financeSeasonContent === undefined) {
+                    financeSeasonContent = yield this.fetchJson(url);
+                }
+                if (financeSeasonContent === null || financeSeasonContent === undefined) {
+                    financeSeasonContent = yield this.fetchJson(url);
+                }
+                yield this.saveFinanceAnalysisSeason(id, financeSeasonContent, scode);
+                console.log(id + ' : ' + scode);
+                return 1;
+            }
+            catch (err) {
+                console.log(id + ' : ' + scode + ' ' + err);
+                return 0;
+            }
         });
     }
-    fetch(url) {
+    fetchJson(url) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                try {
+                    request.get(url, (error, response, body) => {
+                        try {
+                            let jdata = JSON.parse(body);
+                            resolve(jdata);
+                        }
+                        catch (err) {
+                            reject(err);
+                        }
+                    });
+                }
+                catch (reqErr) {
+                    reject(reqErr);
+                }
+            });
+        });
+    }
+    fetchString(url) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 try {
@@ -113,11 +175,10 @@ class FechStockContents {
     checkToString(index, list) {
         return list.length > index ? list[index] : undefined;
     }
-    saveCapitalStockStructure(id, value) {
+    saveCapitalStockStructure(id, value, scode) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let jdata = JSON.parse(value);
-                let { ShareChangeList } = jdata;
+                let { ShareChangeList } = value;
                 let dayList = [];
                 let 总股本 = [];
                 let 已流通股份 = [];
@@ -173,16 +234,14 @@ class FechStockContents {
                 yield Promise.all(promiseArr);
             }
             catch (err) {
-                debugger;
-                console.log(err);
+                console.log(scode + ' : ' + err);
             }
         });
     }
-    saveFinanceAnalysis(id, value) {
+    saveFinanceAnalysis(id, value, scode) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let jdata = JSON.parse(value);
-                let jarr = jdata;
+                let jarr = value;
                 let promiseArr = [];
                 jarr.forEach((item, index) => {
                     let date = item.date;
@@ -233,16 +292,14 @@ class FechStockContents {
                 yield Promise.all(promiseArr);
             }
             catch (err) {
-                debugger;
-                console.log(err);
+                console.log(scode + ' : ' + err);
             }
         });
     }
-    saveFinanceAnalysisSeason(id, value) {
+    saveFinanceAnalysisSeason(id, value, scode) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let jdata = JSON.parse(value);
-                let jarr = jdata;
+                let jarr = value;
                 let promiseArr = [];
                 jarr.forEach((item, index) => {
                     let date = item.date;
@@ -279,8 +336,7 @@ class FechStockContents {
                 yield Promise.all(promiseArr);
             }
             catch (err) {
-                debugger;
-                console.log(err);
+                console.log(scode + ' : ' + err);
             }
         });
     }

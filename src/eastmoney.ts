@@ -1,5 +1,6 @@
 import * as request from 'request';
 import { getRunner, Runner } from './uq-api/db';
+import { sleep } from './sleep';
 
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
 const financeAnalysisSeasonUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=2&code=';
@@ -25,10 +26,26 @@ export async function scanEastmoney() {
     }
   }
   let count = ret.length;
-  let i: number;
+  let i: number, j: number;
+  let retryArr = [];
   for (i = 0; i < count; ++i) {
     let value = ret[i];
-    await f.processOne(value);
+    let r = await f.processOne(value);
+    if (r != 1) {
+      retryArr.push(value);
+    }
+  }
+
+  count = retryArr.length;
+  for (i = 0; i < count; ++i) {
+    let value = retryArr[i];
+    for (j = 0; j < 10; ++j) {
+      await sleep(3000);
+      let r = await f.processOne(value);
+      if (r == 1) {
+        break;
+      }
+    }
   }
 }
 
@@ -41,20 +58,66 @@ class FechStockContents {
   async processOne(item: any) {
     let { id, 市场, 代码 } = item;
     let scode = 市场 + 代码;
-    let url = capitalStockStructureUrl + scode;
-    let capitals = await this.fetch(url);
-    await this.saveCapitalStockStructure(id, capitals);
+    try {
+      let url = capitalStockStructureUrl + scode;
+      let capitals = await this.fetchJson(url);
+      if (capitals === null || capitals === undefined) {
+        capitals = await this.fetchJson(url);
+      }
+      if (capitals === null || capitals === undefined) {
+        capitals = await this.fetchJson(url);
+      }
+      await this.saveCapitalStockStructure(id, capitals, scode);
 
-    url = financeAnalysisYearUrl + scode;
-    let financeYearContent = await this.fetch(url);
-    await this.saveFinanceAnalysis(id, financeYearContent);
+      url = financeAnalysisYearUrl + scode;
+      let financeYearContent = await this.fetchJson(url);
+      if (financeYearContent === null || financeYearContent === undefined) {
+        financeYearContent = await this.fetchJson(url);
+      }
+      if (financeYearContent === null || financeYearContent === undefined) {
+        financeYearContent = await this.fetchJson(url);
+      }
+      await this.saveFinanceAnalysis(id, financeYearContent, scode);
 
-    url = financeAnalysisSeasonUrl + scode;
-    let financeContent = await this.fetch(url);
-    await this.saveFinanceAnalysisSeason(id, financeContent);
+      url = financeAnalysisSeasonUrl + scode;
+      let financeSeasonContent = await this.fetchJson(url);
+      if (financeSeasonContent === null || financeSeasonContent === undefined) {
+        financeSeasonContent = await this.fetchJson(url);
+      }
+      if (financeSeasonContent === null || financeSeasonContent === undefined) {
+        financeSeasonContent = await this.fetchJson(url);
+      }
+      await this.saveFinanceAnalysisSeason(id, financeSeasonContent, scode);
+
+      console.log(id + ' : ' + scode);
+      return 1;
+    }
+    catch (err) {
+      console.log(id + ' : ' + scode + ' ' + err);
+      return 0;
+    }
   }
 
-  async fetch(url: string): Promise<string> {
+  async fetchJson(url: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      try {
+        request.get(url, (error: any, response: request.Response, body: any) => {
+          try {
+            let jdata = JSON.parse(body);
+            resolve(jdata);
+          }
+          catch (err) {
+            reject(err);
+          }
+        });
+      }
+      catch (reqErr) {
+        reject(reqErr);
+      }
+    });
+  }
+
+  async fetchString(url: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       try {
         request.get(url, (error: any, response: request.Response, body: any) => {
@@ -110,10 +173,9 @@ class FechStockContents {
     return list.length > index ? list[index] : undefined;
   }
 
-  async saveCapitalStockStructure(id: any, value: any) {
+  async saveCapitalStockStructure(id: any, value: any, scode: string) {
     try {
-      let jdata = JSON.parse(value);
-      let { ShareChangeList } = jdata as { ShareChangeList: any[] };
+      let { ShareChangeList } = value as { ShareChangeList: any[] };
       let dayList: string[] = [];
       let 总股本: string[] = [];
       let 已流通股份: string[] = [];
@@ -170,15 +232,13 @@ class FechStockContents {
       await Promise.all(promiseArr);
     }
     catch (err) {
-      debugger;
-      console.log(err);
+      console.log(scode + ' : ' + err);
     }
   }
 
-  async saveFinanceAnalysis(id: any, value: any) {
+  async saveFinanceAnalysis(id: any, value: any, scode: string) {
     try {
-      let jdata = JSON.parse(value);
-      let jarr = jdata as any[];
+      let jarr = value as any[];
 
       let promiseArr: Promise<void>[] = [];
       jarr.forEach((item: any, index: number) => {
@@ -231,15 +291,13 @@ class FechStockContents {
       await Promise.all(promiseArr);
     }
     catch (err) {
-      debugger;
-      console.log(err);
+      console.log(scode + ' : ' + err);
     }
   }
 
-  async saveFinanceAnalysisSeason(id: any, value: any) {
+  async saveFinanceAnalysisSeason(id: any, value: any, scode: string) {
     try {
-      let jdata = JSON.parse(value);
-      let jarr = jdata as any[];
+      let jarr = value as any[];
 
       let promiseArr: Promise<void>[] = [];
       jarr.forEach((item: any, index: number) => {
@@ -278,8 +336,7 @@ class FechStockContents {
       await Promise.all(promiseArr);
     }
     catch (err) {
-      debugger;
-      console.log(err);
+      console.log(scode + ' : ' + err);
     }
   }
 }
