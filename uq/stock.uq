@@ -1,0 +1,14 @@
+TUID 股票 ver 0.1 (
+    id,
+    main 市场 char(4) not null,
+    main 代码 char(16) not null,
+    main 名称 char(32) not null,
+    简称 char(8),
+    unique (市场, 代码),
+);
+
+MAP 股票价格 ver 0.2 (
+    key 股票 ID 股票 not null,
+    key 日期 int not null,
+    价格 dec(18,4),
+);
