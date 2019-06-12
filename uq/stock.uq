@@ -11,4 +11,7 @@ MAP 股票价格 ver 0.2 (
     key 股票 ID 股票 not null,
     key 日期 int not null,
     价格 dec(18,4),
+    开 dec(18,4),
+    高 dec(18,4),
+    低 dec(18,4),
 );
