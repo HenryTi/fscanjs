@@ -2,7 +2,7 @@
   "center": "http://centerhost/tv/",
   "centerhost": "localhost:3000",
   "unitxhost": "localhost:3015",
-  "port": 3015,
+  "port": 3020,
   "secret": "xxx-yyy-zzz-00110",
   "sqlType": "mysql",
   "uploadPath": "../uploads/",
