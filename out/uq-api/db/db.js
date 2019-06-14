@@ -39,6 +39,9 @@ class Db {
             case 'mssql': return new ms_1.MsDbServer(dbConfig);
         }
     }
+    close() {
+        this.dbServer.close();
+    }
     exists() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.isExists === true)

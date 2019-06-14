@@ -56,6 +56,11 @@ class Runner {
     createDatabase() {
         return this.db.createDatabase();
     }
+    close() {
+        this.db.close();
+        let name = this.db.getDbName();
+        runners[name] = undefined;
+    }
     setTimezone(unit, user) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.db.call('tv_$set_timezone', [unit, user]);

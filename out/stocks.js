@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
 const db_1 = require("./uq-api/db");
+const const_1 = require("./const");
 const jsonPath = '../data/shsz.json';
 db_1.getRunner('mi').then((runner) => __awaiter(this, void 0, void 0, function* () {
     let p = path.resolve(__dirname, jsonPath);
@@ -19,9 +20,11 @@ db_1.getRunner('mi').then((runner) => __awaiter(this, void 0, void 0, function* 
     let promiseArr = [];
     for (let item of arr) {
         try {
-            let { market, code, name, short } = item;
-            let row = [undefined, market, code, name, short];
-            promiseArr.push(runner.tuidSave('股票', 35, undefined, row));
+            let { market, code, name } = item;
+            market = market.toUpperCase().trim();
+            let symbol = market.toLowerCase() + code;
+            let row = [undefined, symbol, market, code, name, undefined];
+            promiseArr.push(runner.tuidSave('股票', const_1.DefaultUnit, undefined, row));
             if (promiseArr.length >= 100) {
                 yield Promise.all(promiseArr);
                 promiseArr.splice(0, promiseArr.length);

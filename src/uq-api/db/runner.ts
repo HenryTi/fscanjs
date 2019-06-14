@@ -73,6 +73,12 @@ export class Runner {
         return this.db.createDatabase();
     }
 
+    close() {
+        this.db.close();
+        let name = this.db.getDbName();
+        runners[name] = undefined;
+    }
+
     async setTimezone(unit:number, user:number): Promise<void> {
         return await this.db.call('tv_$set_timezone', [unit, user]);
     }

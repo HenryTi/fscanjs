@@ -25,6 +25,9 @@ class MyDbServer extends dbServer_1.DbServer {
         config.typeCast = castField;
         this.pool = mysql_1.createPool(config);
     }
+    close() {
+        this.pool.end();
+    }
     exec(sql, values) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield new Promise((resolve, reject) => {

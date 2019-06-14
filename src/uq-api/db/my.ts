@@ -19,6 +19,9 @@ export class MyDbServer extends DbServer {
         config.typeCast = castField;
         this.pool = createPool(config);
     }
+    close() {
+        this.pool.end();
+    }
     private async exec(sql:string, values:any[]): Promise<any> {
         return await new Promise<any>((resolve, reject) => {
             let retryCount = 0;

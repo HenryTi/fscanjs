@@ -3,41 +3,56 @@ import * as path from 'path';
 import * as request from 'request';
 import * as cheerio from 'cheerio';
 import * as iconv from 'iconv-lite';
-import * as sina from './sina';
 import { getRunner } from './uq-api/db';
 import { scanEastmoney } from './eastmoney';
 import * as _ from 'lodash'
+import { fetchSinaContent } from './sina';
+import { scanSinaQuotations } from './hqsina';
+import { scanSinaSymbols } from './symbolsina';
+import { scanSinaHistory } from './historysina';
 
-var BufferHelper = require('bufferhelper');
 
+let tsa = eval('[{symbol:"sh600000",code:"600000",name:"浦发银行",trade:"11.700",pricechange:"0.100",changepercent:"0.862",buy:"11.690",sell:"11.700",settlement:"11.600",open:"11.570",high:"11.790",low:"11.500",volume:46966016,amount:548219997,ticktime:"15:00:00",per:6.324,pb:0.749,mktcap:34341934.06449,nmc:32881403.76183,turnoverratio:0.16712},{symbol:"sh600004",code:"600004",name:"白云机场",trade:"15.940",pricechange:"-0.150",changepercent:"-0.932",buy:"15.940",sell:"15.950",settlement:"16.090",open:"16.010",high:"16.130",low:"15.780",volume:7840898,amount:124892409,ticktime:"15:00:03",per:28.982,pb:2.081,mktcap:3298496.899316,nmc:3298496.899316,turnoverratio:0.37891}]');
+function tevald(){
+  let vars = eval('var d_str="abcdfg"');
+  let fdsafa = 0;
+}
+let tsnew = eval('(new String("3623"))');
+tevald();
+let aaaa = 1;
 
 const urlOptions = {
   uri: 'http://money.finance.sina.com.cn/corp/go.php/vFD_FinancialGuideLine/stockid/600036/displaytype/4.phtml',
   //encoding: 'GB18030',
 };
 
-let s = new sina.FechContent();
 //s.fech(urlOptions.uri);
 
 const uris = [
+  'https://ddhq.sinajs.cn/list=sh601003,sh601001',
+  'https://hq.sinajs.cn/list=sh601003,sh601001',
   'http://money.finance.sina.com.cn/corp/go.php/vFD_FinancialGuideLine/stockid/600036/displaytype/4.phtml',
 ];
 
 async function processUris() {
   for (let uri of uris) {
-    await s.process(uri);
+    try {
+    let ret = await fetchSinaContent(uri);
+    let s = 1;
+    }
+    catch(err){
+      debugger;
+    }
   }
 }
-
+//let runner = getRunner('mi');
 //processUris();
 
-const jsonPath = '../data/shsz.json';
-let s1 = '123,456,678.9';
-let arr = s1.split(',');
-var str = arr.join('').substring(0,64);
+//scanSinaQuotations();
+scanSinaHistory(1500);
 
-var ssss = '134124312431242fgregtergtregaergregtregear'.substring(0,5);
-let a1 =2;
-scanEastmoney();
+//scanSinaSymbols();
+
+//scanEastmoney();
 
 let a =1;

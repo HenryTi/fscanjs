@@ -9,89 +9,45 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request");
-const cheerio = require("cheerio");
 const iconv = require("iconv-lite");
 var BufferHelper = require('bufferhelper');
-class FechContent {
-    event(type, value) {
-        this.onEvent(type, value);
-    }
-    onEvent(type, value) {
-        switch (type) {
-            default: return;
-            case 'fechend':
-                this.ProcessContent(value);
-                break;
-        }
-    }
-    ProcessContent(value) {
-        let $ = cheerio.load(value);
-        $("#center").find('tr').each((index, element) => {
-            let t = $(element).find('td');
-            t.each((index, element) => {
-                let s = $(element).text();
-                console.log(s);
-            });
-        });
-    }
-    fech(url) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.fechContent(url);
-        });
-    }
-    fechContent(url) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                try {
-                    let req = request.get(url);
-                    req.on('response', (res) => {
-                        var bufferHelper = new BufferHelper();
-                        res.on('data', (chunk) => {
-                            try {
-                                bufferHelper.concat(chunk);
-                            }
-                            catch (err) {
-                                reject(err);
-                            }
-                        });
-                        res.on('end', () => {
-                            try {
-                                var result = iconv.decode(bufferHelper.toBuffer(), 'GBK');
-                                //this.event('fechend', result);
-                                resolve(result);
-                            }
-                            catch (err) {
-                                reject(err);
-                            }
-                        });
-                    });
-                }
-                catch (reqErr) {
-                    reject(reqErr);
-                }
-            });
-        });
-    }
-    process(url) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let content = yield this.fech(url);
-            let $ = cheerio.load(content);
-            $("#center").find('tr').each((index, element) => {
-                let t = $(element).find('td');
-                t.each((index, element) => {
-                    let s = $(element).text();
-                    console.log(s);
-                });
-            });
-        });
-    }
-}
-exports.FechContent = FechContent;
-function scanSina() {
+function fetchSinaContent(url) {
     return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            try {
+                let req = request.get(url);
+                req.on('error', err => {
+                    reject(err);
+                });
+                req.on('response', (res) => {
+                    var bufferHelper = new BufferHelper();
+                    res.on('data', (chunk) => {
+                        try {
+                            bufferHelper.concat(chunk);
+                        }
+                        catch (err) {
+                            reject(err);
+                        }
+                    });
+                    res.on('end', () => {
+                        try {
+                            var result = iconv.decode(bufferHelper.toBuffer(), 'GBK');
+                            resolve(result);
+                        }
+                        catch (err) {
+                            reject(err);
+                        }
+                    });
+                    res.on('error', (err) => {
+                        reject(err);
+                    });
+                });
+            }
+            catch (reqErr) {
+                reject(reqErr);
+            }
+        });
     });
 }
-exports.scanSina = scanSina;
-// const fechSina = new FechContent();
-// export default fechSina;
+exports.fetchSinaContent = fetchSinaContent;
 //# sourceMappingURL=sina.js.map

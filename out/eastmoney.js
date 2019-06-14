@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request");
 const db_1 = require("./uq-api/db");
 const sleep_1 = require("./sleep");
+const const_1 = require("./const");
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
 const financeAnalysisSeasonUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=2&code=';
 const financeAnalysisYearUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=1&code=';
@@ -21,7 +22,7 @@ function scanEastmoney() {
         let ret = [];
         let pageStart = 0, pageSize = 500;
         for (;;) {
-            let ids = yield runner.tuidSeach('股票', 35, undefined, undefined, '', pageStart, pageSize);
+            let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
             let arr = ids[0];
             if (arr.length > pageSize) {
                 let top = arr.pop();
@@ -63,8 +64,8 @@ class FechStockContents {
     }
     processOne(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { id, 市场, 代码 } = item;
-            let scode = 市场 + 代码;
+            let { id, symbol } = item;
+            let scode = symbol.toLowerCase();
             try {
                 let url = capitalStockStructureUrl + scode;
                 let capitals = yield this.fetchJson(url);
@@ -229,7 +230,7 @@ class FechStockContents {
                         this.checkToNumber(i, 流通受限股份),
                         this.checkToString(i, 变动原因).substring(0, 64),
                     ];
-                    promiseArr.push(this.runner.mapSave('东方财富历年股本', 35, undefined, row));
+                    promiseArr.push(this.runner.mapSave('东方财富历年股本', const_1.DefaultUnit, undefined, row));
                 }
                 yield Promise.all(promiseArr);
             }
@@ -285,7 +286,7 @@ class FechStockContents {
                                 this.checkToNumber1(item.ldbl),
                                 this.checkToNumber1(item.sdbl),
                             ];
-                            promiseArr.push(this.runner.mapSave('东方财富财务分析', 35, undefined, row));
+                            promiseArr.push(this.runner.mapSave('东方财富财务分析', const_1.DefaultUnit, undefined, row));
                         }
                     }
                 });
@@ -329,7 +330,7 @@ class FechStockContents {
                                 this.checkToNumber1(item.mll),
                                 this.checkToNumber1(item.jll),
                             ];
-                            promiseArr.push(this.runner.mapSave('东方财富财务分析季报', 35, undefined, row));
+                            promiseArr.push(this.runner.mapSave('东方财富财务分析季报', const_1.DefaultUnit, undefined, row));
                         }
                     }
                 });

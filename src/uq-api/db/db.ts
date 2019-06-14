@@ -38,6 +38,10 @@ export class Db {
         }
     }
 
+    close() {
+        this.dbServer.close();
+    }
+
     async exists(): Promise<boolean> {
         if (this.isExists === true) return true;
         return this.isExists = await this.dbServer.existsDatabase(this.dbName);

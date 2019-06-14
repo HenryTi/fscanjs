@@ -1,6 +1,7 @@
 import * as request from 'request';
 import { getRunner, Runner } from './uq-api/db';
 import { sleep } from './sleep';
+import { DefaultUnit } from './const';
 
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
 const financeAnalysisSeasonUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=2&code=';
@@ -13,7 +14,7 @@ export async function scanEastmoney() {
   let ret: any[] = [];
   let pageStart = 0, pageSize = 500;
   for (; ;) {
-    let ids = await runner.tuidSeach('股票', 35, undefined, undefined, '', pageStart, pageSize);
+    let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
     let arr = ids[0];
     if (arr.length > pageSize) {
       let top = arr.pop();
@@ -56,8 +57,8 @@ class FechStockContents {
   }
 
   async processOne(item: any) {
-    let { id, 市场, 代码 } = item;
-    let scode = 市场 + 代码;
+    let { id, symbol } = item;
+    let scode = (symbol as string).toLowerCase();
     try {
       let url = capitalStockStructureUrl + scode;
       let capitals = await this.fetchJson(url);
@@ -227,7 +228,7 @@ class FechStockContents {
           this.checkToNumber(i, 流通受限股份),
           this.checkToString(i, 变动原因).substring(0, 64),
         ];
-        promiseArr.push(this.runner.mapSave('东方财富历年股本', 35, undefined, row));
+        promiseArr.push(this.runner.mapSave('东方财富历年股本', DefaultUnit, undefined, row));
       }
       await Promise.all(promiseArr);
     }
@@ -283,7 +284,7 @@ class FechStockContents {
               this.checkToNumber1(item.ldbl),
               this.checkToNumber1(item.sdbl),
             ];
-            promiseArr.push(this.runner.mapSave('东方财富财务分析', 35, undefined, row));
+            promiseArr.push(this.runner.mapSave('东方财富财务分析', DefaultUnit, undefined, row));
           }
         }
       });
@@ -328,7 +329,7 @@ class FechStockContents {
               this.checkToNumber1(item.mll),
               this.checkToNumber1(item.jll),
             ];
-            promiseArr.push(this.runner.mapSave('东方财富财务分析季报', 35, undefined, row));
+            promiseArr.push(this.runner.mapSave('东方财富财务分析季报', DefaultUnit, undefined, row));
           }
         }
       });
