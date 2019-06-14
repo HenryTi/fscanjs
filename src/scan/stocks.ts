@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { getRunner } from './uq-api/db';
-import { DefaultUnit } from './const';
+import { getRunner } from '../uq-api/db';
+import { DefaultUnit } from '../const';
 
 const jsonPath = '../data/shsz.json';
 

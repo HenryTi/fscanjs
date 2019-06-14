@@ -8,10 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const db_1 = require("./uq-api/db");
-const sleep_1 = require("./sleep");
+const db_1 = require("../uq-api/db");
+const sleep_1 = require("../sleep");
 const sina_1 = require("./sina");
-const const_1 = require("./const");
+const const_1 = require("../const");
 function scanSinaHistory(len) {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');

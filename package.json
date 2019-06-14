@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "tsc&&SET NODE_ENV=development&&node --nolazy --inspect-brk=5809 out/index.js",
     "build": "tsc"
   },
   "author": "brucesun",

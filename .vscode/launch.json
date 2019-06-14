@@ -9,6 +9,9 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}\\out\\index.js",
+      "env": {
+        "NODE_ENV": "development"
+      },
       "outFiles": [
         "${workspaceFolder}/**/*.js"
       ]

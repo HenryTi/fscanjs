@@ -1,7 +1,7 @@
 import * as request from 'request';
-import { getRunner, Runner } from './uq-api/db';
-import { sleep } from './sleep';
-import { DefaultUnit } from './const';
+import { getRunner, Runner } from '../uq-api/db';
+import { sleep } from '../sleep';
+import { DefaultUnit } from '../const';
 
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
 const financeAnalysisSeasonUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=2&code=';

@@ -1,7 +1,7 @@
-import { getRunner, Runner } from './uq-api/db';
-import { sleep } from './sleep';
+import { getRunner, Runner } from '../uq-api/db';
+import { sleep } from '../sleep';
 import { fetchSinaContent } from './sina';
-import { DefaultUnit } from './const';
+import { DefaultUnit } from '../const';
 
 export async function scanSinaSymbols() {
   let runner = await getRunner('mi');

@@ -1,7 +1,7 @@
-import { getRunner, Runner } from './uq-api/db';
-import { sleep } from './sleep';
+import { getRunner, Runner } from '../uq-api/db';
+import { sleep } from '../sleep';
 import { fetchSinaContent } from './sina';
-import { DefaultUnit } from './const';
+import { DefaultUnit } from '../const';
 
 export async function scanSinaHistory(len: number) {
   let runner = await getRunner('mi');
@@ -108,10 +108,10 @@ class SinaHistory {
         continue;
       let row = [id, date, close, open, high, low, volume];
       promiseArr.push(this.runner.mapSave('股票价格历史', DefaultUnit, undefined, row));
-      // if (promiseArr.length >= 150) {
-      //   await Promise.all(promiseArr);
-      //   promiseArr.splice(0, promiseArr.length);
-      // }
+      if (promiseArr.length >= 200) {
+        await Promise.all(promiseArr);
+        promiseArr.splice(0, promiseArr.length);
+      }
     }
     if (promiseArr.length > 0) {
       await Promise.all(promiseArr);
