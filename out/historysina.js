@@ -17,7 +17,7 @@ function scanSinaHistory(len) {
         let runner = yield db_1.getRunner('mi');
         let sqg = new SinaHistory(runner);
         let ret = [];
-        let pageStart = 24, pageSize = 500;
+        let pageStart = 0, pageSize = 500;
         for (;;) {
             let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
             let arr = ids[0];

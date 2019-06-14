@@ -8,7 +8,7 @@ export async function scanSinaHistory(len: number) {
   let sqg = new SinaHistory(runner);
 
   let ret: any[] = [];
-  let pageStart = 24, pageSize = 500;
+  let pageStart = 0, pageSize = 500;
   for (; ;) {
     let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
     let arr = ids[0];
