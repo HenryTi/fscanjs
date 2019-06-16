@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const eastmoney_1 = require("../scan/eastmoney");
 const eastmoneyRouter = express_1.Router();
 eastmoneyRouter.get('/finance', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    eastmoney_1.scanEastmoney();
     res.json({ "eastmoney": 'sacn finance' });
 }));
 eastmoneyRouter.post('/finance', (req, res) => __awaiter(this, void 0, void 0, function* () {
