@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("../uq-api/db");
-const sleep_1 = require("../sleep");
+const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
 function scanSinaQuotations() {
@@ -61,7 +61,7 @@ function scanSinaQuotations() {
         for (i = 0; i < count; ++i) {
             let gv = retryArr[i];
             for (j = 0; j < 10; ++j) {
-                yield sleep_1.sleep(3000);
+                yield gfuncs_1.sleep(3000);
                 let sqg = new SinaQuotationGroup(runner);
                 let r = yield sqg.processOneGroup(gv);
                 if (r == 1) {

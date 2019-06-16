@@ -1,6 +1,6 @@
 import * as request from 'request';
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep } from '../sleep';
+import { sleep } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';

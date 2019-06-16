@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request");
 const db_1 = require("../uq-api/db");
-const sleep_1 = require("../sleep");
+const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
 const financeAnalysisSeasonUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=2&code=';
@@ -48,7 +48,7 @@ function scanEastmoney() {
         for (i = 0; i < count; ++i) {
             let value = retryArr[i];
             for (j = 0; j < 10; ++j) {
-                yield sleep_1.sleep(3000);
+                yield gfuncs_1.sleep(3000);
                 let r = yield f.processOne(value);
                 if (r == 1) {
                     break;

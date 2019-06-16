@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("../uq-api/db");
-const sleep_1 = require("../sleep");
+const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
 function scanSinaSymbols() {
@@ -57,7 +57,7 @@ class SinaSymbols {
             for (let i = 0; i < count; ++i) {
                 let p = retryArr[i];
                 for (let j = 0; j < 10; ++j) {
-                    yield sleep_1.sleep(3000);
+                    yield gfuncs_1.sleep(3000);
                     let r = yield this.GetHSAOnePage(p);
                     ;
                     if (r) {

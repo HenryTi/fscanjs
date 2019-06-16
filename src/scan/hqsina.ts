@@ -1,5 +1,5 @@
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep } from '../sleep';
+import { sleep } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
 

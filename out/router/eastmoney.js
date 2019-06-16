@@ -13,7 +13,7 @@ const eastmoney_1 = require("../scan/eastmoney");
 const eastmoneyRouter = express_1.Router();
 eastmoneyRouter.get('/finance', (req, res) => __awaiter(this, void 0, void 0, function* () {
     eastmoney_1.scanEastmoney();
-    res.json({ "eastmoney": 'sacn finance' });
+    res.json({ "eastmoney": 'scan finance' });
 }));
 eastmoneyRouter.post('/finance', (req, res) => __awaiter(this, void 0, void 0, function* () {
 }));

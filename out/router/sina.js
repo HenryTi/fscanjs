@@ -11,13 +11,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const symbolsina_1 = require("../scan/symbolsina");
 const hqsina_1 = require("../scan/hqsina");
+const historysina_1 = require("../scan/historysina");
 const sinaRouter = express_1.Router();
 sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
-    let r = req;
-    let a = 1;
+    let len = Number(req.query['len']);
+    if (len > 0 && len <= 3000) {
+        historysina_1.scanSinaHistory(len);
+    }
     res.json({ "sina": 'scan history' });
 }));
 sinaRouter.post('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    let len = Number(req.body['len']);
+    if (len > 0 && len <= 3000) {
+        historysina_1.scanSinaHistory(len);
+    }
+    res.json({ "sina": 'scan history' });
 }));
 sinaRouter.get('/symbols', (req, res) => __awaiter(this, void 0, void 0, function* () {
     symbolsina_1.scanSinaSymbols();
