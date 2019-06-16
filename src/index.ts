@@ -1,30 +1,71 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as request from 'request';
-import * as cheerio from 'cheerio';
-import * as iconv from 'iconv-lite';
-import { getRunner } from './uq-api/db';
-import { scanEastmoney } from './scan/eastmoney';
-import * as _ from 'lodash'
-import { fetchSinaContent } from './scan/sina';
-import { scanSinaQuotations } from './scan/hqsina';
-import { scanSinaSymbols } from './scan/symbolsina';
-import { scanSinaHistory } from './scan/historysina';
 import * as express from 'express';
+import { Request, Response, NextFunction } from 'express';
+import * as bodyParser from 'body-parser';
+import * as config from 'config';
+import sinaRouter from './router/sina';
+import eastmoneyRouter from './router/eastmoney';
 
-let app=express();
-let dir = __dirname;
+console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
+(async function () {
 
-let p1 = path.join(__dirname, '../../data');
-let p2 = path.resolve(__dirname, '../../data')
-let afds = 8;
+    let connection = config.get<any>("connection");
+    if (connection === undefined || connection.host === '0.0.0.0') {
+        console.log("mysql connection must defined in config/default.json or config/production.json");
+        return;
+    }
+    
+    let app = express();
+    app.use(express.static('public'));
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+    app.use(bodyParser.json());
+    app.set('json replacer', (key:any, value:any) => {
+        if (value === null) return undefined;
+        return value;
+    });
 
-//scanSinaQuotations();
+    app.use(async (req:express.Request, res:express.Response, next:express.NextFunction) => {
+        let s= req.socket;
+        let p = '';
+        if (req.method !== 'GET') p = JSON.stringify(req.body);
+        console.log('%s:%s - %s %s %s', s.remoteAddress, s.remotePort, req.method, req.originalUrl, p);
+        try {
+            if (s.remoteAddress == '::ffff:127.0.0.1' || s.remoteAddress == '127.0.0.1') {
+                await next();
+            }
+            else {
+                res.status(404).send('Sorry, we cannot find that!');
+            }
+        }
+        catch (e) {
+            console.error(e);
+        }
+    });
 
-scanSinaHistory(10);
+    app.use('/api/sina', sinaRouter);
+    app.use('/api/eastmoney', eastmoneyRouter)
+    app.use('/hello', dbHello);
 
-//scanSinaSymbols();
+    function dbHello(req:Request, res:Response) {
+        let db = req.params.db;
+        res.json({"hello": 'fscanjs: hello, db is ' + db});
+    }
 
-//scanEastmoney();
+    let port = config.get<number>('port');
+    console.log('port=', port);
 
-let a =1;
+    app.listen(port, async ()=>{
+        console.log('fscanjs listening on port ' + port);
+        let connection = config.get<any>("connection");
+        let {host, user} = connection;
+        console.log('process.env.NODE_ENV: %s\nDB host: %s, user: %s',
+            process.env.NODE_ENV,
+            host,
+            user);
+    });
+})();
