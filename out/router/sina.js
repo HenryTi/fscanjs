@@ -13,9 +13,14 @@ const sinaRouter = express_1.Router();
 sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let r = req;
     let a = 1;
-    res.json({ "sina": 'sina history' });
+    res.json({ "sina": 'scan history' });
 }));
 sinaRouter.post('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
+}));
+sinaRouter.get('/symbols', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    let r = req;
+    let a = 1;
+    res.json({ "sina": 'scan symbols' });
 }));
 exports.default = sinaRouter;
 //# sourceMappingURL=sina.js.map

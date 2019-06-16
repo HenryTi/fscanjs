@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const eastmoneyRouter = express_1.Router();
 eastmoneyRouter.get('/finance', (req, res) => __awaiter(this, void 0, void 0, function* () {
-    res.json({ "eastmoney": 'finance' });
+    res.json({ "eastmoney": 'sacn finance' });
 }));
 eastmoneyRouter.post('/finance', (req, res) => __awaiter(this, void 0, void 0, function* () {
 }));
