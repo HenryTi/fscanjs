@@ -43,19 +43,14 @@ console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
                 p = JSON.stringify(req.body);
             console.log('%s:%s - %s %s %s', s.remoteAddress, s.remotePort, req.method, req.originalUrl, p);
             try {
-                if (s.remoteAddress == '::ffff:127.0.0.1' || s.remoteAddress == '127.0.0.1') {
-                    yield next();
-                }
-                else {
-                    res.status(404).send('Sorry, we cannot find that!');
-                }
+                yield next();
             }
             catch (e) {
                 console.error(e);
             }
         }));
-        app.use('/api/sina', sina_1.default);
-        app.use('/api/eastmoney', eastmoney_1.default);
+        app.use('/fsjs/sina', sina_1.default);
+        app.use('/fsjs/eastmoney', eastmoney_1.default);
         app.use('/hello', dbHello);
         function dbHello(req, res) {
             let db = req.params.db;

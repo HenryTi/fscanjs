@@ -35,20 +35,15 @@ console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
         if (req.method !== 'GET') p = JSON.stringify(req.body);
         console.log('%s:%s - %s %s %s', s.remoteAddress, s.remotePort, req.method, req.originalUrl, p);
         try {
-            if (s.remoteAddress == '::ffff:127.0.0.1' || s.remoteAddress == '127.0.0.1') {
-                await next();
-            }
-            else {
-                res.status(404).send('Sorry, we cannot find that!');
-            }
+            await next();
         }
         catch (e) {
             console.error(e);
         }
     });
 
-    app.use('/api/sina', sinaRouter);
-    app.use('/api/eastmoney', eastmoneyRouter)
+    app.use('/fsjs/sina', sinaRouter);
+    app.use('/fsjs/eastmoney', eastmoneyRouter)
     app.use('/hello', dbHello);
 
     function dbHello(req:Request, res:Response) {
