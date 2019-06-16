@@ -7,8 +7,8 @@
 /coverage
 
 # production
-/out/**/*.map
-/out/*.map
+out/**/*.map
+out/*.map
 # misc
 .DS_Store
 .env.local
