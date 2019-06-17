@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { scanSinaSymbols } from '../scan/symbolsina';
 import { scanSinaQuotations } from '../scan/hqsina';
 import { scanSinaHistory } from '../scan/historysina';
+import { scanSinaExRight } from '../scan/cqsina';
 
 const sinaRouter: Router = Router();
 sinaRouter.get('/history', async (req: Request, res: Response) => {
@@ -28,6 +29,11 @@ sinaRouter.get('/symbols', async (req: Request, res: Response) => {
 sinaRouter.get('/quotations', async (req: Request, res: Response) => {
   scanSinaQuotations();
   res.json({"sina": 'scan quotations'});
+});
+
+sinaRouter.get('/exrights', async (req: Request, res: Response) => {
+  scanSinaExRight();
+  res.json({"sina": 'scan ExRights'});
 });
 
 export default sinaRouter;

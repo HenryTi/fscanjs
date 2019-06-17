@@ -1,6 +1,6 @@
 import * as request from 'request';
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep } from '../gfuncs';
+import { sleep, checkToDateInt } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
@@ -162,14 +162,6 @@ class FechStockContents {
     return ret;
   }
 
-  protected checkToDateInt(str: string) {
-    let s = str.split('-').join('');
-    let ret = parseInt(s);
-    if (isNaN(ret))
-      return undefined;
-    return ret;
-  }
-
   protected checkToString(index: number, list: string[]) {
     return list.length > index ? list[index] : undefined;
   }
@@ -216,7 +208,7 @@ class FechStockContents {
       let i: number;
       let promiseArr: Promise<void>[] = [];
       for (i = 0; i < count; ++i) {
-        let date = this.checkToDateInt(dayList[i]);
+        let date = checkToDateInt(dayList[i]);
         if (date === undefined) continue;
         let row: any[] = [
           id,
@@ -245,7 +237,7 @@ class FechStockContents {
       jarr.forEach((item: any, index: number) => {
         let date = item.date;
         if (date !== null && date !== undefined) {
-          let dint = this.checkToDateInt(date);
+          let dint = checkToDateInt(date);
           if (dint !== undefined) {
             let row: any[] = [
               id,
@@ -304,7 +296,7 @@ class FechStockContents {
       jarr.forEach((item: any, index: number) => {
         let date = item.date;
         if (date !== null && date !== undefined) {
-          let dint = this.checkToDateInt(date);
+          let dint = checkToDateInt(date);
           if (dint !== undefined) {
             let row: any[] = [
               id,

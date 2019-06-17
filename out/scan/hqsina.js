@@ -155,7 +155,7 @@ class SinaQuotationGroup {
         let date;
         switch (market) {
             default:
-                date = this.checkToDateInt(arr[30]);
+                date = gfuncs_1.checkToDateInt(arr[30]);
                 if (date === undefined)
                     return undefined;
                 row.push(date);
@@ -165,7 +165,7 @@ class SinaQuotationGroup {
                 row.push(arr[5]);
                 break;
             case 'HK':
-                date = this.checkToDateInt(arr[17]);
+                date = gfuncs_1.checkToDateInt(arr[17]);
                 if (date === undefined)
                     return undefined;
                 row.push(date);
@@ -176,20 +176,6 @@ class SinaQuotationGroup {
                 break;
         }
         return row;
-    }
-    checkToDateInt(str) {
-        let s = str.split('-').join('');
-        let ret = parseInt(s);
-        if (isNaN(ret))
-            return undefined;
-        return ret;
-    }
-    checkToDateIntHK(str) {
-        let s = str.split('/').join('');
-        let ret = parseInt(s);
-        if (isNaN(ret))
-            return undefined;
-        return ret;
     }
 }
 //# sourceMappingURL=hqsina.js.map

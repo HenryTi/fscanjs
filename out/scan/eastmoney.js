@@ -166,13 +166,6 @@ class FechStockContents {
             ret = ret * 10000;
         return ret;
     }
-    checkToDateInt(str) {
-        let s = str.split('-').join('');
-        let ret = parseInt(s);
-        if (isNaN(ret))
-            return undefined;
-        return ret;
-    }
     checkToString(index, list) {
         return list.length > index ? list[index] : undefined;
     }
@@ -217,7 +210,7 @@ class FechStockContents {
                 let i;
                 let promiseArr = [];
                 for (i = 0; i < count; ++i) {
-                    let date = this.checkToDateInt(dayList[i]);
+                    let date = gfuncs_1.checkToDateInt(dayList[i]);
                     if (date === undefined)
                         continue;
                     let row = [
@@ -247,7 +240,7 @@ class FechStockContents {
                 jarr.forEach((item, index) => {
                     let date = item.date;
                     if (date !== null && date !== undefined) {
-                        let dint = this.checkToDateInt(date);
+                        let dint = gfuncs_1.checkToDateInt(date);
                         if (dint !== undefined) {
                             let row = [
                                 id,
@@ -305,7 +298,7 @@ class FechStockContents {
                 jarr.forEach((item, index) => {
                     let date = item.date;
                     if (date !== null && date !== undefined) {
-                        let dint = this.checkToDateInt(date);
+                        let dint = gfuncs_1.checkToDateInt(date);
                         if (dint !== undefined) {
                             let row = [
                                 id,

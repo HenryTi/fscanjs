@@ -1,5 +1,5 @@
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep } from '../gfuncs';
+import { sleep, checkToDateInt } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
 
@@ -103,7 +103,7 @@ class SinaHistory {
     for (i = 0; i < count; ++i) {
       let item = lines[i];
       let { day, open, high, low, close, volume } = item;
-      let date = this.checkToDateInt(day);
+      let date = checkToDateInt(day);
       if (date === undefined)
         continue;
       let row = [id, date, close, open, high, low, volume];
@@ -116,13 +116,5 @@ class SinaHistory {
     if (promiseArr.length > 0) {
       await Promise.all(promiseArr);
     }
-  }
-
-  protected checkToDateInt(str: string) {
-    let s = str.split('-').join('');
-    let ret = parseInt(s);
-    if (isNaN(ret))
-      return undefined;
-    return ret;
   }
 }

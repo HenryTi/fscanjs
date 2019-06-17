@@ -12,6 +12,7 @@ const express_1 = require("express");
 const symbolsina_1 = require("../scan/symbolsina");
 const hqsina_1 = require("../scan/hqsina");
 const historysina_1 = require("../scan/historysina");
+const cqsina_1 = require("../scan/cqsina");
 const sinaRouter = express_1.Router();
 sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let len = Number(req.query['len']);
@@ -34,6 +35,10 @@ sinaRouter.get('/symbols', (req, res) => __awaiter(this, void 0, void 0, functio
 sinaRouter.get('/quotations', (req, res) => __awaiter(this, void 0, void 0, function* () {
     hqsina_1.scanSinaQuotations();
     res.json({ "sina": 'scan quotations' });
+}));
+sinaRouter.get('/exrights', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    cqsina_1.scanSinaExRight();
+    res.json({ "sina": 'scan ExRights' });
 }));
 exports.default = sinaRouter;
 //# sourceMappingURL=sina.js.map

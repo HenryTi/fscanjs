@@ -1,5 +1,5 @@
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep } from '../gfuncs';
+import { sleep, checkToDateInt, checkToDateIntHK } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
 
@@ -149,7 +149,7 @@ class SinaQuotationGroup {
     let date: number;
     switch (market) {
       default:
-        date = this.checkToDateInt(arr[30]);
+        date = checkToDateInt(arr[30]);
         if (date === undefined)
           return undefined;
         row.push(date);
@@ -159,7 +159,7 @@ class SinaQuotationGroup {
         row.push(arr[5]);
         break;
       case 'HK':
-        date = this.checkToDateInt(arr[17]);
+        date = checkToDateInt(arr[17]);
         if (date === undefined)
           return undefined;
         row.push(date);
@@ -171,21 +171,5 @@ class SinaQuotationGroup {
     }
 
     return row;
-  }
-
-  protected checkToDateInt(str: string) {
-    let s = str.split('-').join('');
-    let ret = parseInt(s);
-    if (isNaN(ret))
-      return undefined;
-    return ret;
-  }
-
-  protected checkToDateIntHK(str: string) {
-    let s = str.split('/').join('');
-    let ret = parseInt(s);
-    if (isNaN(ret))
-      return undefined;
-    return ret;
   }
 }
