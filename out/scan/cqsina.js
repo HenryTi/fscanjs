@@ -17,24 +17,29 @@ function scanSinaExRight() {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
         let sinaer = new SinaExRight(runner);
-        let ret = [];
-        let pageStart = 0, pageSize = 100;
-        for (;;) {
-            let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
-            let arr = ids[0];
-            if (arr.length > pageSize) {
-                let top = arr.pop();
-                pageStart = arr[pageSize - 1].id;
-                yield sinaer.processGroup(arr);
-            }
-            else {
-                if (arr.length > 0) {
+        try {
+            let ret = [];
+            let pageStart = 0, pageSize = 100;
+            for (;;) {
+                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let arr = ids[0];
+                if (arr.length > pageSize) {
+                    let top = arr.pop();
+                    pageStart = arr[pageSize - 1].id;
                     yield sinaer.processGroup(arr);
                 }
-                break;
+                else {
+                    if (arr.length > 0) {
+                        yield sinaer.processGroup(arr);
+                    }
+                    break;
+                }
             }
+            yield sinaer.processRetry();
         }
-        yield sinaer.processRetry();
+        catch (err) {
+            console.log(err);
+        }
     });
 }
 exports.scanSinaExRight = scanSinaExRight;

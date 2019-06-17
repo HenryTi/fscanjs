@@ -7,7 +7,7 @@ import * as cheerio from 'cheerio';
 export async function scanSinaExRight() {
   let runner = await getRunner('mi');
   let sinaer = new SinaExRight(runner);
-
+  try {
   let ret: any[] = [];
   let pageStart = 0, pageSize = 100;
   for (; ;) {
@@ -27,6 +27,10 @@ export async function scanSinaExRight() {
   }
 
   await sinaer.processRetry();
+  }
+  catch (err) {
+    console.log(err);
+  }
 }
 
 class SinaExRight {
