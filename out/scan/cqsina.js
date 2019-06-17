@@ -52,11 +52,10 @@ class SinaExRight {
         return __awaiter(this, void 0, void 0, function* () {
             if (items.length <= 0)
                 return;
-            let promiseArr = [];
-            items.forEach((item) => {
-                promiseArr.push(this.processOne(item));
-            });
-            yield Promise.all(promiseArr);
+            for (let i = 0; i < items.length; ++i) {
+                let item = items[i];
+                yield this.processOne(item);
+            }
             console.log('scan sinaExRight onegroup : ' + items.length);
         });
     }

@@ -8,25 +8,25 @@ export async function scanSinaExRight() {
   let runner = await getRunner('mi');
   let sinaer = new SinaExRight(runner);
   try {
-  let ret: any[] = [];
-  let pageStart = 0, pageSize = 100;
-  for (; ;) {
-    let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
-    let arr = ids[0];
-    if (arr.length > pageSize) {
-      let top = arr.pop();
-      pageStart = arr[pageSize - 1].id;
-      await sinaer.processGroup(arr);
-    }
-    else {
-      if (arr.length > 0) {
+    let ret: any[] = [];
+    let pageStart = 0, pageSize = 100;
+    for (; ;) {
+      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let arr = ids[0];
+      if (arr.length > pageSize) {
+        let top = arr.pop();
+        pageStart = arr[pageSize - 1].id;
         await sinaer.processGroup(arr);
       }
-      break;
+      else {
+        if (arr.length > 0) {
+          await sinaer.processGroup(arr);
+        }
+        break;
+      }
     }
-  }
 
-  await sinaer.processRetry();
+    await sinaer.processRetry();
   }
   catch (err) {
     console.log(err);
@@ -45,12 +45,11 @@ class SinaExRight {
   async processGroup(items: any[]) {
     if (items.length <= 0)
       return;
-    let promiseArr: Promise<any>[] = [];
-    items.forEach((item: any) => {
-      promiseArr.push(this.processOne(item));
-    })
+    for (let i = 0; i < items.length; ++i) {
+      let item = items[i];
+      await this.processOne(item);
+    }
 
-    await Promise.all(promiseArr);
     console.log('scan sinaExRight onegroup : ' + items.length);
   }
 
