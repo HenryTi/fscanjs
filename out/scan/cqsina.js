@@ -153,7 +153,7 @@ class SinaExRight {
             if (promiseArr.length > 0)
                 yield Promise.all(promiseArr);
             let paramObj = { stock: id };
-            yield this.runner.actionFromObj('新浪除权信息', const_1.DefaultUnit, undefined, paramObj);
+            yield this.runner.actionFromObj('计算除权因子', const_1.DefaultUnit, undefined, paramObj);
         });
     }
 }

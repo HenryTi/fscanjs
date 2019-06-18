@@ -144,6 +144,6 @@ class SinaExRight {
     if (promiseArr.length > 0)
       await Promise.all(promiseArr);
     let paramObj :any = {stock:id};
-    await this.runner.actionFromObj('新浪除权信息', DefaultUnit, undefined, paramObj);
+    await this.runner.actionFromObj('计算除权因子', DefaultUnit, undefined, paramObj);
   }
 }
