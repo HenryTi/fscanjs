@@ -30,7 +30,8 @@ MAP 股票价格历史 ver 0.2 (
 MAP 股票除权因子 ver 0.2 (
   key 股票 ID 股票 not null,
   key 日期 int not null,
-  factor dec(11,8) not null
+  factor dec(11,8) not null,
+  factore dec(11,8) not null
 );
 
 MAP 股票分红 ver 0.2 (
@@ -41,7 +42,10 @@ MAP 股票分红 ver 0.2 (
 
 ACTION 计算除权因子(
   stock ID 股票
-) {
+) RETURNS ret(ok int) {
+  var factor dec(11,8);
+  var factore dec(11, 8);
+  var sp dec(10,2);
   foreach (var 日期 int, 送股 dec(10,2), 转增 dec(10,2), 派息 dec(10,2), 配股 dec(10,2), 配股价 dec(10,3) of
     select 日期, 送股, 转增, 派息, 配股, 配股价
       from 新浪除权信息
@@ -56,18 +60,24 @@ ACTION 计算除权因子(
       set close = a.价格 from 股票价格历史 as a where a.股票=stock and a.日期=日期
       if close > 0 {
         var newPrice dec(10,3) = (close + 配股价 * 配股 / 10) / (1 + (送股 + 转增 + 配股) / 10);
-        var fac dec(11,8) = newPrice / close;
-        book 股票除权因子 at (stock, 日期) set factor = fac;
+        set factor = newPrice / close;
       }
+      else {
+        set factor = 1 / (1 + (送股 + 转增) /10); 
+      }
+      set factore = 1 / (1 + (送股 + 转增 + 配股) /10);
+      book 股票除权因子 at (stock, 日期) set factor = factor, factore = factore;
     }
     else {
-      var sp dec(10,2) = 送股 + 转增;
+      set sp = 送股 + 转增;
       if sp > 0 {
-        var fac dec(11,8) = 1 / (1 + sp / 10);
-        book 股票除权因子 at (stock, 日期) set factor = fac;
+        set factor = 1 / (1 + sp / 10);
+        set factore = factor;
+        book 股票除权因子 at (stock, 日期) set factor = factor, factore = factore;
       }
     }
   }
+  into ret select 1 as ok;
 };
 
 QUERY getStockExPrice(
@@ -99,6 +109,20 @@ RETURNS ret (
     if priceb > 0 {
       set priceex = priceb;
       set bonus = 0;
+      foreach (var btoadd dec(11,4) of 
+        select a.bonus
+        from 股票分红 as a
+        where a.股票 = stock and a.日期 > day1 and a.日期 <= day2)
+      {
+        set bonus = bonus + btoadd;
+      }
+      foreach (var factor dec(11,8) of
+        select a.factor
+        from 股票除权因子 as a
+        where a.股票 = stock and a.日期 > day1 and a.日期 <= day2)
+      {
+        set priceex = priceex / factor;
+      }
       into ret select price as priceBegin, day1 as bday, priceb as priceEnd, day2 as eday, priceex as priceEx, bonus as bonus;
     }
   }

@@ -13,6 +13,7 @@ const symbolsina_1 = require("../scan/symbolsina");
 const hqsina_1 = require("../scan/hqsina");
 const historysina_1 = require("../scan/historysina");
 const cqsina_1 = require("../scan/cqsina");
+const calcexright_1 = require("../scan/calcexright");
 const sinaRouter = express_1.Router();
 sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let len = Number(req.query['len']);
@@ -39,6 +40,10 @@ sinaRouter.get('/quotations', (req, res) => __awaiter(this, void 0, void 0, func
 sinaRouter.get('/exrights', (req, res) => __awaiter(this, void 0, void 0, function* () {
     cqsina_1.scanSinaExRight();
     res.json({ "sina": 'scan ExRights' });
+}));
+sinaRouter.get('/calcexrights', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    calcexright_1.caclulateExRight();
+    res.json({ "sina": 'caculate ExRights' });
 }));
 exports.default = sinaRouter;
 //# sourceMappingURL=sina.js.map
