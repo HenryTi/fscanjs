@@ -10,6 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
+const db_1 = require("./uq-api/db");
+const const_1 = require("./const");
+function doTest() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let runner = yield db_1.getRunner('mi');
+        let row = [28];
+        yield runner.actionFromObj('计算除权因子', const_1.DefaultUnit, null, { stock: 2 });
+        let a = 0;
+    });
+}
+exports.doTest = doTest;
 //scanItem({ symbol: 'sz000001', code: "000001" });
 function scanItem(item) {
     return __awaiter(this, void 0, void 0, function* () {

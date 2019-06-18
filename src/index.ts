@@ -7,6 +7,9 @@ import eastmoneyRouter from './router/eastmoney';
 import { fetchSinaContent } from './scan/sina';
 import * as cheerio from 'cheerio';
 import { scanSinaExRight } from './scan/cqsina';
+import { doTest } from './test';
+
+//doTest();
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 (async function () {

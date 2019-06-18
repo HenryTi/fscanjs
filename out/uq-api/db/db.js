@@ -39,9 +39,6 @@ class Db {
             case 'mssql': return new ms_1.MsDbServer(dbConfig);
         }
     }
-    close() {
-        this.dbServer.close();
-    }
     exists() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.isExists === true)
@@ -57,7 +54,7 @@ class Db {
     }
     call(proc, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            //console.log(this.dbName, '.', proc, ': ', params.join(','))
+            console.log(this.dbName, '.', proc, ': ', params.join(','));
             return yield this.dbServer.call(this.dbName, proc, params);
         });
     }

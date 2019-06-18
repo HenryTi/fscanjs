@@ -7,7 +7,17 @@ import eastmoneyRouter from './router/eastmoney';
 import { fetchSinaContent } from './scan/sina';
 import * as cheerio from 'cheerio';
 import { scanSinaExRight } from './scan/cqsina';
+import { getRunner, Runner } from './uq-api/db';
+import { DefaultUnit } from './const';
+import { packParam } from './uq-api/core/packParam';
 
+export async function doTest(){
+  let runner = await getRunner('mi');
+  let row : any[] = [28];
+  await runner.actionFromObj('计算除权因子', DefaultUnit, null, {stock:2});
+  let a = 0;
+
+}
 //scanItem({ symbol: 'sz000001', code: "000001" });
 
 async function scanItem(item: any) {

@@ -8,5 +8,4 @@ export abstract class DbServer {
     abstract existsDatabase(db:string): Promise<boolean>;
     abstract uqDbs():Promise<any[]>;
     abstract initResDb(resDbName:string):Promise<void>;
-    abstract close():void;
 }

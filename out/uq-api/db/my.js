@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const _ = require("lodash");
 const mysql_1 = require("mysql");
+const _ = require("lodash");
 const dbServer_1 = require("./dbServer");
 const db_1 = require("./db");
 const retries = 5;
@@ -21,12 +21,9 @@ const ER_LOCK_DEADLOCK = 1213;
 class MyDbServer extends dbServer_1.DbServer {
     constructor(dbConfig) {
         super();
-        let config = _.clone(dbConfig);
-        config.typeCast = castField;
-        this.pool = mysql_1.createPool(config);
-    }
-    close() {
-        this.pool.end();
+        let conf = _.clone(dbConfig);
+        conf.typeCast = castField;
+        this.pool = mysql_1.createPool(conf);
     }
     exec(sql, values) {
         return __awaiter(this, void 0, void 0, function* () {

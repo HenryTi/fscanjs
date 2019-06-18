@@ -38,10 +38,6 @@ export class Db {
         }
     }
 
-    close() {
-        this.dbServer.close();
-    }
-
     async exists(): Promise<boolean> {
         if (this.isExists === true) return true;
         return this.isExists = await this.dbServer.existsDatabase(this.dbName);
@@ -51,7 +47,7 @@ export class Db {
         return await this.dbServer.sql(this.dbName, sql, params);
     }
     async call(proc:string, params:any[]): Promise<any> {
-        //console.log(this.dbName, '.', proc, ': ', params.join(','))
+        console.log(this.dbName, '.', proc, ': ', params.join(','))
         return await this.dbServer.call(this.dbName, proc, params);
     }
     async callEx(proc:string, params:any[]): Promise<any> {

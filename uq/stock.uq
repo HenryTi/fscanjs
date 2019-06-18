@@ -1,28 +1,105 @@
 TUID 股票 ver 0.1 (
-    id,
-    main symbol char(16) not null,
-    main market char(8) not null,
-    main code char(16) not null,
-    main name char(32) not null,
-    main alias char(32),
-    unique (symbol),
+  id,
+  main symbol char(16) not null,
+  main market char(8) not null,
+  main code char(16) not null,
+  main name char(32) not null,
+  main alias char(32),
+  unique (symbol),
 );
 
 MAP 股票价格 ver 0.2 (
-    key 股票 ID 股票 not null,
-    日期 int not null,
-    价格 dec(10,3),
-    开 dec(10,3),
-    高 dec(10,3),
-    低 dec(10,3),
+  key 股票 ID 股票 not null,
+  日期 int not null,
+  价格 dec(10,3),
+  开 dec(10,3),
+  高 dec(10,3),
+  低 dec(10,3),
 );
 
 MAP 股票价格历史 ver 0.2 (
-    key 股票 ID 股票 not null,
-    key 日期 int not null,
-    价格 dec(10,3),
-    开 dec(10,3),
-    高 dec(10,3),
-    低 dec(10,3),
-    量 dec(12,0)
+  key 股票 ID 股票 not null,
+  key 日期 int not null,
+  价格 dec(10,3),
+  开 dec(10,3),
+  高 dec(10,3),
+  低 dec(10,3),
+  量 dec(12,0)
 );
+
+MAP 股票除权因子 ver 0.2 (
+  key 股票 ID 股票 not null,
+  key 日期 int not null,
+  factor dec(11,8) not null
+);
+
+MAP 股票分红 ver 0.2 (
+  key 股票 ID 股票 not null,
+  key 日期 int not null,
+  bonus dec(11,4) not null
+);
+
+ACTION 计算除权因子(
+  stock ID 股票
+) {
+  foreach (var 日期 int, 送股 dec(10,2), 转增 dec(10,2), 派息 dec(10,2), 配股 dec(10,2), 配股价 dec(10,3) of
+    select 日期, 送股, 转增, 派息, 配股, 配股价
+      from 新浪除权信息
+      where 股票=stock)
+  {
+    if 派息 > 0 {
+      var b dec(10,4) = 派息 / 10;
+      book 股票分红 at (stock, 日期) set bonus = b;
+    }
+    if 配股 > 0 and 配股价 > 0 {
+      var close dec(10,3);
+      set close = a.价格 from 股票价格历史 as a where a.股票=stock and a.日期=日期
+      if close > 0 {
+        var newPrice dec(10,3) = (close + 配股价 * 配股 / 10) / (1 + (送股 + 转增 + 配股) / 10);
+        var fac dec(11,8) = newPrice / close;
+        book 股票除权因子 at (stock, 日期) set factor = fac;
+      }
+    }
+    else {
+      var sp dec(10,2) = 送股 + 转增;
+      if sp > 0 {
+        var fac dec(11,8) = 1 / (1 + sp / 10);
+        book 股票除权因子 at (stock, 日期) set factor = fac;
+      }
+    }
+  }
+};
+
+QUERY getStockExPrice(
+  stock ID 股票,
+  dayBegin int,
+  dayEnd int
+)
+RETURNS ret (
+  priceBegin dec(12, 4),
+  bday int,
+  priceEnd dec(12, 4),
+  eday int,
+  priceEx dec(12, 4),
+  bonus dec(12, 4)
+) {
+  var price dec(12,4);
+  var day1 int;
+  var priceb dec(12,4);
+  var day2 int;
+  var priceex dec(12,4);
+  var bonus dec(12,4);
+  set price = a.价格, day1 = a.日期
+    from 股票价格历史 as a 
+      where a.股票 = stock and a.日期 >= dayBegin order by a.日期 ASC limit 1;
+  if price > 0 {
+    set priceb = a.价格, day2 = a.日期
+      from 股票价格历史 as a 
+        where a.股票 = stock and a.日期 >= dayEnd order by a.日期 ASC limit 1;
+    if priceb > 0 {
+      set priceex = priceb;
+      set bonus = 0;
+      into ret select price as priceBegin, day1 as bday, priceb as priceEnd, day2 as eday, priceex as priceEx, bonus as bonus;
+    }
+  }
+};

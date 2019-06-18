@@ -1,9 +1,9 @@
 MAP 新浪除权信息 ver 0.2 (
     key 股票 ID 股票 not null,
     key 日期 int not null,
-    送股 dec(10,2),
-    转增 dec(10,2),
-    派息 dec(10,2),
-    配股 dec(10,2),
-    配股价 dec(10,3),
+    送股 dec(10,2) not null,
+    转增 dec(10,2) not null,
+    派息 dec(10,2) not null,
+    配股 dec(10,2) not null,
+    配股价 dec(10,3) not null,
 );

@@ -13,5 +13,4 @@ export class MsDbServer extends DbServer {
     existsDatabase(db:string): Promise<boolean> {return}
     uqDbs():Promise<any[]> {return}
     initResDb(resDbName:string):Promise<void> {return}
-    close() {}
 }

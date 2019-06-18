@@ -148,7 +148,7 @@ export default function(router: Router) {
         }
         else {
             let {arrs} = schema;
-            let arrSchema = arrs.find(v => v.name === arr);
+            let arrSchema = arrs.find((v:any) => v.name === arr);
             let {mainFields} = arrSchema;
             if (mainFields !== undefined) {
                 let ret:string[] = [];

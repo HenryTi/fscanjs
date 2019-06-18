@@ -13,6 +13,7 @@ const bodyParser = require("body-parser");
 const config = require("config");
 const sina_1 = require("./router/sina");
 const eastmoney_1 = require("./router/eastmoney");
+//doTest();
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 (function () {
     return __awaiter(this, void 0, void 0, function* () {

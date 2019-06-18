@@ -2,6 +2,8 @@ import * as _ from 'lodash';
 import {getDb, Db} from './db';
 import { packReturns } from '../core/packReturn';
 import { ImportData } from './importData';
+import { packParam } from '../core/packParam';
+import schema from '../router/schema';
 
 const runners: {[name:string]: Runner} = {};
 
@@ -71,12 +73,6 @@ export class Runner {
     }
     createDatabase(): Promise<void> {
         return this.db.createDatabase();
-    }
-
-    close() {
-        this.db.close();
-        let name = this.db.getDbName();
-        runners[name] = undefined;
     }
 
     async setTimezone(unit:number, user:number): Promise<void> {
@@ -273,6 +269,13 @@ export class Runner {
     }
 
     async action(action:string, unit:number, user:number, data:string): Promise<any> {
+        let result = await this.db.callEx('tv_' + action, [unit, user, data]);
+        return result;
+    }
+
+    async actionFromObj(action:string, unit:number, user:number, obj:any): Promise<any> {
+        let schema = this.getSchema(action);
+        let data = packParam(schema.call, obj);
         let result = await this.db.callEx('tv_' + action, [unit, user, data]);
         return result;
     }
