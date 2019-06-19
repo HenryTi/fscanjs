@@ -36,7 +36,8 @@ class SinaSymbols {
       if (!r) {
         retryArr.push(page);
       }
-      else{
+      else {
+        await sleep(1000);
         console.log('sinasymbols hsa page : ' + page);
       }
       ++page;
