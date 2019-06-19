@@ -4,10 +4,8 @@ import * as bodyParser from 'body-parser';
 import * as config from 'config';
 import sinaRouter from './router/sina';
 import eastmoneyRouter from './router/eastmoney';
-import { fetchSinaContent } from './scan/sina';
-import * as cheerio from 'cheerio';
-import { scanSinaExRight } from './scan/cqsina';
 import { doTest } from './test';
+import magicRouter from './router/magic';
 
 doTest();
 
@@ -49,7 +47,8 @@ console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
   });
 
   app.use('/fsjs/sina', sinaRouter);
-  app.use('/fsjs/eastmoney', eastmoneyRouter)
+  app.use('/fsjs/eastmoney', eastmoneyRouter);
+  app.use('/fsjs/magic', magicRouter);
   app.use('/hello', dbHello);
 
   function dbHello(req: Request, res: Response) {

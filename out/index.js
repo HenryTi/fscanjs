@@ -14,6 +14,7 @@ const config = require("config");
 const sina_1 = require("./router/sina");
 const eastmoney_1 = require("./router/eastmoney");
 const test_1 = require("./test");
+const magic_1 = require("./router/magic");
 test_1.doTest();
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 (function () {
@@ -53,6 +54,7 @@ console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
         }));
         app.use('/fsjs/sina', sina_1.default);
         app.use('/fsjs/eastmoney', eastmoney_1.default);
+        app.use('/fsjs/magic', magic_1.default);
         app.use('/hello', dbHello);
         function dbHello(req, res) {
             let db = req.params.db;

@@ -10,16 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
-const db_1 = require("./uq-api/db");
-const const_1 = require("./const");
 function doTest() {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield db_1.getRunner('mi');
-        let row = [1, 5, 20160101, 20160901];
-        let r1 = yield runner.query('getstockexearning', const_1.DefaultUnit, null, row);
-        let row2 = [const_1.DefaultUnit, null, 1, 5, 20160101, 20160901];
-        let r2 = yield runner.procCall('tv_getstockexearning', row2);
-        let a = 0;
+        //emulateAll();
     });
 }
 exports.doTest = doTest;

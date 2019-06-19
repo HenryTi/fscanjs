@@ -5,4 +5,5 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./sina"));
 __export(require("./eastmoney"));
+__export(require("./magic"));
 //# sourceMappingURL=index.js.map
