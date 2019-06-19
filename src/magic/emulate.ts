@@ -21,9 +21,11 @@ export async function emulateAll() {
   let runner:Runner = await getRunner('mi');
   let em = new EmulateMagic(runner);
   try {
-    for (let year = 2015; year < 2018; ++year) {
+    for (let year = 2010; year < 2019; ++year) {
       for (let month = 1; month < 13; ++month) {
         let date = year * 10000 + month * 100 + 1;
+        if (date > 20180601)
+          break;
         console.log('emulate begin day: ' + date);
         let p = {year:year, month:month, day:1, date:date};
         await em.proceeOneDay(p);
