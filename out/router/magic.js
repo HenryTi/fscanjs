@@ -12,7 +12,7 @@ const express_1 = require("express");
 const emulate_1 = require("../magic/emulate");
 const magicRouter = express_1.Router();
 magicRouter.get('/magicall', (req, res) => __awaiter(this, void 0, void 0, function* () {
-    emulate_1.emulateAll();
+    emulate_1.allStocksAvg();
     res.json({ "magic": "emulateAll" });
 }));
 exports.default = magicRouter;

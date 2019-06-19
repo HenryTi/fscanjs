@@ -13,6 +13,7 @@ const cheerio = require("cheerio");
 function doTest() {
     return __awaiter(this, void 0, void 0, function* () {
         //emulateAll();
+        //allStocksAvg();
     });
 }
 exports.doTest = doTest;

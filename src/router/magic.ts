@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { emulateAll } from '../magic/emulate';
+import { emulateAll, allStocksAvg } from '../magic/emulate';
 
 const magicRouter: Router = Router();
 magicRouter.get('/magicall', async (req: Request, res: Response) => {
-  emulateAll();
+  allStocksAvg();
   res.json({"magic": "emulateAll"});
 });
 

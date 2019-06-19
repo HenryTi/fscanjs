@@ -10,10 +10,11 @@ import { scanSinaExRight } from './scan/cqsina';
 import { getRunner, Runner } from './uq-api/db';
 import { DefaultUnit } from './const';
 import { packParam } from './uq-api/core/packParam';
-import { emulateAtDay, emulateAll } from './magic/emulate';
+import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulate';
 
 export async function doTest(){
   //emulateAll();
+  //allStocksAvg();
 }
 //scanItem({ symbol: 'sz000001', code: "000001" });
 
