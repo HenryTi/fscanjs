@@ -12,12 +12,9 @@ const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
 function doTest() {
     return __awaiter(this, void 0, void 0, function* () {
-        //emulateAll();
-        //allStocksAvg();
     });
 }
 exports.doTest = doTest;
-//scanItem({ symbol: 'sz000001', code: "000001" });
 function scanItem(item) {
     return __awaiter(this, void 0, void 0, function* () {
         let { symbol, code } = item;

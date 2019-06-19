@@ -13,10 +13,7 @@ import { packParam } from './uq-api/core/packParam';
 import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulate';
 
 export async function doTest(){
-  //emulateAll();
-  //allStocksAvg();
 }
-//scanItem({ symbol: 'sz000001', code: "000001" });
 
 async function scanItem(item: any) {
   let { symbol, code } = item as { symbol: string, code: string };

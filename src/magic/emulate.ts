@@ -2,15 +2,21 @@ import { getRunner, Runner } from '../uq-api/db';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
-const GroupSize = 30;
+const GroupSize = 200;
+const MaxGroup = 20;
 
-export async function emulateAtDay(day:number) {
+export async function emulateAtDay(date:number) {
   let runner:Runner = await getRunner('mi');
   let em = new EmulateMagic(runner);
   try {
-    console.log('emulate begin day: ' + day);
-    await em.proceeOneDay(day);
-    console.log('emulate end day: ' + day);
+    console.log('emulate begin day: ' + date);
+    let year = Math.floor(date / 10000);
+    let month = date % 10000;
+    let day = month % 100;
+    month = Math.floor(month / 100);
+    let p = {year:year, month:month, day:1, date:date};
+    await em.proceeOneDay(p);
+    console.log('emulate end day: ' + date);
   }
   catch (err) {
     console.log(err);
@@ -108,7 +114,7 @@ class EmulateMagic {
       let arr = ret as any[];
 
       let dayEnd = date + 10000;
-      for (let i = 0; i < 33; ++i) {
+      for (let i = 0; i < MaxGroup; ++i) {
         await this.CalculateOneGroup(date, dayEnd, arr, i, p);
       }
     }

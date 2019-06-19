@@ -10,15 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("../uq-api/db");
 const const_1 = require("../const");
-const GroupSize = 30;
-function emulateAtDay(day) {
+const GroupSize = 200;
+const MaxGroup = 20;
+function emulateAtDay(date) {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
         let em = new EmulateMagic(runner);
         try {
-            console.log('emulate begin day: ' + day);
-            yield em.proceeOneDay(day);
-            console.log('emulate end day: ' + day);
+            console.log('emulate begin day: ' + date);
+            let year = Math.floor(date / 10000);
+            let month = date % 10000;
+            let day = month % 100;
+            month = Math.floor(month / 100);
+            let p = { year: year, month: month, day: 1, date: date };
+            yield em.proceeOneDay(p);
+            console.log('emulate end day: ' + date);
         }
         catch (err) {
             console.log(err);
@@ -114,7 +120,7 @@ class EmulateMagic {
                 let ret = yield this.runner.query('getmagicorderresult', const_1.DefaultUnit, undefined, []);
                 let arr = ret;
                 let dayEnd = date + 10000;
-                for (let i = 0; i < 33; ++i) {
+                for (let i = 0; i < MaxGroup; ++i) {
                     yield this.CalculateOneGroup(date, dayEnd, arr, i, p);
                 }
             }
