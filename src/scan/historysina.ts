@@ -23,6 +23,7 @@ export async function scanSinaHistory(len: number, start:number) {
     }
   }
   let count = ret.length;
+  console.log('stock count = ' + count);
   let i: number, j: number;
   let retryArr = [];
   i = 0;
@@ -38,9 +39,6 @@ export async function scanSinaHistory(len: number, start:number) {
       retryArr.push(code);
     }
     else {
-      if (len > 1000) {
-        await sleep(1000);
-      }
       console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
     }
   }

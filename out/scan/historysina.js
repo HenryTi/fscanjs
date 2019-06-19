@@ -32,6 +32,7 @@ function scanSinaHistory(len, start) {
             }
         }
         let count = ret.length;
+        console.log('stock count = ' + count);
         let i, j;
         let retryArr = [];
         i = 0;
@@ -46,9 +47,6 @@ function scanSinaHistory(len, start) {
                 retryArr.push(code);
             }
             else {
-                if (len > 1000) {
-                    yield gfuncs_1.sleep(1000);
-                }
                 console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
             }
         }
