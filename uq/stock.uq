@@ -80,7 +80,7 @@ ACTION 计算除权因子(
   into ret select 1 as ok;
 };
 
-QUERY getStockExPrice(
+QUERY getStockRestorePrice(
   stock ID 股票,
   dayBegin int,
   dayEnd int
@@ -126,4 +126,25 @@ RETURNS ret (
       into ret select price as priceBegin, day1 as bday, priceb as priceEnd, day2 as eday, priceex as priceEx, bonus as bonus;
     }
   }
+};
+
+QUERY getStockExEarning(
+  stock ID 股票,
+  earning dec(12,4),
+  dayBegin int,
+  dayEnd int
+)
+RETURNS ret (
+  e dec(12, 4)
+) {
+  var te dec(12,4);
+  set te = earning;
+  foreach (var factore dec(11,8) of
+    select a.factore
+    from 股票除权因子 as a
+    where a.股票 = stock and a.日期 >= dayBegin and a.日期 <= dayEnd)
+  {
+    set te = te * factore;
+  }
+  into ret select te as e;
 };

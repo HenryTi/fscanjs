@@ -15,8 +15,10 @@ const const_1 = require("./const");
 function doTest() {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
-        let row = [28];
-        yield runner.actionFromObj('计算除权因子', const_1.DefaultUnit, null, { stock: 2 });
+        let row = [1, 5, 20160101, 20160901];
+        let r1 = yield runner.query('getstockexearning', const_1.DefaultUnit, null, row);
+        let row2 = [const_1.DefaultUnit, null, 1, 5, 20160101, 20160901];
+        let r2 = yield runner.procCall('tv_getstockexearning', row2);
         let a = 0;
     });
 }

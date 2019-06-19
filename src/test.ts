@@ -13,8 +13,10 @@ import { packParam } from './uq-api/core/packParam';
 
 export async function doTest(){
   let runner = await getRunner('mi');
-  let row : any[] = [28];
-  await runner.actionFromObj('计算除权因子', DefaultUnit, null, {stock:2});
+  let row : any[] = [1,5,20160101,20160901];
+  let r1 = await runner.query('getstockexearning', DefaultUnit, null, row);
+  let row2 : any[] = [DefaultUnit, null, 1,5,20160101,20160901];
+  let r2 = await runner.procCall('tv_getstockexearning', row2);
   let a = 0;
 
 }

@@ -111,7 +111,7 @@ class SinaHistory {
                 let item = lines[i];
                 let { day, open, high, low, close, volume } = item;
                 let date = gfuncs_1.checkToDateInt(day);
-                if (date === undefined || date < 20140101)
+                if (date === undefined)
                     continue;
                 let row = [id, date, close, open, high, low, volume];
                 promiseArr.push(this.runner.mapSave('股票价格历史', const_1.DefaultUnit, undefined, row));
