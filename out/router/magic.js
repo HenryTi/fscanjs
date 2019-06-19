@@ -23,7 +23,7 @@ magicRouter.get('/day', (req, res) => __awaiter(this, void 0, void 0, function* 
 magicRouter.get('/avg', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let day = Number(req.query['day']);
     emulate_1.allStocksAvg(day);
-    res.json({ "magic": "emulateday", "day": day });
+    res.json({ "magic": "stocksavg", "day": day });
 }));
 exports.default = magicRouter;
 //# sourceMappingURL=magic.js.map

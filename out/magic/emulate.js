@@ -91,14 +91,13 @@ function allStocksAvg(day) {
                         ++rCount;
                         let one = (priceEx / priceBegin - 1) * 100;
                         sum += one;
-                        console.log("股数: " + rCount + '  涨幅：' + one);
                     }
                 }
             }
         }
         if (rCount > 0) {
             sum = sum / rCount;
-            console.log("股数: " + rCount + '  平均涨幅：' + sum);
+            console.log("股数: " + rCount + '  平均涨幅：' + sum + " dayBegin = " + day);
         }
     });
 }

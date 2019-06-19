@@ -81,7 +81,6 @@ export async function allStocksAvg(day:number) {
           ++rCount;
           let one = (priceEx / priceBegin - 1) * 100;
           sum += one;
-          console.log("股数: " + rCount + '  涨幅：' + one);
         }
       }
     }
@@ -89,7 +88,7 @@ export async function allStocksAvg(day:number) {
 
   if (rCount > 0) {
     sum = sum / rCount;
-    console.log("股数: " + rCount + '  平均涨幅：' + sum);
+    console.log("股数: " + rCount + '  平均涨幅：' + sum + " dayBegin = " + day);
   }
 }
 
