@@ -59,7 +59,7 @@ export class Db {
         return await this.dbServer.tableFromProc(this.dbName, proc, params);
     }
     async tablesFromProc(proc:string, params:any[]): Promise<any[][]> {
-        //console.log(this.dbName, '.', proc, ': ', params.join(','))
+        console.log(this.dbName, '.', proc, ': ', params.join(','))
         return await this.dbServer.tablesFromProc(this.dbName, proc, params);
     }
     async createDatabase(): Promise<void> {
