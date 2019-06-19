@@ -54,7 +54,7 @@ function emulateAll() {
     });
 }
 exports.emulateAll = emulateAll;
-function allStocksAvg(day) {
+function allStocksAvg(begin, end) {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
         let ret = [];
@@ -75,8 +75,8 @@ function allStocksAvg(day) {
         let count = ret.length;
         let rCount = 0;
         let sum = 0;
-        let dayBegin = day;
-        let dayEnd = 20190101;
+        let dayBegin = begin > 0 ? begin : 20110101;
+        let dayEnd = end > 0 ? end : 20190101;
         for (let i = 0; i < count; ++i) {
             let code = ret[i];
             let { id } = code;
@@ -97,7 +97,7 @@ function allStocksAvg(day) {
         }
         if (rCount > 0) {
             sum = sum / rCount;
-            console.log("股数: " + rCount + '  平均涨幅：' + sum + " dayBegin = " + day);
+            console.log('股数: ' + rCount + '  平均涨幅：' + sum + ' dayBegin=' + dayBegin + ' dayEnd=' + dayEnd);
         }
     });
 }

@@ -14,9 +14,10 @@ magicRouter.get('/day', async (req: Request, res: Response) => {
 });
 
 magicRouter.get('/avg', async (req: Request, res: Response) => {
-  let day:number = Number(req.query['day']);
-  allStocksAvg(day);
-  res.json({"magic": "stocksavg", "day":day});
+  let begin:number = Number(req.query['begin']);
+  let end:number = Number(req.query['end']);
+  allStocksAvg(begin, end);
+  res.json({"magic": "stocksavg", "begin":begin, "end":end});
 });
 
 export default magicRouter;
