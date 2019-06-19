@@ -70,7 +70,7 @@ function allStocksAvg() {
         let count = ret.length;
         let rCount = 0;
         let sum = 0;
-        let dayBegin = 20110101;
+        let dayBegin = 20120101;
         let dayEnd = 20190101;
         for (let i = 0; i < count; ++i) {
             let code = ret[i];
