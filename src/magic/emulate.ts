@@ -89,6 +89,8 @@ export async function allStocksAvg(begin: number, end: number) {
   if (rCount > 0) {
     sum = sum / rCount;
     console.log('股数: ' + rCount + '  平均涨幅：' + sum + ' dayBegin=' + dayBegin + ' dayEnd=' + dayEnd);
+    await runner.mapSave('股市平均涨幅', DefaultUnit, undefined, 
+        [dayBegin, dayEnd, sum, rCount]);
   }
 }
 

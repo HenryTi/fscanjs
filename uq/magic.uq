@@ -103,7 +103,7 @@ QUERY getmagicorderresult(
     from `c_magicorder` as a left join `tv_股票` as b 
     on a.stock = b.id 
     order by `order` 
-    limit 1000;
+    limit 3000;
 
   -/
 };
@@ -115,4 +115,11 @@ MAP 神奇公式模拟结果 ver 0.2 (
   key day int not null,
   平均涨幅 dec(10,3),
   count int,
+);
+
+MAP 股市平均涨幅 (
+  key begin int not null,
+  key end int not null,
+  gain dec(12, 6),
+  count int
 );

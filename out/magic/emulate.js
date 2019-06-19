@@ -98,6 +98,7 @@ function allStocksAvg(begin, end) {
         if (rCount > 0) {
             sum = sum / rCount;
             console.log('股数: ' + rCount + '  平均涨幅：' + sum + ' dayBegin=' + dayBegin + ' dayEnd=' + dayEnd);
+            yield runner.mapSave('股市平均涨幅', const_1.DefaultUnit, undefined, [dayBegin, dayEnd, sum, rCount]);
         }
     });
 }
