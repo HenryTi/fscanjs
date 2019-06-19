@@ -38,6 +38,9 @@ export async function scanSinaHistory(len: number, start:number) {
       retryArr.push(code);
     }
     else {
+      if (len > 1000) {
+        await sleep(1000);
+      }
       console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
     }
   }

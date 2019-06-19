@@ -110,7 +110,9 @@ QUERY getmagicorderresult(
 
 MAP 神奇公式模拟结果 ver 0.2 (
   key 组 int not null,
-  key 日期 int not null,
+  key year int not null,
+  key month int not null,
+  key day int not null,
   平均涨幅 dec(10,3),
   count int,
 );

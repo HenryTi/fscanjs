@@ -33,10 +33,11 @@ function emulateAll() {
         try {
             for (let year = 2015; year < 2018; ++year) {
                 for (let month = 1; month < 13; ++month) {
-                    let day = year * 10000 + month * 100 + 1;
-                    console.log('emulate begin day: ' + day);
-                    yield em.proceeOneDay(day);
-                    console.log('emulate end day: ' + day);
+                    let date = year * 10000 + month * 100 + 1;
+                    console.log('emulate begin day: ' + date);
+                    let p = { year: year, month: month, day: 1, date: date };
+                    yield em.proceeOneDay(p);
+                    console.log('emulate end day: ' + date);
                 }
             }
         }
@@ -50,19 +51,20 @@ class EmulateMagic {
     constructor(runner) {
         this.runner = runner;
     }
-    proceeOneDay(day) {
+    proceeOneDay(p) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let lastyear = Math.floor(day / 10000) - 1;
+                let { year, month, day, date } = p;
+                let lastyear = Math.floor(date / 10000) - 1;
                 let rowroe = [lastyear];
                 yield this.runner.query('calcRoeOrder', const_1.DefaultUnit, undefined, rowroe);
                 let rowpe = [day];
                 yield this.runner.query('calcPeOrder', const_1.DefaultUnit, undefined, rowpe);
                 let ret = yield this.runner.query('getmagicorderresult', const_1.DefaultUnit, undefined, []);
                 let arr = ret;
-                let dayEnd = day + 10000;
+                let dayEnd = date + 10000;
                 for (let i = 0; i < 33; ++i) {
-                    yield this.CalculateOneGroup(day, dayEnd, arr, i);
+                    yield this.CalculateOneGroup(date, dayEnd, arr, i, p);
                 }
             }
             catch (err) {
@@ -70,8 +72,9 @@ class EmulateMagic {
             }
         });
     }
-    CalculateOneGroup(dayBegin, dayEnd, codes, groupIndex) {
+    CalculateOneGroup(dayBegin, dayEnd, codes, groupIndex, p) {
         return __awaiter(this, void 0, void 0, function* () {
+            let { year, month, day, date } = p;
             let count = codes.length;
             let i = groupIndex * GroupSize;
             let end = i + GroupSize;
@@ -96,7 +99,7 @@ class EmulateMagic {
             }
             if (rCount > 0 && rCount >= GroupSize / 2) {
                 sum /= rCount;
-                yield this.runner.mapSave('神奇公式模拟结果', const_1.DefaultUnit, undefined, [groupIndex, dayBegin, sum, rCount]);
+                yield this.runner.mapSave('神奇公式模拟结果', const_1.DefaultUnit, undefined, [groupIndex, year, month, day, sum, rCount]);
                 console.log('save magicgroup ' + groupIndex);
             }
         });
