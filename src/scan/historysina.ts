@@ -40,6 +40,7 @@ export async function scanSinaHistory(len: number, start:number) {
     }
     else {
       console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
+      await sleep(1000);
     }
   }
 
@@ -80,6 +81,7 @@ class SinaHistory {
       await this.saveHistory(id, results);
     }
     catch (err) {
+      console.log("fetch sina history err " + item);
       return false;
     }
     return true;

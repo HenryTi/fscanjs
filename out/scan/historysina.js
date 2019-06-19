@@ -48,6 +48,7 @@ function scanSinaHistory(len, start) {
             }
             else {
                 console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
+                yield gfuncs_1.sleep(1000);
             }
         }
         count = retryArr.length;
@@ -85,6 +86,7 @@ class SinaHistory {
                 yield this.saveHistory(id, results);
             }
             catch (err) {
+                console.log("fetch sina history err " + item);
                 return false;
             }
             return true;
