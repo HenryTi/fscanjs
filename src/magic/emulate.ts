@@ -51,7 +51,7 @@ class EmulateMagic {
       let lastyear = Math.floor(date / 10000) - 1;
       let rowroe:any[] = [lastyear];
       await this.runner.query('calcRoeOrder',DefaultUnit, undefined, rowroe);
-      let rowpe:any[] = [day];
+      let rowpe:any[] = [date];
       await this.runner.query('calcPeOrder', DefaultUnit, undefined, rowpe);
 
       let ret = await this.runner.query('getmagicorderresult', DefaultUnit, undefined, []);
