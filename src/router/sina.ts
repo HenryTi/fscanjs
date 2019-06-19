@@ -8,18 +8,20 @@ import { caclulateExRight } from '../scan/calcexright';
 const sinaRouter: Router = Router();
 sinaRouter.get('/history', async (req: Request, res: Response) => {
   let len:number = Number(req.query['len']);
+  let start:number = Number(req.query['start']);
   if (len > 0 && len <= 3000) {
-    scanSinaHistory(len);
+    scanSinaHistory(len, start);
   }
-  res.json({"sina": 'scan history'});
+  res.json({"sina": "scan history ", "len":len, "start":start});
 });
 
 sinaRouter.post('/history', async (req: Request, res: Response) => {
   let len:number = Number(req.body['len']);
+  let start:number = Number(req.body['start']);
   if (len > 0 && len <= 3000) {
-    scanSinaHistory(len);
+    scanSinaHistory(len, start);
   }
-  res.json({"sina": 'scan history'});
+  res.json({"sina": "scan history ", "len":len, "start":start});
 });
 
 sinaRouter.get('/symbols', async (req: Request, res: Response) => {

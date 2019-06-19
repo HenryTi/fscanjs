@@ -12,12 +12,12 @@ const db_1 = require("../uq-api/db");
 const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
-function scanSinaHistory(len) {
+function scanSinaHistory(len, start) {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
         let sqg = new SinaHistory(runner);
         let ret = [];
-        let pageStart = 0, pageSize = 500;
+        let pageStart = start, pageSize = 500;
         for (;;) {
             let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
             let arr = ids[0];

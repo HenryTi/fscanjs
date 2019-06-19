@@ -3,12 +3,12 @@ import { sleep, checkToDateInt } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
 
-export async function scanSinaHistory(len: number) {
+export async function scanSinaHistory(len: number, start:number) {
   let runner = await getRunner('mi');
   let sqg = new SinaHistory(runner);
 
   let ret: any[] = [];
-  let pageStart = 0, pageSize = 500;
+  let pageStart = start, pageSize = 500;
   for (; ;) {
     let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
     let arr = ids[0];

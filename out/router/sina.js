@@ -17,17 +17,19 @@ const calcexright_1 = require("../scan/calcexright");
 const sinaRouter = express_1.Router();
 sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let len = Number(req.query['len']);
+    let start = Number(req.query['start']);
     if (len > 0 && len <= 3000) {
-        historysina_1.scanSinaHistory(len);
+        historysina_1.scanSinaHistory(len, start);
     }
-    res.json({ "sina": 'scan history' });
+    res.json({ "sina": "scan history ", "len": len, "start": start });
 }));
 sinaRouter.post('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let len = Number(req.body['len']);
+    let start = Number(req.body['start']);
     if (len > 0 && len <= 3000) {
-        historysina_1.scanSinaHistory(len);
+        historysina_1.scanSinaHistory(len, start);
     }
-    res.json({ "sina": 'scan history' });
+    res.json({ "sina": "scan history ", "len": len, "start": start });
 }));
 sinaRouter.get('/symbols', (req, res) => __awaiter(this, void 0, void 0, function* () {
     symbolsina_1.scanSinaSymbols();
