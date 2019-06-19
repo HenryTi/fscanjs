@@ -42,7 +42,6 @@ function emulateAll() {
                     let date = year * 10000 + month * 100 + 1;
                     if (date > 20180601)
                         break;
-                    console.log('emulate begin day: ' + date);
                     let p = { year: year, month: month, day: 1, date: date };
                     yield em.proceeOneDay(p);
                     console.log('emulate end day: ' + date);
@@ -55,7 +54,7 @@ function emulateAll() {
     });
 }
 exports.emulateAll = emulateAll;
-function allStocksAvg() {
+function allStocksAvg(day) {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
         let ret = [];
@@ -76,7 +75,7 @@ function allStocksAvg() {
         let count = ret.length;
         let rCount = 0;
         let sum = 0;
-        let dayBegin = 20120101;
+        let dayBegin = day;
         let dayEnd = 20190101;
         for (let i = 0; i < count; ++i) {
             let code = ret[i];

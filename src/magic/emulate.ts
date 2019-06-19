@@ -32,7 +32,6 @@ export async function emulateAll() {
         let date = year * 10000 + month * 100 + 1;
         if (date > 20180601)
           break;
-        console.log('emulate begin day: ' + date);
         let p = {year:year, month:month, day:1, date:date};
         await em.proceeOneDay(p);
         console.log('emulate end day: ' + date);
@@ -44,7 +43,7 @@ export async function emulateAll() {
   }
 }
 
-export async function allStocksAvg() {
+export async function allStocksAvg(day:number) {
   let runner:Runner = await getRunner('mi');
 
   let ret: any[] = [];
@@ -66,7 +65,7 @@ export async function allStocksAvg() {
 
   let rCount = 0;
   let sum = 0;
-  let dayBegin = 20120101;
+  let dayBegin = day;
   let dayEnd = 20190101;
   for (let i = 0; i < count; ++i) {
     let code = ret[i];

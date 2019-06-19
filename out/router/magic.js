@@ -11,13 +11,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const emulate_1 = require("../magic/emulate");
 const magicRouter = express_1.Router();
-magicRouter.get('/magicall', (req, res) => __awaiter(this, void 0, void 0, function* () {
+magicRouter.get('/all', (req, res) => __awaiter(this, void 0, void 0, function* () {
     emulate_1.emulateAll();
     res.json({ "magic": "emulateAll" });
 }));
-magicRouter.get('/magicday', (req, res) => __awaiter(this, void 0, void 0, function* () {
+magicRouter.get('/day', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let day = Number(req.query['day']);
     emulate_1.emulateAtDay(day);
+    res.json({ "magic": "emulateday", "day": day });
+}));
+magicRouter.get('/avg', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    let day = Number(req.query['day']);
+    emulate_1.allStocksAvg(day);
     res.json({ "magic": "emulateday", "day": day });
 }));
 exports.default = magicRouter;
