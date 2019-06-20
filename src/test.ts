@@ -14,8 +14,6 @@ import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulate';
 import { scanSinaFinance } from './scan/financesina';
 
 export async function doTest() {
-  await scanSinaFinance(0);
-  debugger;
 }
 
 async function scanItem(item: any) {
