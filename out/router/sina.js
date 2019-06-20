@@ -14,6 +14,7 @@ const hqsina_1 = require("../scan/hqsina");
 const historysina_1 = require("../scan/historysina");
 const cqsina_1 = require("../scan/cqsina");
 const calcexright_1 = require("../scan/calcexright");
+const financesina_1 = require("../scan/financesina");
 const sinaRouter = express_1.Router();
 sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let len = Number(req.query['len']);
@@ -52,6 +53,7 @@ sinaRouter.get('/finance', (req, res) => __awaiter(this, void 0, void 0, functio
     if (isNaN(start) || start < 0) {
         start = 0;
     }
+    financesina_1.scanSinaFinance(start);
     res.json({ "sina": "scan finance ", "start": start });
 }));
 exports.default = sinaRouter;

@@ -4,6 +4,7 @@ import { scanSinaQuotations } from '../scan/hqsina';
 import { scanSinaHistory } from '../scan/historysina';
 import { scanSinaExRight } from '../scan/cqsina';
 import { caclulateExRight } from '../scan/calcexright';
+import { scanSinaFinance } from '../scan/financesina';
 
 const sinaRouter: Router = Router();
 sinaRouter.get('/history', async (req: Request, res: Response) => {
@@ -49,6 +50,7 @@ sinaRouter.get('/finance', async (req: Request, res: Response) => {
   if (isNaN(start) || start < 0) {
     start = 0;
   }
+  scanSinaFinance(start);
   res.json({"sina": "scan finance ", "start":start});
 });
 
