@@ -18,7 +18,7 @@ const sinaRouter = express_1.Router();
 sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let len = Number(req.query['len']);
     let start = Number(req.query['start']);
-    if (len > 0 && len <= 4000) {
+    if (len > 0 && len <= 5000) {
         historysina_1.scanSinaHistory(len, start);
     }
     res.json({ "sina": "scan history ", "len": len, "start": start });
@@ -26,7 +26,7 @@ sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, functio
 sinaRouter.post('/history', (req, res) => __awaiter(this, void 0, void 0, function* () {
     let len = Number(req.body['len']);
     let start = Number(req.body['start']);
-    if (len > 0 && len <= 4000) {
+    if (len > 0 && len <= 5000) {
         historysina_1.scanSinaHistory(len, start);
     }
     res.json({ "sina": "scan history ", "len": len, "start": start });
