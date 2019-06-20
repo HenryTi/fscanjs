@@ -37,7 +37,7 @@ function emulateAll() {
         let runner = yield db_1.getRunner('mi');
         let em = new EmulateMagic(runner);
         try {
-            for (let year = 2011; year < 2019; ++year) {
+            for (let year = 2013; year < 2019; ++year) {
                 for (let month = 1; month < 13; ++month) {
                     let date = year * 10000 + month * 100 + 1;
                     if (date > 20180601)
