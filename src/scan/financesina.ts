@@ -158,7 +158,7 @@ class SinaFinace {
       }
     }
   
-    console.log('scan sinaFinance : ' + symbol);
+    console.log('scan sinaFinance, code: ' + id + ' - ' + symbol);
 
   }
 }
