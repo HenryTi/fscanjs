@@ -7,3 +7,18 @@ MAP 新浪除权信息 ver 0.2 (
     配股 dec(10,2) not null,
     配股价 dec(10,3) not null,
 );
+
+MAP 新浪财务指标 ver 0.2 (
+    key 股票 ID 股票 not null,
+    key year int not null,
+    key month int not null,
+    摊薄每股收益 dec(14,4),
+    加权每股收益 dec(14,4),
+    扣非每股收益 dec(14,4),
+    每股净资产_调整前 dec(14,4),
+    每股净资产_调整后 dec(14,4),
+    每股经营性现金流 dec(14,4),
+    每股资本公积金 dec(14,4),
+    每股未分配利润 dec(14,4),
+);
+

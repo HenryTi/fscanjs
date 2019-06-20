@@ -14,6 +14,8 @@ import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulate';
 
 export async function doTest() {
   //let runner: Runner = await getRunner('mi');
+  
+  //debugger;
 }
 
 async function scanItem(item: any) {

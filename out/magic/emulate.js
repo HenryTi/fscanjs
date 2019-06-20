@@ -37,6 +37,8 @@ function emulateAll() {
         let runner = yield db_1.getRunner('mi');
         let em = new EmulateMagic(runner);
         try {
+            let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
+            yield runner.sql(sql, []);
             for (let year = 2015; year < 2019; ++year) {
                 for (let month = 1; month < 13; ++month) {
                     let date = year * 10000 + month * 100 + 1;

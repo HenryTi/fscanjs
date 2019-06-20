@@ -72,9 +72,9 @@ QUERY calcPeOrder(
   CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id bigint null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
 
   INSERT INTO `_pe` (id, `pe`)
-    SELECT a.股票 as `id`, f_getstockpe(a.`股票`, a.`扣非每股收益`, b.`价格`, _daybegin_4, _lastyearday_3) as `pe`
-	  from `tv_股票价格历史` b inner join `tv_东方财富财务分析` a on b.`股票` = a.`股票` and 
-      b.`日期`=`_fday_2` and a.`日期`=`_lastyearday_3` and a.`扣非每股收益`>0 and a.`每股净资产`>0
+    SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`earning`, b.`价格`, _daybegin_4, _lastyearday_3) as `pe`
+	  from `tv_股票价格历史` b inner join `tv_capitalearning` a on b.`股票` = a.`stock` and 
+      b.`日期`=`_fday_2` and a.`year`=`_year_1`-1 and a.`earning` > 0
     order by pe asc;
 
   INSERT INTO `c_peorder` (`stock`, `order`, `pe`)
@@ -135,18 +135,6 @@ MAP capitalearning (
   capital dec(18,4) not null,
   earning dec(18,4) not null
 );
-
-QUERY updatecapitalearning(
-) {
-  /-mysql
-  START TRANSACTION;
-  delete from tv_capitalearning where 1=1;
-  insert into `tv_capitalearning` (`$unit`, `stock`, `year`, `capital`, `earning`)
-  	select `_$unit` as `$unit`, `股票` as `stock`, `日期` / 10000 as `year`, `每股净资产` as `capital`, `扣非每股收益` as `earning`
-  	from `tv_东方财富财务分析` where `每股净资产` > 0 and `扣非每股收益` is not null;
-  commit;
-  -/
-};
 
 QUERY getcapitalearning (
   stock ID
