@@ -10,10 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
+const financesina_1 = require("./scan/financesina");
 function doTest() {
     return __awaiter(this, void 0, void 0, function* () {
-        //let runner: Runner = await getRunner('mi');
-        //debugger;
+        yield financesina_1.scanSinaFinance(0);
+        debugger;
     });
 }
 exports.doTest = doTest;

@@ -47,5 +47,12 @@ sinaRouter.get('/calcexrights', (req, res) => __awaiter(this, void 0, void 0, fu
     calcexright_1.caclulateExRight();
     res.json({ "sina": 'caculate ExRights' });
 }));
+sinaRouter.get('/finance', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    let start = Number(req.query['start']);
+    if (isNaN(start) || start < 0) {
+        start = 0;
+    }
+    res.json({ "sina": "scan finance ", "start": start });
+}));
 exports.default = sinaRouter;
 //# sourceMappingURL=sina.js.map

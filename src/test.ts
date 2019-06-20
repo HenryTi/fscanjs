@@ -11,11 +11,11 @@ import { getRunner, Runner } from './uq-api/db';
 import { DefaultUnit } from './const';
 import { packParam } from './uq-api/core/packParam';
 import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulate';
+import { scanSinaFinance } from './scan/financesina';
 
 export async function doTest() {
-  //let runner: Runner = await getRunner('mi');
-  
-  //debugger;
+  await scanSinaFinance(0);
+  debugger;
 }
 
 async function scanItem(item: any) {

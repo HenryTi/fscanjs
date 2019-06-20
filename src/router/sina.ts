@@ -44,4 +44,12 @@ sinaRouter.get('/calcexrights', async (req: Request, res: Response) => {
   res.json({"sina": 'caculate ExRights'});
 });
 
+sinaRouter.get('/finance', async (req: Request, res: Response) => {
+  let start:number = Number(req.query['start']);
+  if (isNaN(start) || start < 0) {
+    start = 0;
+  }
+  res.json({"sina": "scan finance ", "start":start});
+});
+
 export default sinaRouter;
