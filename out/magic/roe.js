@@ -50,6 +50,8 @@ function calculateOne(code, runner) {
             parr.forEach((item) => {
                 let { year, capital, earning } = item;
                 let roe = capital > 0 ? earning / capital : 0;
+                if (roe > 2)
+                    return;
                 ce[year] = { roe: roe };
             });
             let count = parr.length;

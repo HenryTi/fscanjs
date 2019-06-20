@@ -105,7 +105,7 @@ class EmulateMagic {
     try {
       let { year, month, day, date } = p as { year: number, month: number, day: number, date: number }
       let lastyear = Math.floor(date / 10000) - 1;
-      let rowroe: any[] = [lastyear, 5];
+      let rowroe: any[] = [lastyear, 1];
       await this.runner.query('calcRoeOrder', DefaultUnit, undefined, rowroe);
       let rowpe: any[] = [date];
       await this.runner.query('calcPeOrder', DefaultUnit, undefined, rowpe);
