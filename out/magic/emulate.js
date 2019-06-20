@@ -42,7 +42,7 @@ function emulateAll() {
                     let date = year * 10000 + month * 100 + 1;
                     if (date > 20180601)
                         break;
-                    let p = { year: year, month: month, day: 1, date: date };
+                    let p = { year: year, month: month, day: 4, date: date };
                     yield em.proceeOneDay(p);
                     console.log('emulate end day: ' + date);
                 }
