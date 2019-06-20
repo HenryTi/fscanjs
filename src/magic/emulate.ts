@@ -32,7 +32,7 @@ export async function emulateAll() {
         let date = year * 10000 + month * 100 + 1;
         if (date > 20180601)
           break;
-        let p = { year: year, month: month, day: 4, date: date };
+        let p = { year: year, month: month, day: 1, date: date };
         await em.proceeOneDay(p);
         console.log('emulate end day: ' + date);
       }
@@ -105,7 +105,7 @@ class EmulateMagic {
     try {
       let { year, month, day, date } = p as { year: number, month: number, day: number, date: number }
       let lastyear = Math.floor(date / 10000) - 1;
-      let rowroe: any[] = [lastyear, 1];
+      let rowroe: any[] = [lastyear, 4];
       await this.runner.query('calcRoeOrder', DefaultUnit, undefined, rowroe);
       let rowpe: any[] = [date];
       await this.runner.query('calcPeOrder', DefaultUnit, undefined, rowpe);

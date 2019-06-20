@@ -42,7 +42,7 @@ function emulateAll() {
                     let date = year * 10000 + month * 100 + 1;
                     if (date > 20180601)
                         break;
-                    let p = { year: year, month: month, day: 4, date: date };
+                    let p = { year: year, month: month, day: 1, date: date };
                     yield em.proceeOneDay(p);
                     console.log('emulate end day: ' + date);
                 }
@@ -112,7 +112,7 @@ class EmulateMagic {
             try {
                 let { year, month, day, date } = p;
                 let lastyear = Math.floor(date / 10000) - 1;
-                let rowroe = [lastyear, 1];
+                let rowroe = [lastyear, 4];
                 yield this.runner.query('calcRoeOrder', const_1.DefaultUnit, undefined, rowroe);
                 let rowpe = [date];
                 yield this.runner.query('calcPeOrder', const_1.DefaultUnit, undefined, rowpe);
