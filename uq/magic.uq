@@ -1,9 +1,8 @@
 QUERY calcRoeOrder(
-  year int
+  year int,
+  len int
 )
 {
-  var day int = year * 10000 + 1231;
-
   /-mysql
   CREATE TABLE IF NOT EXISTS `c_roeorder` (
 	  `stock` BIGINT(20) NOT NULL,
@@ -21,9 +20,9 @@ QUERY calcRoeOrder(
   DROP TEMPORARY TABLE IF EXISTS `_roe`;
   CREATE TEMPORARY TABLE `_roe` (`serial` int not null auto_increment primary key, id bigint null, `roe` DECIMAL(18,4) NULL) ENGINE=MyISAM;
   INSERT INTO `_roe` (id, `roe`)
-    SELECT a.股票 as id, a.`扣非每股收益` / a.`每股净资产` AS `roe`
-    FROM `tv_东方财富财务分析` AS a
-    WHERE a.`日期`=_day_1 and a.`每股净资产` > 0 and a.`扣非每股收益` is not null
+    SELECT a.stock as id, a.`roe` AS `roe`
+    FROM `tv_roe` AS a
+    WHERE a.`year`=`_year` and a.`yearlen`=`_len`
     ORDER BY roe DESC;
 
   INSERT INTO `c_roeorder` (`stock`, `order`, `roe`)
