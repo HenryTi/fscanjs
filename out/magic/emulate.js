@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("../uq-api/db");
 const const_1 = require("../const");
-const GroupSize = 200;
-const MaxGroup = 20;
+const GroupSize = 100;
+const MaxGroup = 40;
 function emulateAtDay(date) {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
@@ -37,7 +37,7 @@ function emulateAll() {
         let runner = yield db_1.getRunner('mi');
         let em = new EmulateMagic(runner);
         try {
-            for (let year = 2013; year < 2019; ++year) {
+            for (let year = 2015; year < 2019; ++year) {
                 for (let month = 1; month < 13; ++month) {
                     let date = year * 10000 + month * 100 + 1;
                     if (date > 20180601)
@@ -112,7 +112,7 @@ class EmulateMagic {
             try {
                 let { year, month, day, date } = p;
                 let lastyear = Math.floor(date / 10000) - 1;
-                let rowroe = [lastyear, 4];
+                let rowroe = [lastyear, 5];
                 yield this.runner.query('calcRoeOrder', const_1.DefaultUnit, undefined, rowroe);
                 let rowpe = [date];
                 yield this.runner.query('calcPeOrder', const_1.DefaultUnit, undefined, rowpe);

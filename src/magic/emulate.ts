@@ -2,8 +2,8 @@ import { getRunner, Runner } from '../uq-api/db';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
-const GroupSize = 200;
-const MaxGroup = 20;
+const GroupSize = 100;
+const MaxGroup = 40;
 
 export async function emulateAtDay(date: number) {
   let runner: Runner = await getRunner('mi');
@@ -27,7 +27,7 @@ export async function emulateAll() {
   let runner: Runner = await getRunner('mi');
   let em = new EmulateMagic(runner);
   try {
-    for (let year = 2013; year < 2019; ++year) {
+    for (let year = 2015; year < 2019; ++year) {
       for (let month = 1; month < 13; ++month) {
         let date = year * 10000 + month * 100 + 1;
         if (date > 20180601)
@@ -105,7 +105,7 @@ class EmulateMagic {
     try {
       let { year, month, day, date } = p as { year: number, month: number, day: number, date: number }
       let lastyear = Math.floor(date / 10000) - 1;
-      let rowroe: any[] = [lastyear, 4];
+      let rowroe: any[] = [lastyear, 5];
       await this.runner.query('calcRoeOrder', DefaultUnit, undefined, rowroe);
       let rowpe: any[] = [date];
       await this.runner.query('calcPeOrder', DefaultUnit, undefined, rowpe);
