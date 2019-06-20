@@ -48,6 +48,13 @@ export async function scanEastmoney() {
       }
     }
   }
+
+  try {
+    await runner.query('updatecapitalearning', DefaultUnit, undefined, []);
+  }
+  catch (err) {
+    console.log(err);
+  }
 }
 
 class FechStockContents {

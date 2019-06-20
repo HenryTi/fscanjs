@@ -94,7 +94,6 @@ QUERY calcPeOrder(
 };
 
 QUERY getmagicorderresult(
-
 )
 {
   /-mysql
@@ -123,3 +122,39 @@ MAP 股市平均涨幅 (
   gain dec(12, 6),
   count int
 );
+
+MAP roe (
+  key stock ID 股票 not null,
+  key year int not null,
+  key yearlen int not null,
+  roe dec(12,4)
+);
+
+MAP capitalearning (
+  key stock ID 股票 not null,
+  key year int not null,
+  capital dec(18,4) not null,
+  earning dec(18,4) not null
+);
+
+QUERY updatecapitalearning(
+) {
+  /-mysql
+  START TRANSACTION;
+  delete from tv_capitalearning where 1=1;
+  insert into `tv_capitalearning` (`$unit`, `stock`, `year`, `capital`, `earning`)
+  	select `_$unit` as `$unit`, `股票` as `stock`, `日期` / 10000 as `year`, `每股净资产` as `capital`, `扣非每股收益` as `earning`
+  	from `tv_东方财富财务分析` where `每股净资产` > 0 and `扣非每股收益` is not null;
+  commit;
+  -/
+};
+
+QUERY getcapitalearning (
+  stock ID
+){
+  /-mysql
+  select `year`, `capital`, `earning`
+  from tv_capitalearning
+  where `stock`=`_stock`;
+  -/
+};

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const emulate_1 = require("../magic/emulate");
+const roe_1 = require("../magic/roe");
 const magicRouter = express_1.Router();
 magicRouter.get('/all', (req, res) => __awaiter(this, void 0, void 0, function* () {
     emulate_1.emulateAll();
@@ -25,6 +26,10 @@ magicRouter.get('/avg', (req, res) => __awaiter(this, void 0, void 0, function* 
     let end = Number(req.query['end']);
     emulate_1.allStocksAvg(begin, end);
     res.json({ "magic": "stocksavg", "begin": begin, "end": end });
+}));
+magicRouter.get('/roe', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    roe_1.calculateAllRoe();
+    res.json({ "magic": "calculateAllRoe" });
 }));
 exports.default = magicRouter;
 //# sourceMappingURL=magic.js.map

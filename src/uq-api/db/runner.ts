@@ -62,8 +62,8 @@ export class Runner {
 
     getDb():string {return this.db.getDbName()}
 
-    sql(sql:string, params:any[]): Promise<any> {
-        return this.db.sql(sql, params);
+    async sql(sql:string, params:any[]): Promise<any> {
+        return await this.db.sql(sql, params);
     }
     async procCall(proc:string, params:any[]): Promise<any> {
         return await this.db.call(proc, params);

@@ -72,7 +72,7 @@ class Db {
     }
     tablesFromProc(proc, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(this.dbName, '.', proc, ': ', params.join(','));
+            //console.log(this.dbName, '.', proc, ': ', params.join(','))
             return yield this.dbServer.tablesFromProc(this.dbName, proc, params);
         });
     }

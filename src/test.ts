@@ -12,7 +12,8 @@ import { DefaultUnit } from './const';
 import { packParam } from './uq-api/core/packParam';
 import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulate';
 
-export async function doTest(){
+export async function doTest() {
+  //let runner: Runner = await getRunner('mi');
 }
 
 async function scanItem(item: any) {

@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { emulateAll, allStocksAvg, emulateAtDay } from '../magic/emulate';
+import { calculateAllRoe } from '../magic/roe';
 
 const magicRouter: Router = Router();
 magicRouter.get('/all', async (req: Request, res: Response) => {
@@ -20,4 +21,8 @@ magicRouter.get('/avg', async (req: Request, res: Response) => {
   res.json({"magic": "stocksavg", "begin":begin, "end":end});
 });
 
+magicRouter.get('/roe', async (req: Request, res: Response) => {
+  calculateAllRoe();
+  res.json({"magic": "calculateAllRoe"});
+});
 export default magicRouter;

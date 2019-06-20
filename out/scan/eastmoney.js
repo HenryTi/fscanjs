@@ -55,6 +55,12 @@ function scanEastmoney() {
                 }
             }
         }
+        try {
+            yield runner.query('updatecapitalearning', const_1.DefaultUnit, undefined, []);
+        }
+        catch (err) {
+            console.log(err);
+        }
     });
 }
 exports.scanEastmoney = scanEastmoney;
