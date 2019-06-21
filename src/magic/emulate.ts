@@ -2,7 +2,7 @@ import { getRunner, Runner } from '../uq-api/db';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
-const GroupSize = 50;
+const GroupSize = 30;
 const MaxGroup = 80;
 
 export async function emulateAtDay(date: number) {
@@ -31,7 +31,7 @@ export async function emulateAll() {
     let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
     await runner.sql(sql, []);
     for (let year = 2001; year < 2019; ++year) {
-      for (let month = 1; month < 8; month+=3) {
+      for (let month = 1; month < 11; month+=2) {
         let date = year * 10000 + month * 100 + 1;
         if (date > 20180601)
           break;
