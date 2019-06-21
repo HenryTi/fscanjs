@@ -128,8 +128,7 @@ class EmulateMagic {
   async proceeOneDay(p: any): Promise<any> {
     try {
       let { year, month, yearlen, date } = p as { year: number, month: number, yearlen: number, date: number }
-      let lastyear = Math.floor(date / 10000) - 1;
-      let rowroe: any[] = [lastyear, yearlen];
+      let rowroe: any[] = [date, yearlen];
       await this.runner.query('calcMagicOrder', DefaultUnit, undefined, rowroe);
 
       let ret = await this.runner.query('getmagicorderresult', DefaultUnit, undefined, []);

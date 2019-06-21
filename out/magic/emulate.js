@@ -136,8 +136,7 @@ class EmulateMagic {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let { year, month, yearlen, date } = p;
-                let lastyear = Math.floor(date / 10000) - 1;
-                let rowroe = [lastyear, yearlen];
+                let rowroe = [date, yearlen];
                 yield this.runner.query('calcMagicOrder', const_1.DefaultUnit, undefined, rowroe);
                 let ret = yield this.runner.query('getmagicorderresult', const_1.DefaultUnit, undefined, []);
                 let arr = ret;
