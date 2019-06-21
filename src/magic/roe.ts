@@ -20,6 +20,13 @@ export async function calculateAllRoe() {
       break;
     }
   }
+
+  try {
+    await runner.query('clearroeall', DefaultUnit, undefined, []);
+  }
+  catch (err) {
+  }
+
   let count = ret.length;
 
   let rCount = 0;
@@ -40,7 +47,9 @@ async function calculateOne(code: any, runner: Runner) {
     let ce = {};
     parr.forEach((item: any) => {
       let { year, capital, earning } = item as { year: number, capital: number, earning: number };
-      let roe = capital > 0 ? earning / capital : 0;
+      if (capital <= 0)
+        return;
+      let roe = earning / capital;
       if (roe > 2)
         return;
       ce[year] = { roe: roe };

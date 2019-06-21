@@ -28,6 +28,11 @@ function calculateAllRoe() {
                 break;
             }
         }
+        try {
+            yield runner.query('clearroeall', const_1.DefaultUnit, undefined, []);
+        }
+        catch (err) {
+        }
         let count = ret.length;
         let rCount = 0;
         let sum = 0;
@@ -49,7 +54,9 @@ function calculateOne(code, runner) {
             let ce = {};
             parr.forEach((item) => {
                 let { year, capital, earning } = item;
-                let roe = capital > 0 ? earning / capital : 0;
+                if (capital <= 0)
+                    return;
+                let roe = earning / capital;
                 if (roe > 2)
                     return;
                 ce[year] = { roe: roe };

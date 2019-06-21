@@ -40,7 +40,6 @@ QUERY calcPeOrder(
 {
   var year int = day / 10000;
   var fday int = day;
-  var lastyearday int = (year - 1) * 10000 +1231;
   var daybegin int =  year * 10000+101;;
 
   /-mysql
@@ -72,7 +71,7 @@ QUERY calcPeOrder(
   CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id bigint null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
 
   INSERT INTO `_pe` (id, `pe`)
-    SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`earning`, b.`价格`, _daybegin_4, _lastyearday_3) as `pe`
+    SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`earning`, b.`价格`, _daybegin_3, _fday_2) as `pe`
 	  from `tv_股票价格历史` b inner join `tv_capitalearning` a on b.`股票` = a.`stock` and 
       b.`日期`=`_fday_2` and a.`year`=`_year_1`-1 and a.`earning` > 0
     order by pe asc;
@@ -159,6 +158,14 @@ QUERY clearcapitalearningall (
 ){
   /-mysql
   delete from tv_capitalearning
+  where 1=1;
+  -/
+};
+
+QUERY clearroeall (
+){
+  /-mysql
+  delete from tv_roe
   where 1=1;
   -/
 };
