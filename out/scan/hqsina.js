@@ -14,63 +14,72 @@ const sina_1 = require("./sina");
 const const_1 = require("../const");
 function scanSinaQuotations() {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield db_1.getRunner('mi');
-        let ret = [];
-        let pageStart = 0, pageSize = 500;
-        for (;;) {
-            let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
-            let arr = ids[0];
-            if (arr.length > pageSize) {
-                let top = arr.pop();
-                ret.push(...arr);
-                pageStart = arr[pageSize - 1].id;
-            }
-            else {
-                ret.push(...arr);
-                break;
-            }
-        }
-        let count = ret.length;
-        let i, j;
-        let retryArr = [];
-        let oneGroup = [];
-        i = 0;
-        let totalCount = 0;
-        for (;;) {
-            if (i >= count) {
-                break;
-            }
-            let code = ret[i];
-            oneGroup.push(code);
-            ++i;
-            if (oneGroup.length >= 40 || i >= count) {
-                let gv = oneGroup;
-                oneGroup = [];
-                let sqg = new SinaQuotationGroup(runner);
-                let r = yield sqg.processOneGroup(gv);
-                if (r != 1) {
-                    retryArr.push(gv);
+        if (gfuncs_1.RemoteIsRun())
+            return;
+        gfuncs_1.RemoteRun(true);
+        try {
+            let runner = yield db_1.getRunner('mi');
+            let ret = [];
+            let pageStart = 0, pageSize = 500;
+            for (;;) {
+                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let arr = ids[0];
+                if (arr.length > pageSize) {
+                    let top = arr.pop();
+                    ret.push(...arr);
+                    pageStart = arr[pageSize - 1].id;
                 }
                 else {
-                    totalCount += gv.length;
-                    console.log('sinahq: count=' + totalCount);
-                }
-            }
-        }
-        count = retryArr.length;
-        for (i = 0; i < count; ++i) {
-            let gv = retryArr[i];
-            for (j = 0; j < 10; ++j) {
-                yield gfuncs_1.sleep(3000);
-                let sqg = new SinaQuotationGroup(runner);
-                let r = yield sqg.processOneGroup(gv);
-                if (r == 1) {
-                    totalCount += gv.length;
-                    console.log('sinahq retry: count=' + totalCount);
+                    ret.push(...arr);
                     break;
                 }
             }
+            let count = ret.length;
+            let i, j;
+            let retryArr = [];
+            let oneGroup = [];
+            i = 0;
+            let totalCount = 0;
+            for (;;) {
+                if (i >= count) {
+                    break;
+                }
+                let code = ret[i];
+                oneGroup.push(code);
+                ++i;
+                if (oneGroup.length >= 40 || i >= count) {
+                    let gv = oneGroup;
+                    oneGroup = [];
+                    let sqg = new SinaQuotationGroup(runner);
+                    let r = yield sqg.processOneGroup(gv);
+                    if (r != 1) {
+                        retryArr.push(gv);
+                    }
+                    else {
+                        totalCount += gv.length;
+                        console.log('sinahq: count=' + totalCount);
+                    }
+                }
+            }
+            count = retryArr.length;
+            for (i = 0; i < count; ++i) {
+                let gv = retryArr[i];
+                for (j = 0; j < 10; ++j) {
+                    yield gfuncs_1.sleep(3000);
+                    let sqg = new SinaQuotationGroup(runner);
+                    let r = yield sqg.processOneGroup(gv);
+                    if (r == 1) {
+                        totalCount += gv.length;
+                        console.log('sinahq retry: count=' + totalCount);
+                        break;
+                    }
+                }
+            }
         }
+        catch (err) {
+            console.log(err);
+        }
+        gfuncs_1.RemoteRun(false);
     });
 }
 exports.scanSinaQuotations = scanSinaQuotations;

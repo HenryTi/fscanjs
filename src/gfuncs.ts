@@ -1,3 +1,11 @@
+let remoteIsRunning:boolean = false;
+export function RemoteIsRun() {
+  return remoteIsRunning;
+}
+export function RemoteRun(v:boolean) {
+  remoteIsRunning = v;
+}
+
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

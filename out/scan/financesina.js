@@ -15,9 +15,12 @@ const const_1 = require("../const");
 const cheerio = require("cheerio");
 function scanSinaFinance(start) {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield db_1.getRunner('mi');
-        let sinaer = new SinaFinace(runner);
+        if (gfuncs_1.RemoteIsRun())
+            return;
+        gfuncs_1.RemoteRun(true);
         try {
+            let runner = yield db_1.getRunner('mi');
+            let sinaer = new SinaFinace(runner);
             let ret = [];
             let pageStart = start, pageSize = 100;
             for (;;) {
@@ -40,6 +43,7 @@ function scanSinaFinance(start) {
         catch (err) {
             console.log(err);
         }
+        gfuncs_1.RemoteRun(false);
     });
 }
 exports.scanSinaFinance = scanSinaFinance;

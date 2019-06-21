@@ -14,9 +14,18 @@ const sina_1 = require("./sina");
 const const_1 = require("../const");
 function scanSinaSymbols() {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield db_1.getRunner('mi');
-        let sinaSym = new SinaSymbols(runner);
-        yield sinaSym.GetHS_A();
+        if (gfuncs_1.RemoteIsRun())
+            return;
+        gfuncs_1.RemoteRun(true);
+        try {
+            let runner = yield db_1.getRunner('mi');
+            let sinaSym = new SinaSymbols(runner);
+            yield sinaSym.GetHS_A();
+        }
+        catch (err) {
+            console.log(err);
+        }
+        gfuncs_1.RemoteRun(false);
     });
 }
 exports.scanSinaSymbols = scanSinaSymbols;

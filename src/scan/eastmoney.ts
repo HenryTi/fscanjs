@@ -1,6 +1,6 @@
 import * as request from 'request';
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep, checkToDateInt } from '../gfuncs';
+import { sleep, checkToDateInt, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
@@ -8,46 +8,56 @@ const financeAnalysisSeasonUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/Ma
 const financeAnalysisYearUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=1&code=';
 
 export async function scanEastmoney() {
-  let runner = await getRunner('mi');
-  let f = new FechStockContents(runner);
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
 
-  let ret: any[] = [];
-  let pageStart = 0, pageSize = 500;
-  for (; ;) {
-    let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
-    let arr = ids[0];
-    if (arr.length > pageSize) {
-      let top = arr.pop();
-      ret.push(...arr);
-      pageStart = arr[pageSize - 1].id;
-    }
-    else {
-      ret.push(...arr);
-      break;
-    }
-  }
-  let count = ret.length;
-  let i: number, j: number;
-  let retryArr = [];
-  for (i = 0; i < count; ++i) {
-    let value = ret[i];
-    let r = await f.processOne(value);
-    if (r != 1) {
-      retryArr.push(value);
-    }
-  }
+  try {
+    let runner = await getRunner('mi');
+    let f = new FechStockContents(runner);
 
-  count = retryArr.length;
-  for (i = 0; i < count; ++i) {
-    let value = retryArr[i];
-    for (j = 0; j < 10; ++j) {
-      await sleep(3000);
-      let r = await f.processOne(value);
-      if (r == 1) {
+    let ret: any[] = [];
+    let pageStart = 0, pageSize = 500;
+    for (; ;) {
+      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let arr = ids[0];
+      if (arr.length > pageSize) {
+        let top = arr.pop();
+        ret.push(...arr);
+        pageStart = arr[pageSize - 1].id;
+      }
+      else {
+        ret.push(...arr);
         break;
       }
     }
+    let count = ret.length;
+    let i: number, j: number;
+    let retryArr = [];
+    for (i = 0; i < count; ++i) {
+      let value = ret[i];
+      let r = await f.processOne(value);
+      if (r != 1) {
+        retryArr.push(value);
+      }
+    }
+
+    count = retryArr.length;
+    for (i = 0; i < count; ++i) {
+      let value = retryArr[i];
+      for (j = 0; j < 10; ++j) {
+        await sleep(3000);
+        let r = await f.processOne(value);
+        if (r == 1) {
+          break;
+        }
+      }
+    }
   }
+  catch (err) {
+    console.log(err);
+  }
+  RemoteRun(false);
 }
 
 class FechStockContents {

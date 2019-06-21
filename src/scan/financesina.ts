@@ -1,14 +1,18 @@
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
+import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
 import * as cheerio from 'cheerio';
 
 export async function scanSinaFinance(start:number) {
-  let runner = await getRunner('mi');
-  let sinaer = new SinaFinace(runner);
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
+
   try {
-    let ret: any[] = [];
+    let runner = await getRunner('mi');
+    let sinaer = new SinaFinace(runner);
+      let ret: any[] = [];
     let pageStart = start, pageSize = 100;
     for (; ;) {
       let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
@@ -31,6 +35,7 @@ export async function scanSinaFinance(start:number) {
   catch (err) {
     console.log(err);
   }
+  RemoteRun(false);
 }
 
 function parseToDate(str: string) {

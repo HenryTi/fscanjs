@@ -1,5 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+let remoteIsRunning = false;
+function RemoteIsRun() {
+    return remoteIsRunning;
+}
+exports.RemoteIsRun = RemoteIsRun;
+function RemoteRun(v) {
+    remoteIsRunning = v;
+}
+exports.RemoteRun = RemoteRun;
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }

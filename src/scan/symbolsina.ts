@@ -1,12 +1,22 @@
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep } from '../gfuncs';
+import { sleep, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
 
 export async function scanSinaSymbols() {
-  let runner = await getRunner('mi');
-  let sinaSym = new SinaSymbols(runner);
-  await sinaSym.GetHS_A();
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
+
+  try {
+    let runner = await getRunner('mi');
+    let sinaSym = new SinaSymbols(runner);
+    await sinaSym.GetHS_A();
+  }
+  catch (err) {
+    console.log(err);
+  }
+  RemoteRun(false);
 }
 
 class SinaSymbols {
@@ -86,13 +96,13 @@ class SinaSymbols {
     }
   }
 
-  protected async saveHSAOnePage(arr:any[]): Promise<boolean> {
+  protected async saveHSAOnePage(arr: any[]): Promise<boolean> {
     let promiseArr: Promise<void>[] = [];
     let i: number;
     let count = arr.length;
     for (i = 0; i < count; ++i) {
       let item = arr[i];
-      let {symbol, code, name} = item as {symbol:string, code:string, name:string};
+      let { symbol, code, name } = item as { symbol: string, code: string, name: string };
       symbol = symbol.toLowerCase().substring(0, 16);
       if (symbol.length < 4)
         continue;

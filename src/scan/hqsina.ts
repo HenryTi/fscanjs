@@ -1,69 +1,79 @@
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep, checkToDateInt, checkToDateIntHK } from '../gfuncs';
+import { sleep, checkToDateInt, checkToDateIntHK, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
 
 export async function scanSinaQuotations() {
-  let runner = await getRunner('mi');
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
 
-  let ret: any[] = [];
-  let pageStart = 0, pageSize = 500;
-  for (; ;) {
-    let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
-    let arr = ids[0];
-    if (arr.length > pageSize) {
-      let top = arr.pop();
-      ret.push(...arr);
-      pageStart = arr[pageSize - 1].id;
-    }
-    else {
-      ret.push(...arr);
-      break;
-    }
-  }
-  let count = ret.length;
-  let i: number, j: number;
-  let retryArr = [];
-  let oneGroup = [];
-  i = 0;
-  let totalCount = 0;
-  for (; ;) {
-    if (i >= count) {
-      break;
-    }
-    let code = ret[i];
-    oneGroup.push(code);
-    ++i;
+  try {
+    let runner = await getRunner('mi');
 
-    if (oneGroup.length >= 40 || i >= count) {
-      let gv = oneGroup;
-      oneGroup = [];
-      let sqg = new SinaQuotationGroup(runner);
-      let r = await sqg.processOneGroup(gv);
-      if (r != 1) {
-        retryArr.push(gv);
+    let ret: any[] = [];
+    let pageStart = 0, pageSize = 500;
+    for (; ;) {
+      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let arr = ids[0];
+      if (arr.length > pageSize) {
+        let top = arr.pop();
+        ret.push(...arr);
+        pageStart = arr[pageSize - 1].id;
       }
       else {
-        totalCount += gv.length;
-        console.log('sinahq: count=' + totalCount);
-      }
-    }
-  }
-
-  count = retryArr.length;
-  for (i = 0; i < count; ++i) {
-    let gv = retryArr[i];
-    for (j = 0; j < 10; ++j) {
-      await sleep(3000);
-      let sqg = new SinaQuotationGroup(runner);
-      let r = await sqg.processOneGroup(gv);
-      if (r == 1) {
-        totalCount += gv.length;
-        console.log('sinahq retry: count=' + totalCount);
+        ret.push(...arr);
         break;
       }
     }
+    let count = ret.length;
+    let i: number, j: number;
+    let retryArr = [];
+    let oneGroup = [];
+    i = 0;
+    let totalCount = 0;
+    for (; ;) {
+      if (i >= count) {
+        break;
+      }
+      let code = ret[i];
+      oneGroup.push(code);
+      ++i;
+
+      if (oneGroup.length >= 40 || i >= count) {
+        let gv = oneGroup;
+        oneGroup = [];
+        let sqg = new SinaQuotationGroup(runner);
+        let r = await sqg.processOneGroup(gv);
+        if (r != 1) {
+          retryArr.push(gv);
+        }
+        else {
+          totalCount += gv.length;
+          console.log('sinahq: count=' + totalCount);
+        }
+      }
+    }
+
+    count = retryArr.length;
+    for (i = 0; i < count; ++i) {
+      let gv = retryArr[i];
+      for (j = 0; j < 10; ++j) {
+        await sleep(3000);
+        let sqg = new SinaQuotationGroup(runner);
+        let r = await sqg.processOneGroup(gv);
+        if (r == 1) {
+          totalCount += gv.length;
+          console.log('sinahq retry: count=' + totalCount);
+          break;
+        }
+      }
+    }
   }
+  catch (err) {
+    console.log(err);
+  }
+  RemoteRun(false);
 }
 
 class SinaQuotationGroup {

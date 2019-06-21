@@ -1,40 +1,47 @@
 import { getRunner, Runner } from '../uq-api/db';
-import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
+import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
 export async function calculateAllRoe() {
-  let runner: Runner = await getRunner('mi');
-
-  let ret: any[] = [];
-  let pageStart = 0, pageSize = 500;
-  for (; ;) {
-    let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
-    let arr = ids[0];
-    if (arr.length > pageSize) {
-      let top = arr.pop();
-      ret.push(...arr);
-      pageStart = arr[pageSize - 1].id;
-    }
-    else {
-      ret.push(...arr);
-      break;
-    }
-  }
-
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
   try {
-    await runner.query('clearroeall', DefaultUnit, undefined, []);
-  }
-  catch (err) {
-  }
+    let runner: Runner = await getRunner('mi');
 
-  let count = ret.length;
+    let ret: any[] = [];
+    let pageStart = 0, pageSize = 500;
+    for (; ;) {
+      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let arr = ids[0];
+      if (arr.length > pageSize) {
+        let top = arr.pop();
+        ret.push(...arr);
+        pageStart = arr[pageSize - 1].id;
+      }
+      else {
+        ret.push(...arr);
+        break;
+      }
+    }
 
-  let rCount = 0;
-  let sum = 0;
-  for (let i = 0; i < count; ++i) {
-    await calculateOne(ret[i], runner);
+    try {
+      await runner.query('clearroeall', DefaultUnit, undefined, []);
+    }
+    catch (err) {
+    }
+
+    let count = ret.length;
+
+    let rCount = 0;
+    let sum = 0;
+    for (let i = 0; i < count; ++i) {
+      await calculateOne(ret[i], runner);
+    }
+    console.log('calculateAllRoe completed');
   }
-  console.log('calculateAllRoe completed')
+  catch (err) { }
+  RemoteRun(false);
 }
 
 async function calculateOne(code: any, runner: Runner) {

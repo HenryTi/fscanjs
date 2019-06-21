@@ -14,55 +14,64 @@ const sina_1 = require("./sina");
 const const_1 = require("../const");
 function scanSinaHistory(len, start) {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield db_1.getRunner('mi');
-        let sqg = new SinaHistory(runner);
-        let ret = [];
-        let pageStart = start, pageSize = 500;
-        for (;;) {
-            let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
-            let arr = ids[0];
-            if (arr.length > pageSize) {
-                let top = arr.pop();
-                ret.push(...arr);
-                pageStart = arr[pageSize - 1].id;
-            }
-            else {
-                ret.push(...arr);
-                break;
-            }
-        }
-        let count = ret.length;
-        console.log('stock count = ' + count);
-        let i, j;
-        let retryArr = [];
-        i = 0;
-        for (;;) {
-            if (i >= count) {
-                break;
-            }
-            let code = ret[i];
-            ++i;
-            let r = yield sqg.processOne(code, len);
-            if (!r) {
-                retryArr.push(code);
-            }
-            else {
-                console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
-                yield gfuncs_1.sleep(1000);
-            }
-        }
-        count = retryArr.length;
-        for (i = 0; i < count; ++i) {
-            let rc = retryArr[i];
-            for (j = 0; j < 10; ++j) {
-                yield gfuncs_1.sleep(3000);
-                let r = yield sqg.processOne(rc, len);
-                if (r) {
-                    console.log('sinahistory retry: ' + rc['id'] + ' : ' + rc['symbol']);
+        if (gfuncs_1.RemoteIsRun())
+            return;
+        gfuncs_1.RemoteRun(true);
+        try {
+            let runner = yield db_1.getRunner('mi');
+            let sqg = new SinaHistory(runner);
+            let ret = [];
+            let pageStart = start, pageSize = 500;
+            for (;;) {
+                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let arr = ids[0];
+                if (arr.length > pageSize) {
+                    let top = arr.pop();
+                    ret.push(...arr);
+                    pageStart = arr[pageSize - 1].id;
+                }
+                else {
+                    ret.push(...arr);
                     break;
                 }
             }
+            let count = ret.length;
+            console.log('stock count = ' + count);
+            let i, j;
+            let retryArr = [];
+            i = 0;
+            for (;;) {
+                if (i >= count) {
+                    break;
+                }
+                let code = ret[i];
+                ++i;
+                let r = yield sqg.processOne(code, len);
+                if (!r) {
+                    retryArr.push(code);
+                }
+                else {
+                    console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
+                    yield gfuncs_1.sleep(1000);
+                }
+            }
+            count = retryArr.length;
+            for (i = 0; i < count; ++i) {
+                let rc = retryArr[i];
+                for (j = 0; j < 10; ++j) {
+                    yield gfuncs_1.sleep(3000);
+                    let r = yield sqg.processOne(rc, len);
+                    if (r) {
+                        console.log('sinahistory retry: ' + rc['id'] + ' : ' + rc['symbol']);
+                        break;
+                    }
+                }
+            }
         }
+        catch (err) {
+            console.log(err);
+        }
+        gfuncs_1.RemoteRun(false);
     });
 }
 exports.scanSinaHistory = scanSinaHistory;
