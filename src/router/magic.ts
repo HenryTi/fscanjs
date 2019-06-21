@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { emulateAll, allStocksAvg, emulateAtDay } from '../magic/emulate';
 import { calculateAllRoe } from '../magic/roe';
+import { updateAllEarning } from '../magic/updateEarnig';
 
 const magicRouter: Router = Router();
 magicRouter.get('/all', async (req: Request, res: Response) => {
@@ -25,4 +26,10 @@ magicRouter.get('/roe', async (req: Request, res: Response) => {
   calculateAllRoe();
   res.json({"magic": "calculateAllRoe"});
 });
+
+magicRouter.get('/updateearning', async (req: Request, res: Response) => {
+  updateAllEarning();
+  res.json({"magic": "updateAllEarning"});
+});
+
 export default magicRouter;

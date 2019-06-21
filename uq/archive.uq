@@ -1,0 +1,6 @@
+MAP stockarchives (
+  key stock ID 股票 not null,
+  key type char(50) not null,
+  key name char(100) not null,
+  text text(small)
+);

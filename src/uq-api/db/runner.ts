@@ -196,6 +196,9 @@ export class Runner {
     async mapSave(map:string, unit:number, user:number, params:any[]): Promise<any> {
         return await this.db.call('tv_' + map + '$save', [unit, user, ...params]);
     }
+    async mapQuery(map:string, unit:number, user:number, params:any[]): Promise<any> {
+        return await this.db.call('tv_' + map + '$query$', [unit, user, ...params]);
+    }
     async importVId(unit:number, user:number, source:string, tuid:string, arr:string, no:string): Promise<number> {
         let proc = `tv_$import_vid`;
         let ret = await this.db.tableFromProc(proc, [unit, user, source, tuid, arr, no]);

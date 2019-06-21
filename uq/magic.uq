@@ -145,3 +145,20 @@ QUERY getcapitalearning (
   where `stock`=`_stock`;
   -/
 };
+
+QUERY clearcapitalearning (
+  stock ID
+){
+  /-mysql
+  delete from tv_capitalearning
+  where `stock`=`_stock`;
+  -/
+};
+
+QUERY clearcapitalearningall (
+){
+  /-mysql
+  delete from tv_capitalearning
+  where 1=1;
+  -/
+};

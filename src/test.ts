@@ -12,8 +12,12 @@ import { DefaultUnit } from './const';
 import { packParam } from './uq-api/core/packParam';
 import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulate';
 import { scanSinaFinance } from './scan/financesina';
+import { updateAllEarning } from './magic/updateEarnig';
 
 export async function doTest() {
+  //let runner: Runner = await getRunner('mi');
+  //let pret = await runner.mapQuery('新浪财务指标', DefaultUnit, undefined, [1, undefined, 12]);
+  //debugger;
 }
 
 async function scanItem(item: any) {

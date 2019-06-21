@@ -234,6 +234,11 @@ class Runner {
             return yield this.db.call('tv_' + map + '$save', [unit, user, ...params]);
         });
     }
+    mapQuery(map, unit, user, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.db.call('tv_' + map + '$query$', [unit, user, ...params]);
+        });
+    }
     importVId(unit, user, source, tuid, arr, no) {
         return __awaiter(this, void 0, void 0, function* () {
             let proc = `tv_$import_vid`;

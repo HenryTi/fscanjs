@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const emulate_1 = require("../magic/emulate");
 const roe_1 = require("../magic/roe");
+const updateEarnig_1 = require("../magic/updateEarnig");
 const magicRouter = express_1.Router();
 magicRouter.get('/all', (req, res) => __awaiter(this, void 0, void 0, function* () {
     emulate_1.emulateAll();
@@ -30,6 +31,10 @@ magicRouter.get('/avg', (req, res) => __awaiter(this, void 0, void 0, function* 
 magicRouter.get('/roe', (req, res) => __awaiter(this, void 0, void 0, function* () {
     roe_1.calculateAllRoe();
     res.json({ "magic": "calculateAllRoe" });
+}));
+magicRouter.get('/updateearning', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    updateEarnig_1.updateAllEarning();
+    res.json({ "magic": "updateAllEarning" });
 }));
 exports.default = magicRouter;
 //# sourceMappingURL=magic.js.map
