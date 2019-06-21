@@ -12,9 +12,14 @@ export async function emulateAtDay(date: number) {
     console.log('emulate begin day: ' + date);
     let year = Math.floor(date / 10000);
     let month = date % 10000;
-    let day = month % 100;
+    let yearlen = month % 100;
+    if (yearlen < 1 || yearlen > 5) {
+      yearlen = 5;
+    }
     month = Math.floor(month / 100);
-    let p = { year: year, month: month, day: 1, date: date };
+    date = year * 10000 + month * 100 + 1;
+    let p = { year: year, month: month, day: 1, date: date, yearlen: yearlen };
+    await runner.query('clear神奇公式模拟结果', DefaultUnit, undefined, [year, month, yearlen]);
     await em.proceeOneDay(p);
     console.log('emulate end day: ' + date);
   }
@@ -30,14 +35,16 @@ export async function emulateAll() {
   try {
     let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
     await runner.sql(sql, []);
-    for (let year = 2001; year < 2019; ++year) {
-      for (let month = 1; month < 11; month+=2) {
-        let date = year * 10000 + month * 100 + 1;
-        if (date > 20180601)
-          break;
-        let p = { year: year, month: month, day: 1, date: date };
-        await em.proceeOneDay(p);
-        console.log('emulate end day: ' + date);
+    for (let yearlen = 5; yearlen >= 1; --yearlen) {
+      for (let year = 2001; year < 2019; ++year) {
+        for (let month = 1; month <= 12; month += 1) {
+          let date = year * 10000 + month * 100 + 1;
+          if (date > 20180601)
+            break;
+          let p = { year: year, month: month, day: 1, date: date, yearlen: yearlen };
+          await em.proceeOneDay(p);
+          console.log('emulate end. yearlen: ' +yearlen + '  day: ' + date);
+        }
       }
     }
   }
@@ -92,8 +99,8 @@ export async function allStocksAvg(begin: number, end: number) {
   if (rCount > 0) {
     sum = sum / rCount;
     console.log('股数: ' + rCount + '  平均涨幅：' + sum + ' dayBegin=' + dayBegin + ' dayEnd=' + dayEnd);
-    await runner.mapSave('股市平均涨幅', DefaultUnit, undefined, 
-        [dayBegin, dayEnd, sum, rCount]);
+    await runner.mapSave('股市平均涨幅', DefaultUnit, undefined,
+      [dayBegin, dayEnd, sum, rCount]);
   }
 }
 
@@ -106,12 +113,10 @@ class EmulateMagic {
 
   async proceeOneDay(p: any): Promise<any> {
     try {
-      let { year, month, day, date } = p as { year: number, month: number, day: number, date: number }
+      let { year, month, yearlen, date } = p as { year: number, month: number, yearlen: number, date: number }
       let lastyear = Math.floor(date / 10000) - 1;
-      let rowroe: any[] = [lastyear, 5];
-      await this.runner.query('calcRoeOrder', DefaultUnit, undefined, rowroe);
-      let rowpe: any[] = [date];
-      await this.runner.query('calcPeOrder', DefaultUnit, undefined, rowpe);
+      let rowroe: any[] = [lastyear, yearlen];
+      await this.runner.query('calcMagicOrder', DefaultUnit, undefined, rowroe);
 
       let ret = await this.runner.query('getmagicorderresult', DefaultUnit, undefined, []);
       let arr = ret as any[];
@@ -127,7 +132,7 @@ class EmulateMagic {
   }
 
   protected async CalculateOneGroup(dayBegin: number, dayEnd: number, codes: any[], groupIndex: number, p: any) {
-    let { year, month, day, date } = p as { year: number, month: number, day: number, date: number }
+    let { year, month, yearlen, date } = p as { year: number, month: number, yearlen: number, date: number }
     let count = codes.length;
     let i = groupIndex * GroupSize;
     let end = i + GroupSize;
@@ -155,7 +160,7 @@ class EmulateMagic {
     if (rCount > 0 && rCount >= GroupSize / 2) {
       sum /= rCount;
       await this.runner.mapSave('神奇公式模拟结果', DefaultUnit, undefined,
-        [groupIndex, year, month, day, sum, rCount]);
+        [groupIndex, year, month, yearlen, sum, rCount]);
     }
   }
 }

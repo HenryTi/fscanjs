@@ -1,3 +1,88 @@
+QUERY calcMagicOrder(
+  day int,
+  yearlen int
+)
+{
+  var year int = day / 10000;
+  var fday int = day;
+  var daybegin int =  year * 10000+101;;
+  var lastyear int = year-1;
+
+  /-mysql
+  CREATE TABLE IF NOT EXISTS `c_roeorder` (
+	  `stock` BIGINT(20) NOT NULL,
+	  `order` INT(11) NOT NULL,
+	  `roe` DECIMAL(12,4) NOT NULL,
+	  PRIMARY KEY (`stock`),
+	  INDEX `order` (`order`)
+  )
+  COLLATE='utf8_general_ci'
+  ENGINE=InnoDB
+  ;
+
+  START TRANSACTION;
+  delete from `c_roeorder` where 1=1;
+  DROP TEMPORARY TABLE IF EXISTS `_roe`;
+  CREATE TEMPORARY TABLE `_roe` (`serial` int not null auto_increment primary key, id bigint null, `roe` DECIMAL(18,4) NULL) ENGINE=MyISAM;
+  INSERT INTO `_roe` (id, `roe`)
+    SELECT a.stock as id, a.`roe` AS `roe`
+    FROM `tv_roe` AS a
+    WHERE a.`year`=`_lastyear_4` and a.`yearlen`=`_yearlen`
+    ORDER BY roe DESC;
+
+  INSERT INTO `c_roeorder` (`stock`, `order`, `roe`)
+  SELECT id as `stock`, `serial` as `order`, `roe` AS `roe`
+    FROM `_roe`
+    WHERE 1=1;
+
+  CREATE TABLE IF NOT EXISTS `c_peorder` (
+	  `stock` BIGINT(20) NOT NULL,
+	  `order` INT(11) NOT NULL,
+	  `pe` DECIMAL(12,4) NOT NULL,
+	  PRIMARY KEY (`stock`),
+  	INDEX `order` (`order`)
+  )
+  ENGINE=InnoDB
+  ;
+
+  CREATE TABLE IF NOT EXISTS `c_magicorder` (
+	  `stock` BIGINT(20) NOT NULL,
+	  `order` INT(11) NOT NULL,
+	  PRIMARY KEY (`stock`),
+	  INDEX `order` (`order`)
+  )
+  ENGINE=InnoDB
+  ;
+
+  select `日期` into `_fday_2` from `tv_股票价格历史` where `日期`>=`_day` order by `日期` asc limit 1;
+  
+  START TRANSACTION;
+  delete from `c_peorder` where 1=1;
+  DROP TEMPORARY TABLE IF EXISTS `_pe`;
+  CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id bigint null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
+
+  INSERT INTO `_pe` (id, `pe`)
+    SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`earning`, b.`价格`, _daybegin_3, _fday_2) as `pe`
+	  from `tv_股票价格历史` b inner join `tv_capitalearning` a on b.`股票` = a.`stock` and 
+      b.`日期`=`_fday_2` and a.`year`=`_lastyear_4` and a.`earning` > 0
+    order by pe asc;
+
+  INSERT INTO `c_peorder` (`stock`, `order`, `pe`)
+    SELECT id as `stock`, `serial` as `order`, `pe` AS `pe`
+      FROM `_pe`
+      WHERE 1=1;
+
+  delete from `c_magicorder` where 1=1;
+  insert into `c_magicorder` (`stock`, `order`) 
+    select a.`stock` as `stock`, (a.`order` + b.`order`) as `order` 
+    from `c_roeorder` as a inner join `c_peorder` as b on a.`stock` = b.`stock`;
+
+  COMMIT;
+
+  -/
+};
+
+
 QUERY calcRoeOrder(
   year int,
   len int
@@ -109,10 +194,21 @@ MAP 神奇公式模拟结果 ver 0.2 (
   key 组 int not null,
   key year int not null,
   key month int not null,
-  key day int not null,
+  key yearlen int not null,
   平均涨幅 dec(10,3),
   count int,
 );
+
+QUERY clear神奇公式模拟结果 (
+  year int,
+  month int,
+  yearlen int
+){
+  /-mysql
+  delete from `tv_神奇公式模拟结果`
+  where (`_year`=-1 or `year`=`_year`) and (`_month`=-1 or `month`=`_month`) and (`_yearlen`=-1 or `yearlen`=`_yearlen`);
+  -/
+};
 
 MAP 股市平均涨幅 (
   key begin int not null,

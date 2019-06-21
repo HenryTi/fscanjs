@@ -20,9 +20,14 @@ function emulateAtDay(date) {
             console.log('emulate begin day: ' + date);
             let year = Math.floor(date / 10000);
             let month = date % 10000;
-            let day = month % 100;
+            let yearlen = month % 100;
+            if (yearlen < 1 || yearlen > 5) {
+                yearlen = 5;
+            }
             month = Math.floor(month / 100);
-            let p = { year: year, month: month, day: 1, date: date };
+            date = year * 10000 + month * 100 + 1;
+            let p = { year: year, month: month, day: 1, date: date, yearlen: yearlen };
+            yield runner.query('clear神奇公式模拟结果', const_1.DefaultUnit, undefined, [year, month, yearlen]);
             yield em.proceeOneDay(p);
             console.log('emulate end day: ' + date);
         }
@@ -39,14 +44,16 @@ function emulateAll() {
         try {
             let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
             yield runner.sql(sql, []);
-            for (let year = 2001; year < 2019; ++year) {
-                for (let month = 1; month < 11; month += 2) {
-                    let date = year * 10000 + month * 100 + 1;
-                    if (date > 20180601)
-                        break;
-                    let p = { year: year, month: month, day: 1, date: date };
-                    yield em.proceeOneDay(p);
-                    console.log('emulate end day: ' + date);
+            for (let yearlen = 5; yearlen >= 1; --yearlen) {
+                for (let year = 2001; year < 2019; ++year) {
+                    for (let month = 1; month <= 12; month += 1) {
+                        let date = year * 10000 + month * 100 + 1;
+                        if (date > 20180601)
+                            break;
+                        let p = { year: year, month: month, day: 1, date: date, yearlen: yearlen };
+                        yield em.proceeOneDay(p);
+                        console.log('emulate end. yearlen: ' + yearlen + '  day: ' + date);
+                    }
                 }
             }
         }
@@ -112,12 +119,10 @@ class EmulateMagic {
     proceeOneDay(p) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let { year, month, day, date } = p;
+                let { year, month, yearlen, date } = p;
                 let lastyear = Math.floor(date / 10000) - 1;
-                let rowroe = [lastyear, 5];
-                yield this.runner.query('calcRoeOrder', const_1.DefaultUnit, undefined, rowroe);
-                let rowpe = [date];
-                yield this.runner.query('calcPeOrder', const_1.DefaultUnit, undefined, rowpe);
+                let rowroe = [lastyear, yearlen];
+                yield this.runner.query('calcMagicOrder', const_1.DefaultUnit, undefined, rowroe);
                 let ret = yield this.runner.query('getmagicorderresult', const_1.DefaultUnit, undefined, []);
                 let arr = ret;
                 let dayEnd = date + 10000;
@@ -132,7 +137,7 @@ class EmulateMagic {
     }
     CalculateOneGroup(dayBegin, dayEnd, codes, groupIndex, p) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { year, month, day, date } = p;
+            let { year, month, yearlen, date } = p;
             let count = codes.length;
             let i = groupIndex * GroupSize;
             let end = i + GroupSize;
@@ -157,7 +162,7 @@ class EmulateMagic {
             }
             if (rCount > 0 && rCount >= GroupSize / 2) {
                 sum /= rCount;
-                yield this.runner.mapSave('神奇公式模拟结果', const_1.DefaultUnit, undefined, [groupIndex, year, month, day, sum, rCount]);
+                yield this.runner.mapSave('神奇公式模拟结果', const_1.DefaultUnit, undefined, [groupIndex, year, month, yearlen, sum, rCount]);
             }
         });
     }
