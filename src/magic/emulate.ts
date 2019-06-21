@@ -2,8 +2,8 @@ import { getRunner, Runner } from '../uq-api/db';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
-const GroupSize = 100;
-const MaxGroup = 40;
+const GroupSize = 50;
+const MaxGroup = 80;
 
 export async function emulateAtDay(date: number) {
   let runner: Runner = await getRunner('mi');
@@ -30,8 +30,8 @@ export async function emulateAll() {
   try {
     let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
     await runner.sql(sql, []);
-    for (let year = 2015; year < 2019; ++year) {
-      for (let month = 1; month < 13; ++month) {
+    for (let year = 2001; year < 2019; ++year) {
+      for (let month = 1; month < 8; month+=3) {
         let date = year * 10000 + month * 100 + 1;
         if (date > 20180601)
           break;

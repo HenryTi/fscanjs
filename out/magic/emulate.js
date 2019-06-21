@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("../uq-api/db");
 const const_1 = require("../const");
-const GroupSize = 100;
-const MaxGroup = 40;
+const GroupSize = 50;
+const MaxGroup = 80;
 function emulateAtDay(date) {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
@@ -39,8 +39,8 @@ function emulateAll() {
         try {
             let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
             yield runner.sql(sql, []);
-            for (let year = 2015; year < 2019; ++year) {
-                for (let month = 1; month < 13; ++month) {
+            for (let year = 2001; year < 2019; ++year) {
+                for (let month = 1; month < 8; month += 3) {
                     let date = year * 10000 + month * 100 + 1;
                     if (date > 20180601)
                         break;
