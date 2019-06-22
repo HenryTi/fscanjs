@@ -74,6 +74,7 @@ async function calculateOne(code: any, runner: Runner) {
         let weight = 1;
         let sw = 1;
         let lastRoe = sum;
+        let lastYearRoe = sum;
         let rowarr = [];
         rowarr.push(lastRoe);
         for (let k = 2; k <= 5; ++k) {
@@ -86,13 +87,13 @@ async function calculateOne(code: any, runner: Runner) {
           sum += lastRoe * sw;
           weight += sw;
           let roeavg = sum / weight;
-          if (lastRoe > 0) {
+          rowarr.push(lastRoe);
+          if (lastYearRoe > 0) {
             let m = Math.max(...rowarr);
-            if (m < lastRoe * 3) {
+            if (m < lastYearRoe * 3) {
               await runner.mapSave('roe', DefaultUnit, undefined, [id, year, k, roeavg]);
             }
           }
-          rowarr.push(lastRoe);
         }
       }
     }
