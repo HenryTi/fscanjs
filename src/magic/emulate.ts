@@ -41,7 +41,7 @@ export async function emulateAll() {
     let em = new EmulateMagic(runner);
     let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
     await runner.sql(sql, []);
-    for (let yearlen = 5; yearlen >= 1; --yearlen) {
+    for (let yearlen = 5; yearlen >= 5; --yearlen) {
       for (let year = 2001; year < 2019; ++year) {
         for (let month = 1; month <= 1; month += 1) {
           let date = year * 10000 + month * 100 + 1;

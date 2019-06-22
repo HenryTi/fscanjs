@@ -237,7 +237,7 @@ QUERY getcapitalearning (
   /-mysql
   select `year`, `capital`, `earning`
   from tv_capitalearning
-  where `stock`=`_stock`;
+  where `stock`=`_stock` order by `year` asc;
   -/
 };
 

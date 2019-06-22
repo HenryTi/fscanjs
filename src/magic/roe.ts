@@ -68,21 +68,31 @@ async function calculateOne(code: any, runner: Runner) {
       let { year } = item as { year: number, capital: number, earning: number };
       let roe = ce[year];
       if (roe !== undefined) {
-        let sum = roe.roe;
+        let sum = roe.roe as number;
         await runner.mapSave('roe', DefaultUnit, undefined, [id, year, 1, sum]);
         let preyear = year;
         let weight = 1;
         let sw = 1;
+        let lastRoe = sum;
+        let rowarr = [];
+        rowarr.push(lastRoe);
         for (let k = 2; k <= 5; ++k) {
           --preyear;
           let ri = ce[preyear];
           if (ri === undefined)
             break;
           sw -= 0.125;
-          sum += ri.roe * sw;
+          lastRoe = ri.roe as number;
+          sum += lastRoe * sw;
           weight += sw;
           let roeavg = sum / weight;
-          await runner.mapSave('roe', DefaultUnit, undefined, [id, year, k, roeavg]);
+          if (lastRoe > 0) {
+            let m = Math.max(...rowarr);
+            if (m < lastRoe * 3) {
+              await runner.mapSave('roe', DefaultUnit, undefined, [id, year, k, roeavg]);
+            }
+          }
+          rowarr.push(lastRoe);
         }
       }
     }

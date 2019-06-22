@@ -80,16 +80,26 @@ function calculateOne(code, runner) {
                     let preyear = year;
                     let weight = 1;
                     let sw = 1;
+                    let lastRoe = sum;
+                    let rowarr = [];
+                    rowarr.push(lastRoe);
                     for (let k = 2; k <= 5; ++k) {
                         --preyear;
                         let ri = ce[preyear];
                         if (ri === undefined)
                             break;
                         sw -= 0.125;
-                        sum += ri.roe * sw;
+                        lastRoe = ri.roe;
+                        sum += lastRoe * sw;
                         weight += sw;
                         let roeavg = sum / weight;
-                        yield runner.mapSave('roe', const_1.DefaultUnit, undefined, [id, year, k, roeavg]);
+                        if (lastRoe > 0) {
+                            let m = Math.max(...rowarr);
+                            if (m < lastRoe * 3) {
+                                yield runner.mapSave('roe', const_1.DefaultUnit, undefined, [id, year, k, roeavg]);
+                            }
+                        }
+                        rowarr.push(lastRoe);
                     }
                 }
             }
