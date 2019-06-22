@@ -98,7 +98,7 @@ function calculateOne(code, runner) {
                         if (lastYearRoe > 0) {
                             let mx = Math.max(...rowarr);
                             let mn = Math.min(...rowarr);
-                            if (mn > 0 && mx < lastYearRoe * 3 && mx < mn * 4) {
+                            if (mn > 0 && mx < lastYearRoe * 3 && mx < mn * 5) {
                                 yield runner.mapSave('roe', const_1.DefaultUnit, undefined, [id, year, k, roeavg]);
                             }
                         }
