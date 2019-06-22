@@ -54,7 +54,7 @@ QUERY calcMagicOrder(
   ENGINE=InnoDB
   ;
 
-  select `日期` into `_fday_2` from `tv_股票价格历史` where `日期`>=`_day` order by `日期` asc limit 1;
+  select `日期` into `_fday_2` from `tv_股票价格历史` where `日期`<=`_day` order by `日期` desc limit 1;
   
   START TRANSACTION;
   delete from `c_peorder` where 1=1;
@@ -148,7 +148,7 @@ QUERY calcPeOrder(
   ENGINE=InnoDB
   ;
 
-  select `日期` into `_fday_2` from `tv_股票价格历史` where `日期`>=`_day` order by `日期` asc limit 1;
+  select `日期` into `_fday_2` from `tv_股票价格历史` where `日期`<=`_day` order by `日期` desc limit 1;
   
   START TRANSACTION;
   delete from `c_peorder` where 1=1;

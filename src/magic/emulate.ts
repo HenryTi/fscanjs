@@ -43,7 +43,7 @@ export async function emulateAll() {
     await runner.sql(sql, []);
     for (let yearlen = 5; yearlen >= 1; --yearlen) {
       for (let year = 2001; year < 2019; ++year) {
-        for (let month = 1; month <= 12; month += 1) {
+        for (let month = 1; month <= 1; month += 1) {
           let date = year * 10000 + month * 100 + 1;
           if (date > 20180601)
             break;
