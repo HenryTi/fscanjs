@@ -137,8 +137,8 @@ class EmulateMagic {
             try {
                 let { year, month, yearlen, date } = p;
                 let rowroe = [date, yearlen];
-                yield this.runner.query('calcMagicOrder', const_1.DefaultUnit, undefined, rowroe);
-                let ret = yield this.runner.query('getmagicorderresult', const_1.DefaultUnit, undefined, []);
+                yield this.runner.query('calcMagicOrder2', const_1.DefaultUnit, undefined, rowroe);
+                let ret = yield this.runner.query('getnoeorderresult', const_1.DefaultUnit, undefined, []);
                 let arr = ret;
                 let dayEnd = date + 10000;
                 for (let i = 0; i < MaxGroup; ++i) {

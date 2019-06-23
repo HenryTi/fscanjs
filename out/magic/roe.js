@@ -81,7 +81,6 @@ function calculateOne(code, runner) {
                     let weight = 1;
                     let sw = 1;
                     let lastRoe = sum;
-                    let lastYearRoe = sum;
                     let rowarr = [];
                     rowarr.push(lastRoe);
                     for (let k = 2; k <= 5; ++k) {
@@ -94,14 +93,13 @@ function calculateOne(code, runner) {
                         sum += lastRoe * sw;
                         weight += sw;
                         let roeavg = sum / weight;
-                        rowarr.push(lastRoe);
-                        if (lastYearRoe > 0) {
-                            let mx = Math.max(...rowarr);
-                            let mn = Math.min(...rowarr);
-                            if (mn > 0) { // && mx < lastYearRoe * 4 && mx < mn * 6) {
+                        if (lastRoe > 0) {
+                            let m = Math.max(...rowarr);
+                            if (m < lastRoe * 3) {
                                 yield runner.mapSave('roe', const_1.DefaultUnit, undefined, [id, year, k, roeavg]);
                             }
                         }
+                        rowarr.push(lastRoe);
                     }
                 }
             }

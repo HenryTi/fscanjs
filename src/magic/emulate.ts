@@ -129,9 +129,9 @@ class EmulateMagic {
     try {
       let { year, month, yearlen, date } = p as { year: number, month: number, yearlen: number, date: number }
       let rowroe: any[] = [date, yearlen];
-      await this.runner.query('calcMagicOrder', DefaultUnit, undefined, rowroe);
+      await this.runner.query('calcMagicOrder2', DefaultUnit, undefined, rowroe);
 
-      let ret = await this.runner.query('getmagicorderresult', DefaultUnit, undefined, []);
+      let ret = await this.runner.query('getnoeorderresult', DefaultUnit, undefined, []);
       let arr = ret as any[];
 
       let dayEnd = date + 10000;
