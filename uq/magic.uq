@@ -54,7 +54,7 @@ QUERY calcMagicOrder2(
   DROP TEMPORARY TABLE IF EXISTS `_noe`;
   CREATE TEMPORARY TABLE `_noe` (`serial` int not null auto_increment primary key, id bigint null,`noe` DECIMAL(12,6) NULL, `roe` DECIMAL(12,6) NULL, `pe` DECIMAL(12,6) NULL) ENGINE=MyISAM;
   INSERT INTO `_noe` (id, `noe`, `roe`, `pe`)
-    SELECT a.stock as id, (1+a.`roe`) / b.`pe` as `noe`, a.`roe` AS `roe`, b.`pe` as `pe`
+    SELECT a.stock as id, pow((1+a.`roe`),2) / b.`pe` as `noe`, a.`roe` AS `roe`, b.`pe` as `pe`
     FROM `tv_roe` AS a inner join `c_peorder` b
     on a.`stock`=b.`stock` and a.`year`=`_lastyear_4` and a.`yearlen`=`_yearlen` and a.`roe`>0.0999 and b.`pe` < 20.001
     ORDER BY `noe` DESC;
