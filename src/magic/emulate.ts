@@ -21,8 +21,8 @@ export async function emulateAtDay(date: number) {
     }
     month = Math.floor(month / 100);
     date = year * 10000 + month * 100 + 1;
-    let p = { year: year, month: month, day: 1, date: date, yearlen: yearlen };
-    await runner.query('clear神奇公式模拟结果', DefaultUnit, undefined, [year, month, yearlen]);
+    let p = { year: year, month: month, day: 1, date: date };
+    await runner.query('clear神奇公式模拟结果', DefaultUnit, undefined, [year, month]);
     await runner.query('clear神奇公式模拟结果明细', DefaultUnit, undefined, [-1, date]);
     await em.proceeOneDay(p);
     console.log('emulate end day: ' + date);
@@ -44,16 +44,14 @@ export async function emulateAll() {
     await runner.sql(sql, []);
     await runner.query('clear神奇公式模拟结果明细', DefaultUnit, undefined, [-1, -1]);
 
-    for (let yearlen = 5; yearlen >= 5; --yearlen) {
-      for (let year = 2001; year < 2019; ++year) {
-        for (let month = 1; month <= 1; month += 1) {
-          let date = year * 10000 + month * 100 + 1;
-          if (date > 20180601)
-            break;
-          let p = { year: year, month: month, day: 1, date: date, yearlen: yearlen };
-          await em.proceeOneDay(p);
-          console.log('emulate end. yearlen: ' + yearlen + '  day: ' + date);
-        }
+    for (let year = 2001; year < 2019; ++year) {
+      for (let month = 1; month <= 1; month += 1) {
+        let date = year * 10000 + month * 100 + 1;
+        if (date > 20180601)
+          break;
+        let p = { year: year, month: month, day: 1, date: date };
+        await em.proceeOneDay(p);
+        console.log('emulate end :  ' + date);
       }
     }
   }
@@ -130,8 +128,8 @@ class EmulateMagic {
 
   async proceeOneDay(p: any): Promise<any> {
     try {
-      let { year, month, yearlen, date } = p as { year: number, month: number, yearlen: number, date: number }
-      let rowroe: any[] = [date, yearlen];
+      let { year, month, date } = p as { year: number, month: number, date: number }
+      let rowroe: any[] = [date];
       await this.runner.query('calcMagicOrder', DefaultUnit, undefined, rowroe);
 
       let ret = await this.runner.query('getmagicorderresult', DefaultUnit, undefined, []);
@@ -178,7 +176,7 @@ class EmulateMagic {
     if (rCount > 0 && rCount >= GroupSize / 2) {
       sum /= rCount;
       await this.runner.mapSave('神奇公式模拟结果', DefaultUnit, undefined,
-        [groupIndex, year, month, yearlen, sum, rCount]);
+        [groupIndex, year, month, sum, rCount]);
     }
   }
 }

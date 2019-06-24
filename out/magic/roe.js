@@ -72,11 +72,10 @@ function calculateOne(code, runner) {
             let count = parr.length;
             for (let i = 0; i < count; ++i) {
                 let item = parr[i];
-                let { year } = item;
+                let { year, capital } = item;
                 let roe = ce[year];
                 if (roe !== undefined) {
                     let sum = roe.roe;
-                    yield runner.mapSave('roe', const_1.DefaultUnit, undefined, [id, year, 1, sum]);
                     let preyear = year;
                     let weight = 1;
                     let sw = 1;
@@ -93,10 +92,10 @@ function calculateOne(code, runner) {
                         sum += lastRoe * sw;
                         weight += sw;
                         let roeavg = sum / weight;
-                        if (lastRoe > 0) {
+                        if (lastRoe > 0 && k == 5) {
                             let m = Math.max(...rowarr);
-                            if (m < lastRoe * 3) {
-                                yield runner.mapSave('roe', const_1.DefaultUnit, undefined, [id, year, k, roeavg]);
+                            if (m < roeavg * 3) {
+                                yield runner.mapSave('roe', const_1.DefaultUnit, undefined, [id, year, roeavg, roeavg * capital]);
                             }
                         }
                         rowarr.push(lastRoe);
