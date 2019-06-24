@@ -80,12 +80,12 @@ async function calculateOne(code: any, runner: Runner) {
           let ri = ce[preyear];
           if (ri === undefined)
             break;
-          sw -= 0.125;
+          sw -= 0.1;
           lastRoe = ri.roe as number;
           sum += lastRoe * sw;
           weight += sw;
           let roeavg = sum / weight;
-          if (lastRoe > 0 && k == 5) {
+          if (roeavg > 0 && k == 5) {
             let m = Math.max(...rowarr);
             if (m < roeavg * 3) {
               await runner.mapSave('roe', DefaultUnit, undefined, [id, year, roeavg, roeavg * capital]);

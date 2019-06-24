@@ -182,18 +182,17 @@ QUERY calcMagicPeAVG(
   ENGINE=InnoDB
   ;
 
-  select max(`日期`) into `_fday_2` from `tv_股票价格历史` where `日期`<=`_daybegin` and `日期`>=`_dayfrom_4`;
+  select max(`日期`) into `_fday_2` from `tv_股票价格历史` where `日期`<=`_daybegin`;
   
   delete from `c_peavg` where `day`=`_daybegin`;
   DROP TEMPORARY TABLE IF EXISTS `_pe`;
   CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id bigint null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
 
   INSERT INTO `_pe` (id, `pe`)
-    SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`earning`, b.`价格`, _daybegin, _fday_2) as `pe`
-	  from (`tv_股票价格历史` b inner join `tv_capitalearning` a on b.`股票` = a.`stock` and 
-      b.`日期`=`_fday_2` and a.`year`=`_lastyear_3` and a.`earning` > 0) 
-	  inner join `tv_roe` c on c.`stock`=a.`stock` and c.`year`=`_lastyear_3`
-    order by pe asc limit 200;
+    SELECT c.`stock` as `id`, f_getstockpe(c.`stock`, c.`e`, b.`价格`, _daybegin, _fday_2) as `pe`
+	  from `tv_股票价格历史` b inner join `tv_roe` c 
+      on c.`stock`=b.`股票` and b.`日期`=`_fday_2` and c.`year`=`_lastyear_3` and c.`e` > 0
+      order by `pe` asc limit 200;
 
   SELECT avg(`pe`) AS `peavg` INTO `_ret_5`
       FROM `_pe`

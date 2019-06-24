@@ -87,12 +87,12 @@ function calculateOne(code, runner) {
                         let ri = ce[preyear];
                         if (ri === undefined)
                             break;
-                        sw -= 0.125;
+                        sw -= 0.1;
                         lastRoe = ri.roe;
                         sum += lastRoe * sw;
                         weight += sw;
                         let roeavg = sum / weight;
-                        if (lastRoe > 0 && k == 5) {
+                        if (roeavg > 0 && k == 5) {
                             let m = Math.max(...rowarr);
                             if (m < roeavg * 3) {
                                 yield runner.mapSave('roe', const_1.DefaultUnit, undefined, [id, year, roeavg, roeavg * capital]);
