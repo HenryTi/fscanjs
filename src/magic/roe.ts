@@ -29,6 +29,7 @@ export async function calculateAllRoe() {
     console.log('calculateAllRoe get stocks id');
     try {
       await runner.query('clearroeall', DefaultUnit, undefined, []);
+      console.log('calculateAllRoe clearroe');
     }
     catch (err) {
       console.log(err);

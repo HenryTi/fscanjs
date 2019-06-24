@@ -33,7 +33,6 @@ QUERY calcMagicOrder2(
 
   select max(`日期`) into `_fday_2` from `tv_股票价格历史` where `日期`<=`_day` and `股票` <= 100;
   
-  START TRANSACTION;
   delete from `c_noeorder` where 1=1;
   delete from `c_peorder` where 1=1;
   DROP TEMPORARY TABLE IF EXISTS `_pe`;
@@ -63,8 +62,6 @@ QUERY calcMagicOrder2(
     FROM `_noe`
     WHERE 1=1;
 
-  COMMIT;
-
   -/
 };
 
@@ -89,7 +86,6 @@ QUERY calcMagicOrder(
   ENGINE=InnoDB
   ;
 
-  START TRANSACTION;
   delete from `c_roeorder` where 1=1;
   DROP TEMPORARY TABLE IF EXISTS `_roe`;
   CREATE TEMPORARY TABLE `_roe` (`serial` int not null auto_increment primary key, id bigint null, `roe` DECIMAL(18,4) NULL) ENGINE=MyISAM;
@@ -156,8 +152,6 @@ QUERY calcMagicOrder(
     SELECT id as `stock`, `serial` as `order`, `pr`, `pe`, `roe`
       FROM `_mo`
       WHERE 1=1;
-
-  COMMIT;
 
   -/
 };

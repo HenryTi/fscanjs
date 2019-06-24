@@ -37,6 +37,7 @@ function calculateAllRoe() {
             console.log('calculateAllRoe get stocks id');
             try {
                 yield runner.query('clearroeall', const_1.DefaultUnit, undefined, []);
+                console.log('calculateAllRoe clearroe');
             }
             catch (err) {
                 console.log(err);
