@@ -15,10 +15,6 @@ export async function emulateAtDay(date: number) {
     console.log('emulate begin day: ' + date);
     let year = Math.floor(date / 10000);
     let month = date % 10000;
-    let yearlen = month % 100;
-    if (yearlen < 1 || yearlen > 5) {
-      yearlen = 5;
-    }
     month = Math.floor(month / 100);
     date = year * 10000 + month * 100 + 1;
     let p = { year: year, month: month, day: 1, date: date };
@@ -130,9 +126,9 @@ class EmulateMagic {
     try {
       let { year, month, date } = p as { year: number, month: number, date: number }
       let rowroe: any[] = [date];
-      await this.runner.query('calcMagicOrder', DefaultUnit, undefined, rowroe);
+      await this.runner.query('calcMagicOrder2', DefaultUnit, undefined, rowroe);
 
-      let ret = await this.runner.query('getmagicorderresult', DefaultUnit, undefined, []);
+      let ret = await this.runner.query('getnoeorderresult', DefaultUnit, undefined, []);
       let arr = ret as any[];
 
       let dayEnd = date + 10000;

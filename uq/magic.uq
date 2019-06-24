@@ -122,9 +122,8 @@ QUERY calcMagicOrder(
   ENGINE=InnoDB
   ;
 
-  select max(`日期`) into `_fday_2` from `tv_股票价格历史` where `日期`<=`_day` and `股票` <= 100;
+  select max(`日期`) into `_fday_2` from `tv_股票价格历史` where `日期`<=`_day`;
   
-  START TRANSACTION;
   delete from `c_peorder` where 1=1;
   DROP TEMPORARY TABLE IF EXISTS `_pe`;
   CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id bigint null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
