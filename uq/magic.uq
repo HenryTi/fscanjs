@@ -54,9 +54,9 @@ QUERY calcMagicOrder2(
   DROP TEMPORARY TABLE IF EXISTS `_noe`;
   CREATE TEMPORARY TABLE `_noe` (`serial` int not null auto_increment primary key, id bigint null,`noe` DECIMAL(12,6) NULL, `roe` DECIMAL(12,6) NULL, `pe` DECIMAL(12,6) NULL) ENGINE=MyISAM;
   INSERT INTO `_noe` (id, `noe`, `roe`, `pe`)
-    SELECT a.stock as id, pow((1+a.`roe`),3) / b.`pe` as `noe`, a.`roe` AS `roe`, b.`pe` as `pe`
+    SELECT a.stock as id, (1+a.`roe`) / b.`pe` as `noe`, a.`roe` AS `roe`, b.`pe` as `pe`
     FROM `tv_roe` AS a inner join `c_peorder` b
-    on a.`stock`=b.`stock` and a.`year`=`_lastyear_4` and a.`yearlen`=`_yearlen`
+    on a.`stock`=b.`stock` and a.`year`=`_lastyear_4` and a.`yearlen`=`_yearlen` and a.`roe`>0.0999 and b.`pe` < 20.001
     ORDER BY `noe` DESC;
 
   INSERT INTO `c_noeorder` (`stock`, `order`, `noe`, `roe`, `pe`)
@@ -252,6 +252,23 @@ QUERY clear神奇公式模拟结果 (
   /-mysql
   delete from `tv_神奇公式模拟结果`
   where (`_year`=-1 or `year`=`_year`) and (`_month`=-1 or `month`=`_month`) and (`_yearlen`=-1 or `yearlen`=`_yearlen`);
+  -/
+};
+
+MAP 神奇公式模拟结果明细 ver 0.2 (
+  key 组 int not null,
+  key day int not null,
+  key stock id 股票 not null,
+  涨幅 dec(10,3),
+);
+
+QUERY clear神奇公式模拟结果明细 (
+  组 int,
+  day int,
+){
+  /-mysql
+  delete from `tv_神奇公式模拟结果明细`
+  where (`_组`=-1 or `组`=`_组`) and (`_day`=-1 or `day`=`_day`);
   -/
 };
 
