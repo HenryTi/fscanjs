@@ -32,7 +32,7 @@ function emulateAtDay(date) {
             date = year * 10000 + month * 100 + 1;
             let p = { year: year, month: month, day: 1, date: date, yearlen: yearlen };
             yield runner.query('clear神奇公式模拟结果', const_1.DefaultUnit, undefined, [year, month, yearlen]);
-            yield runner.query('clear神奇公式模拟结果明细', const_1.DefaultUnit, undefined, [undefined, date]);
+            yield runner.query('clear神奇公式模拟结果明细', const_1.DefaultUnit, undefined, [-1, date]);
             yield em.proceeOneDay(p);
             console.log('emulate end day: ' + date);
         }
@@ -53,7 +53,7 @@ function emulateAll() {
             let em = new EmulateMagic(runner);
             let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
             yield runner.sql(sql, []);
-            yield runner.query('clear神奇公式模拟结果明细', const_1.DefaultUnit, undefined, [undefined, undefined]);
+            yield runner.query('clear神奇公式模拟结果明细', const_1.DefaultUnit, undefined, [-1, -1]);
             for (let yearlen = 5; yearlen >= 5; --yearlen) {
                 for (let year = 2001; year < 2019; ++year) {
                     for (let month = 1; month <= 1; month += 1) {

@@ -23,7 +23,7 @@ export async function emulateAtDay(date: number) {
     date = year * 10000 + month * 100 + 1;
     let p = { year: year, month: month, day: 1, date: date, yearlen: yearlen };
     await runner.query('clear神奇公式模拟结果', DefaultUnit, undefined, [year, month, yearlen]);
-    await runner.query('clear神奇公式模拟结果明细', DefaultUnit, undefined, [undefined, date]);
+    await runner.query('clear神奇公式模拟结果明细', DefaultUnit, undefined, [-1, date]);
     await em.proceeOneDay(p);
     console.log('emulate end day: ' + date);
   }
@@ -42,7 +42,7 @@ export async function emulateAll() {
     let em = new EmulateMagic(runner);
     let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
     await runner.sql(sql, []);
-    await runner.query('clear神奇公式模拟结果明细', DefaultUnit, undefined, [undefined, undefined]);
+    await runner.query('clear神奇公式模拟结果明细', DefaultUnit, undefined, [-1, -1]);
 
     for (let yearlen = 5; yearlen >= 5; --yearlen) {
       for (let year = 2001; year < 2019; ++year) {
