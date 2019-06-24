@@ -6,6 +6,7 @@ export async function calculateAllRoe() {
   if (RemoteIsRun())
     return;
   RemoteRun(true);
+  console.log('calculateAllRoe start');
   try {
     let runner: Runner = await getRunner('mi');
 
@@ -25,6 +26,7 @@ export async function calculateAllRoe() {
       }
     }
 
+    console.log('calculateAllRoe get stocks id');
     try {
       await runner.query('clearroeall', DefaultUnit, undefined, []);
     }
@@ -32,11 +34,8 @@ export async function calculateAllRoe() {
       console.log(err);
     }
 
-    console.log('calculateAllRoe start');
     let count = ret.length;
 
-    let rCount = 0;
-    let sum = 0;
     for (let i = 0; i < count; ++i) {
       await calculateOne(ret[i], runner);
     }

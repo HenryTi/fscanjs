@@ -16,6 +16,7 @@ function calculateAllRoe() {
         if (gfuncs_1.RemoteIsRun())
             return;
         gfuncs_1.RemoteRun(true);
+        console.log('calculateAllRoe start');
         try {
             let runner = yield db_1.getRunner('mi');
             let ret = [];
@@ -33,16 +34,14 @@ function calculateAllRoe() {
                     break;
                 }
             }
+            console.log('calculateAllRoe get stocks id');
             try {
                 yield runner.query('clearroeall', const_1.DefaultUnit, undefined, []);
             }
             catch (err) {
                 console.log(err);
             }
-            console.log('calculateAllRoe start');
             let count = ret.length;
-            let rCount = 0;
-            let sum = 0;
             for (let i = 0; i < count; ++i) {
                 yield calculateOne(ret[i], runner);
             }
