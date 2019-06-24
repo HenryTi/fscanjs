@@ -29,8 +29,10 @@ export async function calculateAllRoe() {
       await runner.query('clearroeall', DefaultUnit, undefined, []);
     }
     catch (err) {
+      console.log(err);
     }
 
+    console.log('calculateAllRoe start');
     let count = ret.length;
 
     let rCount = 0;

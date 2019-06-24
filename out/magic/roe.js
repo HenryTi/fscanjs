@@ -37,7 +37,9 @@ function calculateAllRoe() {
                 yield runner.query('clearroeall', const_1.DefaultUnit, undefined, []);
             }
             catch (err) {
+                console.log(err);
             }
+            console.log('calculateAllRoe start');
             let count = ret.length;
             let rCount = 0;
             let sum = 0;
