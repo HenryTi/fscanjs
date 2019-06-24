@@ -119,6 +119,7 @@ QUERY calcMagicOrder(
   CREATE TABLE IF NOT EXISTS `c_magicorder` (
 	  `stock` BIGINT(20) NOT NULL,
 	  `order` INT(11) NOT NULL,
+	  `pr` INT(11) NOT NULL,
     `pe` DECIMAL(12,4) NOT NULL,
     `roe` DECIMAL(12,4) NOT NULL,
 	  PRIMARY KEY (`stock`),
