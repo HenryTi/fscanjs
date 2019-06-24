@@ -82,7 +82,7 @@ async function calculateOne(code: any, runner: Runner) {
           let ri = ce[preyear];
           if (ri === undefined)
             break;
-          sw -= 0.1;
+          sw -= 0.2;
           lastRoe = ri.roe as number;
           sum += lastRoe * sw;
           weight += sw;
