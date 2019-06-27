@@ -131,7 +131,7 @@ QUERY calcMagicOrder(
   INSERT INTO `_pe` (id, `pe`)
     SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`earning`, b.`价格`, _daybegin_3, _fday_2) as `pe`
 	  from `tv_capitalearning` a inner join `tv_股票价格历史` b on b.`股票` = a.`stock` and 
-      b.`日期`=`_fday_2` and a.`year`=`_lastyear_4` and a.`e` > 0
+      b.`日期`=`_fday_2` and a.`year`=`_lastyear_4` and a.`earning` > 0
     order by pe asc;
 
   INSERT INTO `c_peorder` (`stock`, `order`, `pe`)
@@ -143,7 +143,7 @@ QUERY calcMagicOrder(
   CREATE TEMPORARY TABLE `_mo` (`serial` int not null auto_increment primary key, id bigint null, `pr` int null, `pe` DECIMAL(12,4) NULL,`roe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
 
   insert into `_mo` (`id`, `pr`, `pe`, `roe`) 
-    select a.`stock` as `id`, (a.`order`) as `pr`, b.`pe` as `pe`, a.`roe` as `roe` 
+    select a.`stock` as `id`, (a.`order` + b.`order`) as `pr`, b.`pe` as `pe`, a.`roe` as `roe` 
     from `c_roeorder` as a inner join `c_peorder` as b on a.`stock` = b.`stock` order by `pr` asc;
 
   delete from `c_magicorder` where 1=1;
@@ -282,6 +282,12 @@ MAP capitalearning (
   earning dec(18,4) not null
 );
 
+MAP dividend (
+  key stock ID 股票 not null,
+  key year int not null,
+  devidend dec(12,8) not null,
+);
+
 QUERY getcapitalearning (
   stock ID
 ){
@@ -289,6 +295,16 @@ QUERY getcapitalearning (
   select `year`, `capital`, `earning`
   from tv_capitalearning
   where `stock`=`_stock` order by `year` asc;
+  -/
+};
+
+QUERY getstocklastprice(
+  stock ID,
+  day int
+){
+  var fday int = day;
+  /-mysql
+  select `价格` as `price` from `tv_股票价格历史` where `股票`=`_stock` and `日期`<`_day` order by `日期` desc limit 1;
   -/
 };
 
@@ -313,6 +329,14 @@ QUERY clearroeall (
 ){
   /-mysql
   delete from tv_roe
+  where 1=1;
+  -/
+};
+
+QUERY cleardividendall (
+){
+  /-mysql
+  delete from tv_dividend
   where 1=1;
   -/
 };

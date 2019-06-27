@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const emulate_1 = require("../magic/emulate");
+const emulatemagic_1 = require("../magic/emulatemagic");
 const roe_1 = require("../magic/roe");
 const updateEarnig_1 = require("../magic/updateEarnig");
 const gfuncs_1 = require("../gfuncs");
@@ -19,7 +19,7 @@ magicRouter.get('/all', (req, res) => __awaiter(this, void 0, void 0, function* 
         res.json({ "magic": "busy" });
         return;
     }
-    emulate_1.emulateAll();
+    emulatemagic_1.emulateAll();
     res.json({ "magic": "emulateAll" });
 }));
 magicRouter.get('/day', (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -28,7 +28,7 @@ magicRouter.get('/day', (req, res) => __awaiter(this, void 0, void 0, function* 
         return;
     }
     let day = Number(req.query['day']);
-    emulate_1.emulateAtDay(day);
+    emulatemagic_1.emulateAtDay(day);
     res.json({ "magic": "emulateday", "day": day });
 }));
 magicRouter.get('/avg', (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -38,7 +38,7 @@ magicRouter.get('/avg', (req, res) => __awaiter(this, void 0, void 0, function* 
     }
     let begin = Number(req.query['begin']);
     let end = Number(req.query['end']);
-    emulate_1.allStocksAvg(begin, end);
+    emulatemagic_1.allStocksAvg(begin, end);
     res.json({ "magic": "stocksavg", "begin": begin, "end": end });
 }));
 magicRouter.get('/roe', (req, res) => __awaiter(this, void 0, void 0, function* () {

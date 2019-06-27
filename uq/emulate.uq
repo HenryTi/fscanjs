@@ -1,0 +1,55 @@
+TUID emulateType ver 0.1 (
+  id,
+  main name char(20) not null,
+  main begin int not null,
+  main end int not null,
+  unique (name, begin, end)
+);
+
+QUERY getemulateTypeID (
+  name char(20),
+  begin int,
+  end int
+){
+  /-mysql
+  select `id`, `name`, `begin`, `end`
+  from tv_emulateType
+  where `name`=`_name` and (`_begin` <= 0 or `_begin`=`begin`) and (`_end` <= 0 or `_end`=`end`);
+  -/
+};
+
+
+MAP emulateTrade (
+  key type ID emulateType not null,
+  key day int not null,
+  key stock ID 股票 not null,
+  tradeType tinyint not null,
+  price dec(12,4) not null,
+  volume dec(12,2) not null
+);
+
+MAP emulateShares (
+  key type ID emulateType not null,
+  key day int not null,
+  key stock ID 股票 not null,
+  price dec(12,4) not null,
+  volume dec(12,2) not null
+);
+
+MAP emulateResult (
+  key type ID emulateType not null,
+  key day int not null,
+  money dec(18,4) not null,
+  share dec(18,4) not null,
+  gain dec(12,6) not null,
+);
+
+QUERY clearOneEmulateType (
+  type ID
+){
+  /-mysql
+  delete from tv_emulateTrade where `type`=`_type`;
+  delete from tv_emulateShares where `type`=`_type`;
+  delete from tv_emulateResult where `type`=`_type`;
+  -/
+};

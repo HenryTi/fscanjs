@@ -7,6 +7,18 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Run Test",
+      "program": "${workspaceFolder}\\out\\runtest.js",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}\\out\\index.js",
       "env": {

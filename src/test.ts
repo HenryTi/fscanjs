@@ -10,7 +10,7 @@ import { scanSinaExRight } from './scan/cqsina';
 import { getRunner, Runner } from './uq-api/db';
 import { DefaultUnit } from './const';
 import { packParam } from './uq-api/core/packParam';
-import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulate';
+import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulatemagic';
 import { scanSinaFinance } from './scan/financesina';
 import { updateAllEarning } from './magic/updateEarnig';
 

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { emulateAll, allStocksAvg, emulateAtDay } from '../magic/emulate';
+import { emulateAll, allStocksAvg, emulateAtDay } from '../magic/emulatemagic';
 import { calculateAllRoe } from '../magic/roe';
 import { updateAllEarning } from '../magic/updateEarnig';
 import { RemoteIsRun } from '../gfuncs';
