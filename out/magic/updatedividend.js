@@ -13,6 +13,7 @@ const const_1 = require("../const");
 function updateAllDividend() {
     return __awaiter(this, void 0, void 0, function* () {
         let runner = yield db_1.getRunner('mi');
+        console.log('updateAllDividend start');
         let ret = [];
         let pageStart = 0, pageSize = 500;
         for (;;) {

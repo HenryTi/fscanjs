@@ -4,6 +4,7 @@ import { DefaultUnit } from '../const';
 
 export async function updateAllDividend() {
   let runner: Runner = await getRunner('mi');
+  console.log('updateAllDividend start')
 
   let ret: any[] = [];
   let pageStart = 0, pageSize = 500;

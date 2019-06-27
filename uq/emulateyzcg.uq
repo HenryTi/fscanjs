@@ -9,7 +9,7 @@ QUERY calcEmulateYZCG(
 
   /-mysql
   CREATE TABLE IF NOT EXISTS `c_roeorder` (
-	  `stock` BIGINT(20) NOT NULL,
+	  `stock` INT(11) NOT NULL,
 	  `order` INT(11) NOT NULL,
 	  `roe` DECIMAL(12,4) NOT NULL,
 	  PRIMARY KEY (`stock`),
@@ -21,7 +21,7 @@ QUERY calcEmulateYZCG(
 
   delete from `c_roeorder` where 1=1;
   DROP TEMPORARY TABLE IF EXISTS `_roe`;
-  CREATE TEMPORARY TABLE `_roe` (`serial` int not null auto_increment primary key, id bigint null, `roe` DECIMAL(18,4) NULL) ENGINE=MyISAM;
+  CREATE TEMPORARY TABLE `_roe` (`serial` int not null auto_increment primary key, id int null, `roe` DECIMAL(18,4) NULL) ENGINE=MyISAM;
   INSERT INTO `_roe` (id, `roe`)
     SELECT a.stock as id, a.`roe` AS `roe`
     FROM `tv_roe` AS a
@@ -34,7 +34,7 @@ QUERY calcEmulateYZCG(
     WHERE 1=1;
 
   CREATE TABLE IF NOT EXISTS `c_peorder` (
-	  `stock` BIGINT(20) NOT NULL,
+	  `stock` INT(11) NOT NULL,
 	  `order` INT(11) NOT NULL,
 	  `pe` DECIMAL(12,4) NOT NULL,
 	  PRIMARY KEY (`stock`),
@@ -44,7 +44,7 @@ QUERY calcEmulateYZCG(
   ;
 
   CREATE TABLE IF NOT EXISTS `c_yzcgorder` (
-	  `stock` BIGINT(20) NOT NULL,
+	  `stock` INT(11) NOT NULL,
 	  `order` INT(11) NOT NULL,
 	  `pr` INT(11) NOT NULL,
     `pe` DECIMAL(12,4) NOT NULL,
@@ -59,7 +59,7 @@ QUERY calcEmulateYZCG(
   
   delete from `c_peorder` where 1=1;
   DROP TEMPORARY TABLE IF EXISTS `_pe`;
-  CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id bigint null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
+  CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id int null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
 
   INSERT INTO `_pe` (id, `pe`)
     SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`earning`, b.`价格`, _daybegin_3, _fday_2) as `pe`
@@ -73,7 +73,7 @@ QUERY calcEmulateYZCG(
       WHERE 1=1;
 
   DROP TEMPORARY TABLE IF EXISTS `_mo`;
-  CREATE TEMPORARY TABLE `_mo` (`serial` int not null auto_increment primary key, id bigint null, `pr` int null, `pe` DECIMAL(12,4) NULL,`roe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
+  CREATE TEMPORARY TABLE `_mo` (`serial` int not null auto_increment primary key, id int null, `pr` int null, `pe` DECIMAL(12,4) NULL,`roe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
 
   insert into `_mo` (`id`, `pr`, `pe`, `roe`) 
     select a.`stock` as `id`, b.`order` as `pr`, b.`pe` as `pe`, a.`roe` as `roe` 
