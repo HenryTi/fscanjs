@@ -9,6 +9,5 @@ let d1 = new Date(d.getTime() + ms);
 let d2 = new Date(d.getTime() - ms);
 
 
-debugger;
 updateAllDividend();
 

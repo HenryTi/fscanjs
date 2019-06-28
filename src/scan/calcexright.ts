@@ -1,11 +1,11 @@
-import { getRunner, Runner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
 import * as cheerio from 'cheerio';
 
 export async function caclulateExRight() {
-  let runner = await getRunner('mi');
+  let runner = await getRunnerN('mi');
   let sinaer = new CalculateSinaExRight(runner);
   try {
     let ret: any[] = [];

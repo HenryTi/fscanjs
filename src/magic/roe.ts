@@ -1,4 +1,4 @@
-import { getRunner, Runner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
@@ -8,7 +8,7 @@ export async function calculateAllRoe() {
   RemoteRun(true);
   console.log('calculateAllRoe start');
   try {
-    let runner: Runner = await getRunner('mi');
+    let runner: Runner = await getRunnerN('mi');
 
     let ret: any[] = [];
     let pageStart = 0, pageSize = 500;

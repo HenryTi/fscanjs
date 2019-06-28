@@ -1,4 +1,4 @@
-import { getRunner, Runner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
@@ -10,7 +10,7 @@ export async function emulateAtDay(date: number) {
     return;
   RemoteRun(true);
   try {
-    let runner: Runner = await getRunner('mi');
+    let runner: Runner = await getRunnerN('mi');
     let em = new EmulateMagic(runner);
     console.log('emulate begin day: ' + date);
     let year = Math.floor(date / 10000);
@@ -34,7 +34,7 @@ export async function emulateAll() {
     return;
   RemoteRun(true);
   try {
-    let runner: Runner = await getRunner('mi');
+    let runner: Runner = await getRunnerN('mi');
     let em = new EmulateMagic(runner);
     let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
     await runner.sql(sql, []);
@@ -62,7 +62,7 @@ export async function allStocksAvg(begin: number, end: number) {
     return;
   RemoteRun(true);
   try {
-    let runner: Runner = await getRunner('mi');
+    let runner: Runner = await getRunnerN('mi');
 
     let ret: any[] = [];
     let pageStart = 0, pageSize = 500;

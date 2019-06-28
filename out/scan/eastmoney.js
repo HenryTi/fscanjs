@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request");
-const db_1 = require("../uq-api/db");
+const runner_1 = require("../runner");
 const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
@@ -21,7 +21,7 @@ function scanEastmoney() {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield db_1.getRunner('mi');
+            let runner = yield runner_1.getRunnerN('mi');
             let f = new FechStockContents(runner);
             let ret = [];
             let pageStart = 0, pageSize = 500;

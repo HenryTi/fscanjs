@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const db_1 = require("../uq-api/db");
+const runner_1 = require("../runner");
 const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
 const GroupSize = 30;
@@ -19,7 +19,7 @@ function emulateAtDay(date) {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield db_1.getRunner('mi');
+            let runner = yield runner_1.getRunnerN('mi');
             let em = new EmulateMagic(runner);
             console.log('emulate begin day: ' + date);
             let year = Math.floor(date / 10000);
@@ -45,7 +45,7 @@ function emulateAll() {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield db_1.getRunner('mi');
+            let runner = yield runner_1.getRunnerN('mi');
             let em = new EmulateMagic(runner);
             let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
             yield runner.sql(sql, []);
@@ -74,7 +74,7 @@ function allStocksAvg(begin, end) {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield db_1.getRunner('mi');
+            let runner = yield runner_1.getRunnerN('mi');
             let ret = [];
             let pageStart = 0, pageSize = 500;
             for (;;) {

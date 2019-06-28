@@ -1,9 +1,9 @@
-import { getRunner, Runner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
 export async function updateAllDividend() {
-  let runner: Runner = await getRunner('mi');
+  let runner: Runner = await getRunnerN('mi');
   console.log('updateAllDividend start')
 
   let ret: any[] = [];

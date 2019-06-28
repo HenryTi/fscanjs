@@ -9,12 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
-const db_1 = require("./db");
-const packReturn_1 = require("../core/packReturn");
-const importData_1 = require("./importData");
-const packParam_1 = require("../core/packParam");
+const db_1 = require("./uq-api/db/db");
+const packReturn_1 = require("./uq-api/core/packReturn");
+const packParam_1 = require("./uq-api/core/packParam");
 const runners = {};
-function getRunner(name) {
+function getRunnerN(name) {
     return __awaiter(this, void 0, void 0, function* () {
         name = name.toLowerCase();
         let runner = runners[name];
@@ -34,7 +33,7 @@ function getRunner(name) {
         return runner;
     });
 }
-exports.getRunner = getRunner;
+exports.getRunnerN = getRunnerN;
 class Runner {
     constructor(db) {
         this.db = db;
@@ -325,6 +324,11 @@ class Runner {
             return yield this.unitUserCall('tv_' + map + '$save', unit, user, ...params);
         });
     }
+    mapQuery(map, unit, user, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.unitUserCall('tv_' + map + '$query$', unit, user, ...params);
+        });
+    }
     importVId(unit, user, source, tuid, arr, no) {
         return __awaiter(this, void 0, void 0, function* () {
             let proc = `tv_$import_vid`;
@@ -453,7 +457,7 @@ class Runner {
     }
     importData(unit, user, source, entity, filePath) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield importData_1.ImportData.exec(this, unit, this.db, source, entity, filePath);
+            //await ImportData.exec(this, unit, this.db, source, entity, filePath);
         });
     }
     init() {
@@ -487,7 +491,7 @@ class Runner {
             this.version = setting['version'];
             this.uqId = setting['uqId'];
             this.hasUnit = !(setting['hasUnit'] === 0);
-            console.log('init schemas: ', this.uq, this.author, this.version);
+            console.log('init schemas: ', this.uq, this.author, this.version, this.hasUnit);
             this.schemas = {};
             this.accessSchemaArr = [];
             this.tuids = {};

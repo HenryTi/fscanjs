@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
-import {getDb, Db} from './db';
-import { packReturns } from '../core/packReturn';
-import { ImportData } from './importData';
-import { packParam } from '../core/packParam';
+import {getDb, Db} from './uq-api/db/db';
+import { packReturns } from './uq-api/core/packReturn';
+import { ImportData } from './uq-api/db/importData';
+import { packParam } from './uq-api/core/packParam';
 
 const runners: {[name:string]: Runner} = {};
 
-export async function getRunner(name:string):Promise<Runner> {
+export async function getRunnerN(name:string):Promise<Runner> {
     name = name.toLowerCase();
     let runner = runners[name];
     if (runner === null) return;
@@ -260,6 +260,9 @@ export class Runner {
     async mapSave(map:string, unit:number, user:number, params:any[]): Promise<any> {
         return await this.unitUserCall('tv_' + map + '$save', unit, user, ...params);
     }
+    async mapQuery(map:string, unit:number, user:number, params:any[]): Promise<any> {
+        return await this.unitUserCall('tv_' + map + '$query$', unit, user, ...params);
+    }
     async importVId(unit:number, user:number, source:string, tuid:string, arr:string, no:string): Promise<number> {
         let proc = `tv_$import_vid`;
         let ret = await this.unitUserTableFromProc(proc, unit, user, source, tuid, arr, no);
@@ -357,7 +360,7 @@ export class Runner {
     }
 
     async importData(unit:number, user:number, source:string, entity:string, filePath: string): Promise<void> {
-        await ImportData.exec(this, unit, this.db, source, entity, filePath);
+        //await ImportData.exec(this, unit, this.db, source, entity, filePath);
     }
 
     async init() {
@@ -389,7 +392,7 @@ export class Runner {
         this.uqId = setting['uqId'] as number;
         this.hasUnit = !(setting['hasUnit'] as number === 0);
         
-        console.log('init schemas: ', this.uq, this.author, this.version);
+        console.log('init schemas: ', this.uq, this.author, this.version, this.hasUnit);
 
         this.schemas = {};
         this.accessSchemaArr = [];

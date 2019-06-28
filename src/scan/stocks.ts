@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { getRunner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { DefaultUnit } from '../const';
 
 const jsonPath = '../data/shsz.json';
 
-getRunner('mi').then(async (runner) => {
+getRunnerN('mi').then(async (runner) => {
   let p = path.resolve(__dirname, jsonPath);
   let content:string = fs.readFileSync(p, 'utf-8');
   let arr = JSON.parse(content); 

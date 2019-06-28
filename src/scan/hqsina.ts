@@ -1,4 +1,4 @@
-import { getRunner, Runner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { sleep, checkToDateInt, checkToDateIntHK, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
@@ -9,7 +9,7 @@ export async function scanSinaQuotations() {
   RemoteRun(true);
 
   try {
-    let runner = await getRunner('mi');
+    let runner = await getRunnerN('mi');
 
     let ret: any[] = [];
     let pageStart = 0, pageSize = 500;

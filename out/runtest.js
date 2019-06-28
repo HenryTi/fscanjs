@@ -8,6 +8,5 @@ let tsd = timespan.fromDays(1);
 let ms = tsd.totalMilliseconds();
 let d1 = new Date(d.getTime() + ms);
 let d2 = new Date(d.getTime() - ms);
-debugger;
 updatedividend_1.updateAllDividend();
 //# sourceMappingURL=runtest.js.map

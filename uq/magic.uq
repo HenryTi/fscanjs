@@ -285,7 +285,7 @@ MAP capitalearning (
 MAP dividend (
   key stock ID 股票 not null,
   key year int not null,
-  devidend dec(12,8) not null,
+  dividend dec(12,8) not null,
 );
 
 QUERY getcapitalearning (

@@ -1,4 +1,4 @@
-import { getRunner, Runner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { sleep, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
@@ -9,7 +9,7 @@ export async function scanSinaSymbols() {
   RemoteRun(true);
 
   try {
-    let runner = await getRunner('mi');
+    let runner = await getRunnerN('mi');
     let sinaSym = new SinaSymbols(runner);
     await sinaSym.GetHS_A();
   }
@@ -97,7 +97,6 @@ class SinaSymbols {
   }
 
   protected async saveHSAOnePage(arr: any[]): Promise<boolean> {
-    let promiseArr: Promise<void>[] = [];
     let i: number;
     let count = arr.length;
     for (i = 0; i < count; ++i) {
@@ -109,10 +108,7 @@ class SinaSymbols {
       name = name.substring(0, 32);
       let market = symbol.substring(0, 2).toUpperCase();
       let row = [undefined, symbol, market, code, name, undefined];
-      promiseArr.push(this.runner.tuidSave('股票', DefaultUnit, undefined, row));
-    }
-    if (promiseArr.length > 0) {
-      await Promise.all(promiseArr);
+      await this.runner.tuidSave('股票', DefaultUnit, undefined, row);
     }
 
     return true;

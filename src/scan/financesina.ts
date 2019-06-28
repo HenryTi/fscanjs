@@ -1,4 +1,4 @@
-import { getRunner, Runner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { DefaultUnit } from '../const';
@@ -10,7 +10,7 @@ export async function scanSinaFinance(start:number) {
   RemoteRun(true);
 
   try {
-    let runner = await getRunner('mi');
+    let runner = await getRunnerN('mi');
     let sinaer = new SinaFinace(runner);
       let ret: any[] = [];
     let pageStart = start, pageSize = 100;

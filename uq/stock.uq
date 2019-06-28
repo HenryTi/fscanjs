@@ -17,15 +17,16 @@ MAP 股票价格 ver 0.2 (
   低 dec(10,3),
 );
 
--- MAP 股票价格历史 ver 0.2 (
---  key 股票 ID 股票 not null,
---  key 日期 int not null,
---  价格 dec(10,3),
---  开 dec(10,3),
---  高 dec(10,3),
---  低 dec(10,3),
---  量 dec(12,0)
--- );
+MAP 股票价格历史 ver 0.2 (
+  key 股票 ID 股票 not null,
+  key 日期 int not null,
+  价格 dec(10,3),
+  开 dec(10,3),
+  高 dec(10,3),
+  低 dec(10,3),
+  量 dec(12,0),
+  index i_日期(日期)
+);
 
 MAP 股票除权因子 ver 0.2 (
   key 股票 ID 股票 not null,

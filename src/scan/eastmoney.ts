@@ -1,5 +1,5 @@
 import * as request from 'request';
-import { getRunner, Runner } from '../uq-api/db';
+import { getRunnerN, Runner } from '../runner';
 import { sleep, checkToDateInt, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { DefaultUnit } from '../const';
 
@@ -13,7 +13,7 @@ export async function scanEastmoney() {
   RemoteRun(true);
 
   try {
-    let runner = await getRunner('mi');
+    let runner = await getRunnerN('mi');
     let f = new FechStockContents(runner);
 
     let ret: any[] = [];

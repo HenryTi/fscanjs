@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
-const db_1 = require("../uq-api/db");
+const runner_1 = require("../runner");
 const const_1 = require("../const");
 const jsonPath = '../data/shsz.json';
-db_1.getRunner('mi').then((runner) => __awaiter(this, void 0, void 0, function* () {
+runner_1.getRunnerN('mi').then((runner) => __awaiter(this, void 0, void 0, function* () {
     let p = path.resolve(__dirname, jsonPath);
     let content = fs.readFileSync(p, 'utf-8');
     let arr = JSON.parse(content);

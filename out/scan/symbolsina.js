@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const db_1 = require("../uq-api/db");
+const runner_1 = require("../runner");
 const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
@@ -18,7 +18,7 @@ function scanSinaSymbols() {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield db_1.getRunner('mi');
+            let runner = yield runner_1.getRunnerN('mi');
             let sinaSym = new SinaSymbols(runner);
             yield sinaSym.GetHS_A();
         }
@@ -110,7 +110,6 @@ class SinaSymbols {
     }
     saveHSAOnePage(arr) {
         return __awaiter(this, void 0, void 0, function* () {
-            let promiseArr = [];
             let i;
             let count = arr.length;
             for (i = 0; i < count; ++i) {
@@ -122,10 +121,7 @@ class SinaSymbols {
                 name = name.substring(0, 32);
                 let market = symbol.substring(0, 2).toUpperCase();
                 let row = [undefined, symbol, market, code, name, undefined];
-                promiseArr.push(this.runner.tuidSave('股票', const_1.DefaultUnit, undefined, row));
-            }
-            if (promiseArr.length > 0) {
-                yield Promise.all(promiseArr);
+                yield this.runner.tuidSave('股票', const_1.DefaultUnit, undefined, row);
             }
             return true;
         });
