@@ -1,6 +1,6 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 
 export async function calculateAllRoe() {
   if (RemoteIsRun())
@@ -8,12 +8,12 @@ export async function calculateAllRoe() {
   RemoteRun(true);
   console.log('calculateAllRoe start');
   try {
-    let runner: Runner = await getRunnerN('mi');
+    let runner: Runner = await getRunner(Const_dbname);
 
     let ret: any[] = [];
     let pageStart = 0, pageSize = 500;
     for (; ;) {
-      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
       let arr = ids[0];
       if (arr.length > pageSize) {
         let top = arr.pop();
@@ -28,7 +28,7 @@ export async function calculateAllRoe() {
 
     console.log('calculateAllRoe get stocks id');
     try {
-      await runner.query('clearroeall', DefaultUnit, undefined, []);
+      await runner.call('tv_roe$clearall', []);
       console.log('calculateAllRoe clearroe');
     }
     catch (err) {
@@ -49,7 +49,7 @@ export async function calculateAllRoe() {
 async function calculateOne(code: any, runner: Runner) {
   try {
     let { id } = code;
-    let pret = await runner.query('getcapitalearning', DefaultUnit, undefined, [id]);
+    let pret = await runner.query('tv_getcapitalearning', [id]);
     let parr = pret as any[];
     if (parr.length <= 0)
       return;
@@ -90,7 +90,7 @@ async function calculateOne(code: any, runner: Runner) {
           if (roeavg > 0 && k == 5) {
             let m = Math.max(...rowarr);
             if (m < roeavg * 3) {
-              await runner.mapSave('roe', DefaultUnit, undefined, [id, year, roeavg, roeavg * capital]);
+              await runner.call('tv_roe$save', [id, year, roeavg, roeavg * capital]);
             }
           }
           rowarr.push(lastRoe);

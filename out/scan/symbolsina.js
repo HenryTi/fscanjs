@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
@@ -18,7 +18,7 @@ function scanSinaSymbols() {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield runner_1.getRunnerN('mi');
+            let runner = yield db_1.getRunner(const_1.Const_dbname);
             let sinaSym = new SinaSymbols(runner);
             yield sinaSym.GetHS_A();
         }
@@ -121,7 +121,7 @@ class SinaSymbols {
                 name = name.substring(0, 32);
                 let market = symbol.substring(0, 2).toUpperCase();
                 let row = [undefined, symbol, market, code, name, undefined];
-                yield this.runner.tuidSave('股票', const_1.DefaultUnit, undefined, row);
+                yield this.runner.call('tv_股票$save', row);
             }
             return true;
         });

@@ -1,6 +1,6 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 
 const GroupSize = 30;
 const MaxGroup = 80;
@@ -10,7 +10,7 @@ export async function emulateAtDay(date: number) {
     return;
   RemoteRun(true);
   try {
-    let runner: Runner = await getRunnerN('mi');
+    let runner: Runner = await getRunner(Const_dbname);
     let em = new EmulateMagic(runner);
     console.log('emulate begin day: ' + date);
     let year = Math.floor(date / 10000);
@@ -18,8 +18,8 @@ export async function emulateAtDay(date: number) {
     month = Math.floor(month / 100);
     date = year * 10000 + month * 100 + 1;
     let p = { year: year, month: month, day: 1, date: date };
-    await runner.query('clear神奇公式模拟结果', DefaultUnit, undefined, [year, month]);
-    await runner.query('clear神奇公式模拟结果明细', DefaultUnit, undefined, [-1, date]);
+    await runner.call('tv_神奇公式模拟结果$delete', [year, month]);
+    await runner.call('tv_神奇公式模拟结果明细$delete', [-1, date]);
     await em.proceeOneDay(p);
     console.log('emulate end day: ' + date);
   }
@@ -34,11 +34,10 @@ export async function emulateAll() {
     return;
   RemoteRun(true);
   try {
-    let runner: Runner = await getRunnerN('mi');
+    let runner: Runner = await getRunner(Const_dbname);
     let em = new EmulateMagic(runner);
-    let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
-    await runner.sql(sql, []);
-    await runner.query('clear神奇公式模拟结果明细', DefaultUnit, undefined, [-1, -1]);
+    await runner.call('tv_神奇公式模拟结果$delete', [-1, -1]);
+    await runner.call('tv_神奇公式模拟结果明细$delete', [-1, -1]);
 
     for (let year = 2001; year < 2019; ++year) {
       for (let month = 1; month <= 1; month += 1) {
@@ -62,12 +61,12 @@ export async function allStocksAvg(begin: number, end: number) {
     return;
   RemoteRun(true);
   try {
-    let runner: Runner = await getRunnerN('mi');
+    let runner: Runner = await getRunner(Const_dbname);
 
     let ret: any[] = [];
     let pageStart = 0, pageSize = 500;
     for (; ;) {
-      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
       let arr = ids[0];
       if (arr.length > pageSize) {
         let top = arr.pop();
@@ -88,7 +87,7 @@ export async function allStocksAvg(begin: number, end: number) {
     for (let i = 0; i < count; ++i) {
       let code = ret[i];
       let { id } = code;
-      let pret = await runner.query('getStockRestorePrice', DefaultUnit, undefined, [id, dayBegin, dayEnd]);
+      let pret = await runner.call('tv_getStockRestorePrice', [id, dayBegin, dayEnd]);
       let parr = pret as any[];
       let r = parr[0];
       if (r !== undefined) {
@@ -107,7 +106,7 @@ export async function allStocksAvg(begin: number, end: number) {
     if (rCount > 0) {
       sum = sum / rCount;
       console.log('股数: ' + rCount + '  平均涨幅：' + sum + ' dayBegin=' + dayBegin + ' dayEnd=' + dayEnd);
-      await runner.mapSave('股市平均涨幅', DefaultUnit, undefined,
+      await runner.call('tv_股市平均涨幅$save',
         [dayBegin, dayEnd, sum, rCount]);
     }
   }
@@ -126,9 +125,9 @@ class EmulateMagic {
     try {
       let { year, month, date } = p as { year: number, month: number, date: number }
       let rowroe: any[] = [date];
-      await this.runner.query('calcMagicOrder', DefaultUnit, undefined, rowroe);
+      await this.runner.call('tv_calcMagicOrder', rowroe);
 
-      let ret = await this.runner.query('getmagicorderresult', DefaultUnit, undefined, []);
+      let ret = await this.runner.query('tv_getmagicorderresult', [2000]);
       let arr = ret as any[];
 
       let dayEnd = date + 10000;
@@ -154,7 +153,7 @@ class EmulateMagic {
     for (; i < end; ++i) {
       let code = codes[i];
       let { stock } = code;
-      let pret = await this.runner.query('getStockRestorePrice', DefaultUnit, undefined, [stock, dayBegin, dayEnd]);
+      let pret = await this.runner.query('tv_getStockRestorePrice', [stock, dayBegin, dayEnd]);
       let parr = pret as any[];
       let r = parr[0];
       if (r !== undefined) {
@@ -164,14 +163,14 @@ class EmulateMagic {
           ++rCount;
           let zf = (priceEx / priceBegin - 1) * 100;
           sum += zf;
-          await this.runner.mapSave('神奇公式模拟结果明细', DefaultUnit, undefined, [groupIndex, date, stock, zf]);
+          await this.runner.call('tv_神奇公式模拟结果明细$save', [groupIndex, date, stock, zf]);
         }
       }
     }
 
     if (rCount > 0 && rCount >= GroupSize / 2) {
       sum /= rCount;
-      await this.runner.mapSave('神奇公式模拟结果', DefaultUnit, undefined,
+      await this.runner.call('tv_神奇公式模拟结果$save',
         [groupIndex, year, month, sum, rCount]);
     }
   }

@@ -1,7 +1,7 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 import * as cheerio from 'cheerio';
 
 export async function scanSinaFinance(start:number) {
@@ -10,12 +10,12 @@ export async function scanSinaFinance(start:number) {
   RemoteRun(true);
 
   try {
-    let runner = await getRunnerN('mi');
+    let runner = await getRunner(Const_dbname);
     let sinaer = new SinaFinace(runner);
       let ret: any[] = [];
     let pageStart = start, pageSize = 100;
     for (; ;) {
-      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
       let arr = ids[0];
       if (arr.length > pageSize) {
         let top = arr.pop();
@@ -158,12 +158,11 @@ class SinaFinace {
           nitem.push(value);
         }
         if (findData) {
-          await this.runner.mapSave('新浪财务指标', DefaultUnit, undefined, nitem);
+          await this.runner.query('tv_新浪财务指标$save', nitem);
         }
       }
     }
   
     console.log('scan sinaFinance, code: ' + id + ' - ' + symbol);
-
   }
 }

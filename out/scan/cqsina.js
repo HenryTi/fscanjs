@@ -8,20 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
 const cheerio = require("cheerio");
 function scanSinaExRight() {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield runner_1.getRunnerN('mi');
+        let runner = yield db_1.getRunner(const_1.Const_dbname);
         let sinaer = new SinaExRight(runner);
         try {
             let ret = [];
             let pageStart = 0, pageSize = 100;
             for (;;) {
-                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
                 let arr = ids[0];
                 if (arr.length > pageSize) {
                     let top = arr.pop();
@@ -148,12 +148,11 @@ class SinaExRight {
                 }
             });
             rows.forEach((item) => {
-                promiseArr.push(this.runner.mapSave('新浪除权信息', const_1.DefaultUnit, undefined, item));
+                promiseArr.push(this.runner.call('tv_新浪除权信息$save', item));
             });
             if (promiseArr.length > 0)
                 yield Promise.all(promiseArr);
-            let paramObj = { stock: id };
-            yield this.runner.actionFromObj('计算除权因子', const_1.DefaultUnit, undefined, paramObj);
+            yield this.runner.call('tv_计算除权因子', [id]);
         });
     }
 }

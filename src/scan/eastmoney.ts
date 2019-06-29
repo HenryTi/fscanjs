@@ -1,7 +1,7 @@
 import * as request from 'request';
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, RemoteIsRun, RemoteRun } from '../gfuncs';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
 const financeAnalysisSeasonUrl = 'http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=2&code=';
@@ -13,13 +13,13 @@ export async function scanEastmoney() {
   RemoteRun(true);
 
   try {
-    let runner = await getRunnerN('mi');
+    let runner = await getRunner(Const_dbname);
     let f = new FechStockContents(runner);
 
     let ret: any[] = [];
     let pageStart = 0, pageSize = 500;
     for (; ;) {
-      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
       let arr = ids[0];
       if (arr.length > pageSize) {
         let top = arr.pop();
@@ -230,7 +230,7 @@ class FechStockContents {
           this.checkToNumber(i, 流通受限股份),
           this.checkToString(i, 变动原因).substring(0, 64),
         ];
-        promiseArr.push(this.runner.mapSave('东方财富历年股本', DefaultUnit, undefined, row));
+        promiseArr.push(this.runner.query('tv_东方财富历年股本$save', row));
       }
       await Promise.all(promiseArr);
     }
@@ -286,7 +286,7 @@ class FechStockContents {
               this.checkToNumber1(item.ldbl),
               this.checkToNumber1(item.sdbl),
             ];
-            promiseArr.push(this.runner.mapSave('东方财富财务分析', DefaultUnit, undefined, row));
+            promiseArr.push(this.runner.query('tv_东方财富财务分析$save', row));
           }
         }
       });
@@ -331,7 +331,7 @@ class FechStockContents {
               this.checkToNumber1(item.mll),
               this.checkToNumber1(item.jll),
             ];
-            promiseArr.push(this.runner.mapSave('东方财富财务分析季报', DefaultUnit, undefined, row));
+            promiseArr.push(this.runner.query('tv_东方财富财务分析季报$save', row));
           }
         }
       });

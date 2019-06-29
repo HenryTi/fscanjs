@@ -1,15 +1,15 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 
 export async function updateAllDividend() {
-  let runner: Runner = await getRunnerN('mi');
+  let runner: Runner = await getRunner(Const_dbname);
   console.log('updateAllDividend start')
 
   let ret: any[] = [];
   let pageStart = 0, pageSize = 500;
   for (; ;) {
-    let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+    let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
     let arr = ids[0];
     if (arr.length > pageSize) {
       let top = arr.pop();
@@ -24,7 +24,7 @@ export async function updateAllDividend() {
   let count = ret.length;
 
   try {
-    await runner.query('cleardividendall', DefaultUnit, undefined, []);
+    await runner.call('tv_dividend$clearall', []);
   }
   catch (err) {
 
@@ -44,7 +44,7 @@ function checkNull(v:any) {
 async function calculateOne(code: any, runner: Runner) {
   try {
     let { id, symbol } = code;
-    let pret = await runner.mapQuery('股票分红', DefaultUnit, undefined, [id, undefined]);
+    let pret = await runner.query('tv_股票分红$query', [id, undefined]);
     let parr = pret as any[];
     if (parr.length <= 0)
       return;
@@ -57,7 +57,7 @@ async function calculateOne(code: any, runner: Runner) {
       if (bonus <= 0)
         return;
       let year:number = Math.floor(日期/10000);
-      let priceret = await runner.query('getstocklastprice', DefaultUnit, undefined, [id, 日期]);
+      let priceret = await runner.query('tv_getstocklastprice', [id, 日期]);
       if (priceret.length <= 0)
         continue;
       let { price } = priceret[0] as { price:number};
@@ -76,9 +76,9 @@ async function calculateOne(code: any, runner: Runner) {
     for (i = 0; i < years[i]; ++i) {
       let ys = years[i];
       let divident = ce[ys];
-      await runner.mapSave('dividend', DefaultUnit, undefined, [id, ys, divident]); 
+      await runner.call('tv_dividend$save', [id, ys, divident]); 
     }
-    console.log('updateDividend id: ' + id + ' , ' + symbol);
+    //console.log('updateDividend id: ' + id + ' , ' + symbol);
   }
   catch (err) {
     console.log(err);

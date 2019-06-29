@@ -12,7 +12,7 @@ const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
 function doTest() {
     return __awaiter(this, void 0, void 0, function* () {
-        //let runner: Runner = await getRunner('mi');
+        //let runner: Runner = await getRunner(Const_dbname);
         //let pret = await runner.mapQuery('新浪财务指标', DefaultUnit, undefined, [1, undefined, 12]);
         //debugger;
     });

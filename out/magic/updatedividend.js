@@ -8,16 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const const_1 = require("../const");
 function updateAllDividend() {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield runner_1.getRunnerN('mi');
+        let runner = yield db_1.getRunner(const_1.Const_dbname);
         console.log('updateAllDividend start');
         let ret = [];
         let pageStart = 0, pageSize = 500;
         for (;;) {
-            let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+            let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
             let arr = ids[0];
             if (arr.length > pageSize) {
                 let top = arr.pop();
@@ -31,7 +31,7 @@ function updateAllDividend() {
         }
         let count = ret.length;
         try {
-            yield runner.query('cleardividendall', const_1.DefaultUnit, undefined, []);
+            yield runner.call('tv_dividend$clearall', []);
         }
         catch (err) {
         }
@@ -51,7 +51,7 @@ function calculateOne(code, runner) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let { id, symbol } = code;
-            let pret = yield runner.mapQuery('股票分红', const_1.DefaultUnit, undefined, [id, undefined]);
+            let pret = yield runner.query('tv_股票分红$query', [id, undefined]);
             let parr = pret;
             if (parr.length <= 0)
                 return;
@@ -64,7 +64,7 @@ function calculateOne(code, runner) {
                 if (bonus <= 0)
                     return;
                 let year = Math.floor(日期 / 10000);
-                let priceret = yield runner.query('getstocklastprice', const_1.DefaultUnit, undefined, [id, 日期]);
+                let priceret = yield runner.query('tv_getstocklastprice', [id, 日期]);
                 if (priceret.length <= 0)
                     continue;
                 let { price } = priceret[0];
@@ -83,9 +83,9 @@ function calculateOne(code, runner) {
             for (i = 0; i < years[i]; ++i) {
                 let ys = years[i];
                 let divident = ce[ys];
-                yield runner.mapSave('dividend', const_1.DefaultUnit, undefined, [id, ys, divident]);
+                yield runner.call('tv_dividend$save', [id, ys, divident]);
             }
-            console.log('updateDividend id: ' + id + ' , ' + symbol);
+            //console.log('updateDividend id: ' + id + ' , ' + symbol);
         }
         catch (err) {
             console.log(err);

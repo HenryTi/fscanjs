@@ -1,3 +1,21 @@
+MAP noeorder(
+  key stock id 股票 not null,
+  o int not null,
+  noe DEC(12,6) NOT NULL,
+  roe DEC(12,6) NOT NULL,
+  pe DEC(12,6) NOT NULL,
+  INDEX i_order(o)
+);
+
+MAP magicorder(
+  key stock id 股票 not null,
+  o INT NOT NULL,
+  pr  INT NOT NULL,
+  pe DECIMAL(12,6) NOT NULL,
+  roe DECIMAL(12,6) NOT NULL,
+  INDEX i_order(o)
+);
+
 QUERY calcMagicOrder2(
   day int
 )
@@ -8,35 +26,12 @@ QUERY calcMagicOrder2(
   var lastyear int = year-1;
 
   /-mysql
-  CREATE TABLE IF NOT EXISTS `c_noeorder` (
-	  `stock` INT(11) NOT NULL,
-	  `order` INT(11) NOT NULL,
-	  `noe` DECIMAL(12,6) NOT NULL,
-	  `roe` DECIMAL(12,6) NOT NULL,
-	  `pe` DECIMAL(12,6) NOT NULL,
-	  PRIMARY KEY (`stock`),
-	  INDEX `order` (`order`)
-  )
-  COLLATE='utf8_general_ci'
-  ENGINE=InnoDB
-  ;
-
-  CREATE TABLE IF NOT EXISTS `c_peorder` (
-	  `stock` INT(11) NOT NULL,
-	  `order` INT(11) NOT NULL,
-	  `pe` DECIMAL(12,4) NOT NULL,
-	  PRIMARY KEY (`stock`),
-  	INDEX `order` (`order`)
-  )
-  ENGINE=InnoDB
-  ;
 
   select max(`日期`) into `_fday_2` from `tv_股票价格历史` where `日期`<=`_day`;
   
-  delete from `c_noeorder` where 1=1;
-  delete from `c_peorder` where 1=1;
+  delete from `tv_noeorder` where 1=1;
   DROP TEMPORARY TABLE IF EXISTS `_pe`;
-  CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id int null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
+  CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id int null, `pe` DECIMAL(12,4) NULL, INDEX i_id (id)) ENGINE=MyISAM;
 
   INSERT INTO `_pe` (id, `pe`)
     SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`e`, b.`价格`, _daybegin_3, _fday_2) as `pe`
@@ -44,21 +39,16 @@ QUERY calcMagicOrder2(
       b.`日期`=`_fday_2` and a.`year`=`_lastyear_4` and a.`e` > 0
     order by pe asc;
 
-  INSERT INTO `c_peorder` (`stock`, `order`, `pe`)
-    SELECT id as `stock`, `serial` as `order`, `pe` AS `pe`
-      FROM `_pe`
-      WHERE 1=1;
-
   DROP TEMPORARY TABLE IF EXISTS `_noe`;
   CREATE TEMPORARY TABLE `_noe` (`serial` int not null auto_increment primary key, id int null,`noe` DECIMAL(12,6) NULL, `roe` DECIMAL(12,6) NULL, `pe` DECIMAL(12,6) NULL) ENGINE=MyISAM;
   INSERT INTO `_noe` (id, `noe`, `roe`, `pe`)
     SELECT a.stock as id, pow((1+a.`roe`),2) / b.`pe` as `noe`, a.`roe` AS `roe`, b.`pe` as `pe`
-    FROM `tv_roe` AS a inner join `c_peorder` b
-    on a.`stock`=b.`stock` and a.`year`=`_lastyear_4`
+    FROM `tv_roe` AS a inner join `_pe` b
+    on a.`stock`=b.`id` and a.`year`=`_lastyear_4`
     ORDER BY `noe` DESC;
 
-  INSERT INTO `c_noeorder` (`stock`, `order`, `noe`, `roe`, `pe`)
-  SELECT id as `stock`, `serial` as `order`, `noe`, `roe`, `pe`
+  INSERT INTO `tv_noeorder` (`stock`, `o`, `noe`, `roe`, `pe`)
+  SELECT id as `stock`, `serial` as `o`, `noe`, `roe`, `pe`
     FROM `_noe`
     WHERE 1=1;
 
@@ -75,58 +65,19 @@ QUERY calcMagicOrder(
   var lastyear int = year-1;
 
   /-mysql
-  CREATE TABLE IF NOT EXISTS `c_roeorder` (
-	  `stock` INT(11) NOT NULL,
-	  `order` INT(11) NOT NULL,
-	  `roe` DECIMAL(12,4) NOT NULL,
-	  PRIMARY KEY (`stock`),
-	  INDEX `order` (`order`)
-  )
-  COLLATE='utf8_general_ci'
-  ENGINE=InnoDB
-  ;
 
-  delete from `c_roeorder` where 1=1;
   DROP TEMPORARY TABLE IF EXISTS `_roe`;
-  CREATE TEMPORARY TABLE `_roe` (`serial` int not null auto_increment primary key, id int null, `roe` DECIMAL(18,4) NULL) ENGINE=MyISAM;
+  CREATE TEMPORARY TABLE `_roe` (`serial` int not null auto_increment primary key, id int null, `roe` DECIMAL(18,4) NULL, INDEX i_id (id)) ENGINE=MyISAM;
   INSERT INTO `_roe` (id, `roe`)
     SELECT a.stock as id, a.`roe` AS `roe`
     FROM `tv_roe` AS a
     WHERE a.`year`=`_lastyear_4`
     ORDER BY roe DESC;
 
-  INSERT INTO `c_roeorder` (`stock`, `order`, `roe`)
-  SELECT id as `stock`, `serial` as `order`, `roe` AS `roe`
-    FROM `_roe`
-    WHERE 1=1;
-
-  CREATE TABLE IF NOT EXISTS `c_peorder` (
-	  `stock` INT(11) NOT NULL,
-	  `order` INT(11) NOT NULL,
-	  `pe` DECIMAL(12,4) NOT NULL,
-	  PRIMARY KEY (`stock`),
-  	INDEX `order` (`order`)
-  )
-  ENGINE=InnoDB
-  ;
-
-  CREATE TABLE IF NOT EXISTS `c_magicorder` (
-	  `stock` INT(11) NOT NULL,
-	  `order` INT(11) NOT NULL,
-	  `pr` INT(11) NOT NULL,
-    `pe` DECIMAL(12,4) NOT NULL,
-    `roe` DECIMAL(12,4) NOT NULL,
-	  PRIMARY KEY (`stock`),
-	  INDEX `order` (`order`)
-  )
-  ENGINE=InnoDB
-  ;
-
   select max(`日期`) into `_fday_2` from `tv_股票价格历史` where `日期`<=`_day`;
   
-  delete from `c_peorder` where 1=1;
   DROP TEMPORARY TABLE IF EXISTS `_pe`;
-  CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id int null, `pe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
+  CREATE TEMPORARY TABLE `_pe` (`serial` int not null auto_increment primary key, id int null, `pe` DECIMAL(12,4) NULL, INDEX i_id (id)) ENGINE=MyISAM;
 
   INSERT INTO `_pe` (id, `pe`)
     SELECT a.`stock` as `id`, f_getstockpe(a.`stock`, a.`earning`, b.`价格`, _daybegin_3, _fday_2) as `pe`
@@ -134,21 +85,16 @@ QUERY calcMagicOrder(
       b.`日期`=`_fday_2` and a.`year`=`_lastyear_4` and a.`earning` > 0
     order by pe asc;
 
-  INSERT INTO `c_peorder` (`stock`, `order`, `pe`)
-    SELECT id as `stock`, `serial` as `order`, `pe` AS `pe`
-      FROM `_pe`
-      WHERE 1=1;
-
   DROP TEMPORARY TABLE IF EXISTS `_mo`;
   CREATE TEMPORARY TABLE `_mo` (`serial` int not null auto_increment primary key, id int null, `pr` int null, `pe` DECIMAL(12,4) NULL,`roe` DECIMAL(12,4) NULL) ENGINE=MyISAM;
 
   insert into `_mo` (`id`, `pr`, `pe`, `roe`) 
-    select a.`stock` as `id`, (a.`order` + b.`order`) as `pr`, b.`pe` as `pe`, a.`roe` as `roe` 
-    from `c_roeorder` as a inner join `c_peorder` as b on a.`stock` = b.`stock` order by `pr` asc;
+    select a.`id` as `id`, (a.`serial` + b.`serial`) as `pr`, b.`pe` as `pe`, a.`roe` as `roe` 
+    from `_roe` as a inner join `_pe` as b on a.`id` = b.`id` order by `pr` asc;
 
-  delete from `c_magicorder` where 1=1;
-  insert into `c_magicorder` (`stock`, `order`, `pr`, `pe`, `roe`) 
-    SELECT id as `stock`, `serial` as `order`, `pr`, `pe`, `roe`
+  delete from `tv_magicorder` where 1=1;
+  insert into `tv_magicorder` (`stock`, `o`, `pr`, `pe`, `roe`) 
+    SELECT id as `stock`, `serial` as `o`, `pr`, `pe`, `roe`
       FROM `_mo`
       WHERE 1=1;
 
@@ -203,8 +149,8 @@ QUERY getmagicorderresult(
 {
   /-mysql
 
-  select a.`stock` as `stock`, a.`order` as `order`, b.`symbol` as `symbol` 
-    from `c_magicorder` as a left join `tv_股票` as b 
+  select a.`stock` as `stock`, a.`o` as `order`, b.`symbol` as `symbol` 
+    from `tv_magicorder` as a left join `tv_股票` as b 
     on a.stock = b.id 
     order by `order` 
     limit 3000;
@@ -217,8 +163,8 @@ QUERY getnoeorderresult(
 {
   /-mysql
 
-  select a.`stock` as `stock`, a.`order` as `order`, b.`symbol` as `symbol` 
-    from `c_noeorder` as a left join `tv_股票` as b 
+  select a.`stock` as `stock`, a.`o` as `order`, b.`symbol` as `symbol` 
+    from `tv_noeorder` as a left join `tv_股票` as b 
     on a.stock = b.id 
     order by `order` 
     limit 3000;

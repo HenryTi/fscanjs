@@ -45,11 +45,9 @@ MAP emulateResult (
 );
 
 QUERY clearOneEmulateType (
-  type ID
+  t ID
 ){
-  /-mysql
-  delete from tv_emulateTrade where `type`=`_type`;
-  delete from tv_emulateShares where `type`=`_type`;
-  delete from tv_emulateResult where `type`=`_type`;
-  -/
+  delete from emulateTrade where type=t;
+  delete from emulateShares where type=t;
+  delete from emulateResult where type=t;
 };

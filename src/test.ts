@@ -7,15 +7,14 @@ import eastmoneyRouter from './router/eastmoney';
 import { fetchSinaContent } from './scan/sina';
 import * as cheerio from 'cheerio';
 import { scanSinaExRight } from './scan/cqsina';
-import { getRunner, Runner } from './uq-api/db';
-import { DefaultUnit } from './const';
-import { packParam } from './uq-api/core/packParam';
+import { getRunner, Runner } from './db';
+import { Const_dbname } from './const';
 import { emulateAtDay, emulateAll, allStocksAvg } from './magic/emulatemagic';
 import { scanSinaFinance } from './scan/financesina';
 import { updateAllEarning } from './magic/updateEarnig';
 
 export async function doTest() {
-  //let runner: Runner = await getRunner('mi');
+  //let runner: Runner = await getRunner(Const_dbname);
   //let pret = await runner.mapQuery('新浪财务指标', DefaultUnit, undefined, [1, undefined, 12]);
   //debugger;
 }

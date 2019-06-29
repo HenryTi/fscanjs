@@ -8,18 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const runner_1 = require("../runner");
 const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
+const db_1 = require("../db");
 function caclulateExRight() {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield runner_1.getRunnerN('mi');
+        let runner = yield db_1.getRunner(const_1.Const_dbname);
         let sinaer = new CalculateSinaExRight(runner);
         try {
             let ret = [];
             let pageStart = 0, pageSize = 100;
             for (;;) {
-                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
                 let arr = ids[0];
                 if (arr.length > pageSize) {
                     let top = arr.pop();
@@ -97,8 +97,7 @@ class CalculateSinaExRight {
     scanItem(item) {
         return __awaiter(this, void 0, void 0, function* () {
             let { id, symbol, code } = item;
-            let paramObj = { stock: id };
-            yield this.runner.actionFromObj('计算除权因子', const_1.DefaultUnit, undefined, paramObj);
+            yield this.runner.call('tv_计算除权因子', [id]);
         });
     }
 }

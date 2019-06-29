@@ -1,17 +1,18 @@
-import { getRunnerN, Runner } from '../runner';
+
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
 import { fetchSinaContent } from './sina';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 import * as cheerio from 'cheerio';
+import { getRunner, Runner } from '../db';
 
 export async function caclulateExRight() {
-  let runner = await getRunnerN('mi');
+  let runner = await getRunner(Const_dbname);
   let sinaer = new CalculateSinaExRight(runner);
   try {
     let ret: any[] = [];
     let pageStart = 0, pageSize = 100;
     for (; ;) {
-      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
       let arr = ids[0];
       if (arr.length > pageSize) {
         let top = arr.pop();
@@ -89,7 +90,6 @@ class CalculateSinaExRight {
 
   protected async scanItem(item: any) {
     let { id, symbol, code } = item as { id: number, symbol: string, code: string };
-    let paramObj :any = {stock:id};
-    await this.runner.actionFromObj('计算除权因子', DefaultUnit, undefined, paramObj);
+    await this.runner.call('tv_计算除权因子', [id]);
   }
 }

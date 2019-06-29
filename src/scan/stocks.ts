@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { getRunnerN, Runner } from '../runner';
-import { DefaultUnit } from '../const';
+import { getRunner, Runner } from '../db';
+import { Const_dbname } from '../const';
 
 const jsonPath = '../data/shsz.json';
 
-getRunnerN('mi').then(async (runner) => {
+getRunner(Const_dbname).then(async (runner) => {
   let p = path.resolve(__dirname, jsonPath);
   let content:string = fs.readFileSync(p, 'utf-8');
   let arr = JSON.parse(content); 
@@ -17,7 +17,7 @@ getRunnerN('mi').then(async (runner) => {
       market = (market as string).toUpperCase().trim();
       let symbol = (market as string).toLowerCase() + code;
       let row:any[] = [undefined, symbol, market, code, name, undefined];
-      promiseArr.push(runner.tuidSave('股票', DefaultUnit, undefined, row));
+      promiseArr.push(runner.call('tv_股票$save', row));
       if (promiseArr.length >= 100) {
         await Promise.all(promiseArr);
         promiseArr.splice(0, promiseArr.length);

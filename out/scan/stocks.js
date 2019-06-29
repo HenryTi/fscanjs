@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const const_1 = require("../const");
 const jsonPath = '../data/shsz.json';
-runner_1.getRunnerN('mi').then((runner) => __awaiter(this, void 0, void 0, function* () {
+db_1.getRunner(const_1.Const_dbname).then((runner) => __awaiter(this, void 0, void 0, function* () {
     let p = path.resolve(__dirname, jsonPath);
     let content = fs.readFileSync(p, 'utf-8');
     let arr = JSON.parse(content);
@@ -24,7 +24,7 @@ runner_1.getRunnerN('mi').then((runner) => __awaiter(this, void 0, void 0, funct
             market = market.toUpperCase().trim();
             let symbol = market.toLowerCase() + code;
             let row = [undefined, symbol, market, code, name, undefined];
-            promiseArr.push(runner.tuidSave('股票', const_1.DefaultUnit, undefined, row));
+            promiseArr.push(runner.call('tv_股票$save', row));
             if (promiseArr.length >= 100) {
                 yield Promise.all(promiseArr);
                 promiseArr.splice(0, promiseArr.length);

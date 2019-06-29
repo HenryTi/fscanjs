@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
 const GroupSize = 30;
@@ -19,7 +19,7 @@ function emulateAtDay(date) {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield runner_1.getRunnerN('mi');
+            let runner = yield db_1.getRunner(const_1.Const_dbname);
             let em = new EmulateMagic(runner);
             console.log('emulate begin day: ' + date);
             let year = Math.floor(date / 10000);
@@ -27,8 +27,8 @@ function emulateAtDay(date) {
             month = Math.floor(month / 100);
             date = year * 10000 + month * 100 + 1;
             let p = { year: year, month: month, day: 1, date: date };
-            yield runner.query('clear神奇公式模拟结果', const_1.DefaultUnit, undefined, [year, month]);
-            yield runner.query('clear神奇公式模拟结果明细', const_1.DefaultUnit, undefined, [-1, date]);
+            yield runner.call('tv_神奇公式模拟结果$delete', [year, month]);
+            yield runner.call('tv_神奇公式模拟结果明细$delete', [-1, date]);
             yield em.proceeOneDay(p);
             console.log('emulate end day: ' + date);
         }
@@ -45,11 +45,10 @@ function emulateAll() {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield runner_1.getRunnerN('mi');
+            let runner = yield db_1.getRunner(const_1.Const_dbname);
             let em = new EmulateMagic(runner);
-            let sql = 'delete from tv_神奇公式模拟结果 where 1=1';
-            yield runner.sql(sql, []);
-            yield runner.query('clear神奇公式模拟结果明细', const_1.DefaultUnit, undefined, [-1, -1]);
+            yield runner.call('tv_神奇公式模拟结果$delete', [-1, -1]);
+            yield runner.call('tv_神奇公式模拟结果明细$delete', [-1, -1]);
             for (let year = 2001; year < 2019; ++year) {
                 for (let month = 1; month <= 1; month += 1) {
                     let date = year * 10000 + month * 100 + 1;
@@ -74,11 +73,11 @@ function allStocksAvg(begin, end) {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield runner_1.getRunnerN('mi');
+            let runner = yield db_1.getRunner(const_1.Const_dbname);
             let ret = [];
             let pageStart = 0, pageSize = 500;
             for (;;) {
-                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
                 let arr = ids[0];
                 if (arr.length > pageSize) {
                     let top = arr.pop();
@@ -98,7 +97,7 @@ function allStocksAvg(begin, end) {
             for (let i = 0; i < count; ++i) {
                 let code = ret[i];
                 let { id } = code;
-                let pret = yield runner.query('getStockRestorePrice', const_1.DefaultUnit, undefined, [id, dayBegin, dayEnd]);
+                let pret = yield runner.call('tv_getStockRestorePrice', [id, dayBegin, dayEnd]);
                 let parr = pret;
                 let r = parr[0];
                 if (r !== undefined) {
@@ -116,7 +115,7 @@ function allStocksAvg(begin, end) {
             if (rCount > 0) {
                 sum = sum / rCount;
                 console.log('股数: ' + rCount + '  平均涨幅：' + sum + ' dayBegin=' + dayBegin + ' dayEnd=' + dayEnd);
-                yield runner.mapSave('股市平均涨幅', const_1.DefaultUnit, undefined, [dayBegin, dayEnd, sum, rCount]);
+                yield runner.call('tv_股市平均涨幅$save', [dayBegin, dayEnd, sum, rCount]);
             }
         }
         catch (err) { }
@@ -133,8 +132,8 @@ class EmulateMagic {
             try {
                 let { year, month, date } = p;
                 let rowroe = [date];
-                yield this.runner.query('calcMagicOrder', const_1.DefaultUnit, undefined, rowroe);
-                let ret = yield this.runner.query('getmagicorderresult', const_1.DefaultUnit, undefined, []);
+                yield this.runner.call('tv_calcMagicOrder', rowroe);
+                let ret = yield this.runner.query('tv_getmagicorderresult', [2000]);
                 let arr = ret;
                 let dayEnd = date + 10000;
                 for (let i = 0; i < MaxGroup; ++i) {
@@ -159,7 +158,7 @@ class EmulateMagic {
             for (; i < end; ++i) {
                 let code = codes[i];
                 let { stock } = code;
-                let pret = yield this.runner.query('getStockRestorePrice', const_1.DefaultUnit, undefined, [stock, dayBegin, dayEnd]);
+                let pret = yield this.runner.query('tv_getStockRestorePrice', [stock, dayBegin, dayEnd]);
                 let parr = pret;
                 let r = parr[0];
                 if (r !== undefined) {
@@ -169,13 +168,13 @@ class EmulateMagic {
                         ++rCount;
                         let zf = (priceEx / priceBegin - 1) * 100;
                         sum += zf;
-                        yield this.runner.mapSave('神奇公式模拟结果明细', const_1.DefaultUnit, undefined, [groupIndex, date, stock, zf]);
+                        yield this.runner.call('tv_神奇公式模拟结果明细$save', [groupIndex, date, stock, zf]);
                     }
                 }
             }
             if (rCount > 0 && rCount >= GroupSize / 2) {
                 sum /= rCount;
-                yield this.runner.mapSave('神奇公式模拟结果', const_1.DefaultUnit, undefined, [groupIndex, year, month, sum, rCount]);
+                yield this.runner.call('tv_神奇公式模拟结果$save', [groupIndex, year, month, sum, rCount]);
             }
         });
     }

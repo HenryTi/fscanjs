@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
@@ -19,12 +19,12 @@ function scanSinaFinance(start) {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield runner_1.getRunnerN('mi');
+            let runner = yield db_1.getRunner(const_1.Const_dbname);
             let sinaer = new SinaFinace(runner);
             let ret = [];
             let pageStart = start, pageSize = 100;
             for (;;) {
-                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
                 let arr = ids[0];
                 if (arr.length > pageSize) {
                     let top = arr.pop();
@@ -164,7 +164,7 @@ class SinaFinace {
                         nitem.push(value);
                     }
                     if (findData) {
-                        yield this.runner.mapSave('新浪财务指标', const_1.DefaultUnit, undefined, nitem);
+                        yield this.runner.query('tv_新浪财务指标$save', nitem);
                     }
                 }
             }

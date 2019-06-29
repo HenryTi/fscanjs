@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
@@ -18,11 +18,11 @@ function scanSinaQuotations() {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield runner_1.getRunnerN('mi');
+            let runner = yield db_1.getRunner(const_1.Const_dbname);
             let ret = [];
             let pageStart = 0, pageSize = 500;
             for (;;) {
-                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
                 let arr = ids[0];
                 if (arr.length > pageSize) {
                     let top = arr.pop();
@@ -151,7 +151,7 @@ class SinaQuotationGroup {
                     throw 'hqsina 返回格式错误';
                 if (row[3] === '0.000')
                     continue;
-                promiseArr.push(this.runner.mapSave('股票价格', const_1.DefaultUnit, undefined, row));
+                promiseArr.push(this.runner.call('tv_股票价格$save', row));
             }
             if (promiseArr.length > 0) {
                 yield Promise.all(promiseArr);

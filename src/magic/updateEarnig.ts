@@ -1,14 +1,14 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 
 export async function updateAllEarning() {
-  let runner: Runner = await getRunnerN('mi');
+  let runner: Runner = await getRunner(Const_dbname);
 
   let ret: any[] = [];
   let pageStart = 0, pageSize = 500;
   for (; ;) {
-    let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+    let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
     let arr = ids[0];
     if (arr.length > pageSize) {
       let top = arr.pop();
@@ -23,7 +23,7 @@ export async function updateAllEarning() {
   let count = ret.length;
 
   try {
-    await runner.query('clearcapitalearningall', DefaultUnit, undefined, []);
+    await runner.query('tv_capitalearning$clear', []);
   }
   catch (err) {
 
@@ -43,7 +43,7 @@ function checkNull(v:any) {
 async function calculateOne(code: any, runner: Runner) {
   try {
     let { id } = code;
-    let pret = await runner.mapQuery('新浪财务指标', DefaultUnit, undefined, [id, undefined, 12]);
+    let pret = await runner.query('tv_新浪财务指标$query', [id, undefined, 12]);
     let parr = pret as any[];
     for (let i = 0; i < parr.length;  ++i) {
       let item = parr[i];
@@ -70,7 +70,7 @@ async function calculateOne(code: any, runner: Runner) {
       let e = Number(earning);
       if (e >= 1000)
         continue;
-      await runner.mapSave('capitalearning', DefaultUnit, undefined, [id, year, capital, e]);
+      await runner.call('tv_capitalearning$save', [id, year, capital, e]);
     }
   }
   catch (err) {

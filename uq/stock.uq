@@ -106,7 +106,7 @@ RETURNS ret (
   if price > 0 {
     set priceb = a.价格, day2 = a.日期
       from 股票价格历史 as a 
-        where a.股票 = stock and a.日期 >= dayEnd order by a.日期 ASC limit 1;
+        where a.股票 = stock and a.日期 <= dayEnd order by a.日期 DESC limit 1;
     if priceb > 0 {
       set priceex = priceb;
       set bonus = 0;
@@ -125,6 +125,53 @@ RETURNS ret (
         set priceex = priceex / factor;
       }
       into ret select price as priceBegin, day1 as bday, priceb as priceEnd, day2 as eday, priceex as priceEx, bonus as bonus;
+    }
+  }
+};
+
+QUERY getStockRestoreShare(
+  stock ID 股票,
+  dayBegin int,
+  dayEnd int
+)
+RETURNS ret (
+  priceBegin dec(12, 4),
+  bday int,
+  priceEnd dec(12, 4),
+  eday int,
+  rate dec(12,6),
+  bonus dec(12, 4)
+) {
+  var price dec(12,4);
+  var day1 int;
+  var priceb dec(12,4);
+  var day2 int;
+  var bonus dec(12,4) = 0;
+  var rate dec(12, 6) = 1;
+  set price = a.价格, day1 = a.日期
+    from 股票价格历史 as a 
+      where a.股票 = stock and a.日期 >= dayBegin order by a.日期 ASC limit 1;
+  if price > 0 {
+    set priceb = a.价格, day2 = a.日期
+      from 股票价格历史 as a 
+        where a.股票 = stock and a.日期 <= dayEnd order by a.日期 DESC limit 1;
+    if priceb > 0 {
+      set bonus = 0;
+      foreach (var btoadd dec(11,4) of 
+        select a.bonus
+        from 股票分红 as a
+        where a.股票 = stock and a.日期 > day1 and a.日期 <= day2)
+      {
+        set bonus = bonus + btoadd;
+      }
+      foreach (var factor dec(11,8) of
+        select a.factor
+        from 股票除权因子 as a
+        where a.股票 = stock and a.日期 > day1 and a.日期 <= day2)
+      {
+        set rate = rate / factor;
+      }
+      into ret select price as priceBegin, day1 as bday, priceb as priceEnd, day2 as eday, rate as rate, bonus as bonus;
     }
   }
 };

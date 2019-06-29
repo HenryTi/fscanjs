@@ -1,7 +1,7 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 
 export async function scanSinaHistory(len: number, start: number) {
   if (RemoteIsRun())
@@ -9,13 +9,13 @@ export async function scanSinaHistory(len: number, start: number) {
   RemoteRun(true);
 
   try {
-    let runner = await getRunnerN('mi');
+    let runner = await getRunner(Const_dbname);
     let sqg = new SinaHistory(runner);
 
     let ret: any[] = [];
     let pageStart = start, pageSize = 500;
     for (; ;) {
-      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
       let arr = ids[0];
       if (arr.length > pageSize) {
         let top = arr.pop();
@@ -120,7 +120,7 @@ class SinaHistory {
       if (date === undefined)
         continue;
       let row = [id, date, close, open, high, low, volume];
-      promiseArr.push(this.runner.mapSave('股票价格历史', DefaultUnit, undefined, row));
+      promiseArr.push(this.runner.call('tv_股票价格历史$save', row));
       if (promiseArr.length >= 200) {
         await Promise.all(promiseArr);
         promiseArr.splice(0, promiseArr.length);

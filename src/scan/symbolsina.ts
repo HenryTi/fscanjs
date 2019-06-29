@@ -1,7 +1,7 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 
 export async function scanSinaSymbols() {
   if (RemoteIsRun())
@@ -9,7 +9,7 @@ export async function scanSinaSymbols() {
   RemoteRun(true);
 
   try {
-    let runner = await getRunnerN('mi');
+    let runner = await getRunner(Const_dbname);
     let sinaSym = new SinaSymbols(runner);
     await sinaSym.GetHS_A();
   }
@@ -108,7 +108,7 @@ class SinaSymbols {
       name = name.substring(0, 32);
       let market = symbol.substring(0, 2).toUpperCase();
       let row = [undefined, symbol, market, code, name, undefined];
-      await this.runner.tuidSave('股票', DefaultUnit, undefined, row);
+      await this.runner.call('tv_股票$save', row);
     }
 
     return true;

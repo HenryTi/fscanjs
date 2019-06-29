@@ -1,7 +1,7 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkToDateIntHK, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 
 export async function scanSinaQuotations() {
   if (RemoteIsRun())
@@ -9,12 +9,12 @@ export async function scanSinaQuotations() {
   RemoteRun(true);
 
   try {
-    let runner = await getRunnerN('mi');
+    let runner = await getRunner(Const_dbname);
 
     let ret: any[] = [];
     let pageStart = 0, pageSize = 500;
     for (; ;) {
-      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
       let arr = ids[0];
       if (arr.length > pageSize) {
         let top = arr.pop();
@@ -146,7 +146,7 @@ class SinaQuotationGroup {
         throw 'hqsina 返回格式错误';
       if (row[3] === '0.000')
         continue;
-      promiseArr.push(this.runner.mapSave('股票价格', DefaultUnit, undefined, row));
+      promiseArr.push(this.runner.call('tv_股票价格$save', row));
     }
     if (promiseArr.length > 0) {
       await Promise.all(promiseArr);

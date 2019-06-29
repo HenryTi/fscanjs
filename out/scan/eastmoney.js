@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request");
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
 const capitalStockStructureUrl = 'http://f10.eastmoney.com/CapitalStockStructure/CapitalStockStructureAjax?code=';
@@ -21,12 +21,12 @@ function scanEastmoney() {
             return;
         gfuncs_1.RemoteRun(true);
         try {
-            let runner = yield runner_1.getRunnerN('mi');
+            let runner = yield db_1.getRunner(const_1.Const_dbname);
             let f = new FechStockContents(runner);
             let ret = [];
             let pageStart = 0, pageSize = 500;
             for (;;) {
-                let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+                let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
                 let arr = ids[0];
                 if (arr.length > pageSize) {
                     let top = arr.pop();
@@ -232,7 +232,7 @@ class FechStockContents {
                         this.checkToNumber(i, 流通受限股份),
                         this.checkToString(i, 变动原因).substring(0, 64),
                     ];
-                    promiseArr.push(this.runner.mapSave('东方财富历年股本', const_1.DefaultUnit, undefined, row));
+                    promiseArr.push(this.runner.query('tv_东方财富历年股本$save', row));
                 }
                 yield Promise.all(promiseArr);
             }
@@ -288,7 +288,7 @@ class FechStockContents {
                                 this.checkToNumber1(item.ldbl),
                                 this.checkToNumber1(item.sdbl),
                             ];
-                            promiseArr.push(this.runner.mapSave('东方财富财务分析', const_1.DefaultUnit, undefined, row));
+                            promiseArr.push(this.runner.query('tv_东方财富财务分析$save', row));
                         }
                     }
                 });
@@ -332,7 +332,7 @@ class FechStockContents {
                                 this.checkToNumber1(item.mll),
                                 this.checkToNumber1(item.jll),
                             ];
-                            promiseArr.push(this.runner.mapSave('东方财富财务分析季报', const_1.DefaultUnit, undefined, row));
+                            promiseArr.push(this.runner.query('tv_东方财富财务分析季报$save', row));
                         }
                     }
                 });

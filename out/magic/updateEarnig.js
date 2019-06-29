@@ -8,15 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const runner_1 = require("../runner");
+const db_1 = require("../db");
 const const_1 = require("../const");
 function updateAllEarning() {
     return __awaiter(this, void 0, void 0, function* () {
-        let runner = yield runner_1.getRunnerN('mi');
+        let runner = yield db_1.getRunner(const_1.Const_dbname);
         let ret = [];
         let pageStart = 0, pageSize = 500;
         for (;;) {
-            let ids = yield runner.tuidSeach('股票', const_1.DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+            let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
             let arr = ids[0];
             if (arr.length > pageSize) {
                 let top = arr.pop();
@@ -30,7 +30,7 @@ function updateAllEarning() {
         }
         let count = ret.length;
         try {
-            yield runner.query('clearcapitalearningall', const_1.DefaultUnit, undefined, []);
+            yield runner.query('tv_capitalearning$clear', []);
         }
         catch (err) {
         }
@@ -50,7 +50,7 @@ function calculateOne(code, runner) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let { id } = code;
-            let pret = yield runner.mapQuery('新浪财务指标', const_1.DefaultUnit, undefined, [id, undefined, 12]);
+            let pret = yield runner.query('tv_新浪财务指标$query', [id, undefined, 12]);
             let parr = pret;
             for (let i = 0; i < parr.length; ++i) {
                 let item = parr[i];
@@ -76,7 +76,7 @@ function calculateOne(code, runner) {
                 let e = Number(earning);
                 if (e >= 1000)
                     continue;
-                yield runner.mapSave('capitalearning', const_1.DefaultUnit, undefined, [id, year, capital, e]);
+                yield runner.call('tv_capitalearning$save', [id, year, capital, e]);
             }
         }
         catch (err) {

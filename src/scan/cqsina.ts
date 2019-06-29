@@ -1,17 +1,17 @@
-import { getRunnerN, Runner } from '../runner';
+import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
 import { fetchSinaContent } from './sina';
-import { DefaultUnit } from '../const';
+import { Const_dbname } from '../const';
 import * as cheerio from 'cheerio';
 
 export async function scanSinaExRight() {
-  let runner = await getRunnerN('mi');
+  let runner = await getRunner(Const_dbname);
   let sinaer = new SinaExRight(runner);
   try {
     let ret: any[] = [];
     let pageStart = 0, pageSize = 100;
     for (; ;) {
-      let ids = await runner.tuidSeach('股票', DefaultUnit, undefined, undefined, '', pageStart, pageSize);
+      let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
       let arr = ids[0];
       if (arr.length > pageSize) {
         let top = arr.pop();
@@ -139,11 +139,10 @@ class SinaExRight {
       }
     });
     rows.forEach((item: any[]) => {
-      promiseArr.push(this.runner.mapSave('新浪除权信息', DefaultUnit, undefined, item));
+      promiseArr.push(this.runner.call('tv_新浪除权信息$save', item));
     });
     if (promiseArr.length > 0)
       await Promise.all(promiseArr);
-    let paramObj :any = {stock:id};
-    await this.runner.actionFromObj('计算除权因子', DefaultUnit, undefined, paramObj);
+    await this.runner.call('tv_计算除权因子', [id]);
   }
 }
