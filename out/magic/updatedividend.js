@@ -51,7 +51,7 @@ function calculateOne(code, runner) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let { id, symbol } = code;
-            let pret = yield runner.query('tv_股票分红$query', [id, undefined]);
+            let pret = yield runner.query('tv_股票分红$query', [id, -1]);
             let parr = pret;
             if (parr.length <= 0)
                 return;

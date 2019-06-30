@@ -44,7 +44,7 @@ function checkNull(v:any) {
 async function calculateOne(code: any, runner: Runner) {
   try {
     let { id, symbol } = code;
-    let pret = await runner.query('tv_股票分红$query', [id, undefined]);
+    let pret = await runner.query('tv_股票分红$query', [id, -1]);
     let parr = pret as any[];
     if (parr.length <= 0)
       return;
