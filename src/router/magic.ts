@@ -3,6 +3,7 @@ import { emulateAll, allStocksAvg, emulateAtDay } from '../magic/emulatemagic';
 import { calculateAllRoe } from '../magic/roe';
 import { updateAllEarning } from '../magic/updateEarnig';
 import { RemoteIsRun } from '../gfuncs';
+import { updateAllDividend } from '../magic/updatedividend';
 
 const magicRouter: Router = Router();
 magicRouter.get('/all', async (req: Request, res: Response) => {
@@ -51,6 +52,15 @@ magicRouter.get('/updateearning', async (req: Request, res: Response) => {
   }
   updateAllEarning();
   res.json({"magic": "updateAllEarning"});
+});
+
+magicRouter.get('/updatedividend', async (req: Request, res: Response) => {
+  if (RemoteIsRun()) {
+    res.json({"magic": "busy"});
+    return;
+  }
+  updateAllDividend;
+  res.json({"magic": "updateAllDividend"});
 });
 
 export default magicRouter;

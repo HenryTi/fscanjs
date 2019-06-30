@@ -13,6 +13,7 @@ const emulatemagic_1 = require("../magic/emulatemagic");
 const roe_1 = require("../magic/roe");
 const updateEarnig_1 = require("../magic/updateEarnig");
 const gfuncs_1 = require("../gfuncs");
+const updatedividend_1 = require("../magic/updatedividend");
 const magicRouter = express_1.Router();
 magicRouter.get('/all', (req, res) => __awaiter(this, void 0, void 0, function* () {
     if (gfuncs_1.RemoteIsRun()) {
@@ -56,6 +57,14 @@ magicRouter.get('/updateearning', (req, res) => __awaiter(this, void 0, void 0, 
     }
     updateEarnig_1.updateAllEarning();
     res.json({ "magic": "updateAllEarning" });
+}));
+magicRouter.get('/updatedividend', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    if (gfuncs_1.RemoteIsRun()) {
+        res.json({ "magic": "busy" });
+        return;
+    }
+    updatedividend_1.updateAllDividend;
+    res.json({ "magic": "updateAllDividend" });
 }));
 exports.default = magicRouter;
 //# sourceMappingURL=magic.js.map
