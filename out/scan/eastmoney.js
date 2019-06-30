@@ -27,7 +27,7 @@ function scanEastmoney() {
             let pageStart = 0, pageSize = 500;
             for (;;) {
                 let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
-                let arr = ids[0];
+                let arr = ids;
                 if (arr.length > pageSize) {
                     let top = arr.pop();
                     ret.push(...arr);

@@ -12,7 +12,7 @@ export async function scanSinaExRight() {
     let pageStart = 0, pageSize = 100;
     for (; ;) {
       let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
-      let arr = ids[0];
+      let arr = ids as any[];
       if (arr.length > pageSize) {
         let top = arr.pop();
         pageStart = arr[pageSize - 1].id;
