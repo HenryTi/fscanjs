@@ -59,7 +59,7 @@ magicRouter.get('/updatedividend', async (req: Request, res: Response) => {
     res.json({"magic": "busy"});
     return;
   }
-  updateAllDividend;
+  updateAllDividend();
   res.json({"magic": "updateAllDividend"});
 });
 

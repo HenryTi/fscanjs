@@ -63,7 +63,7 @@ magicRouter.get('/updatedividend', (req, res) => __awaiter(this, void 0, void 0,
         res.json({ "magic": "busy" });
         return;
     }
-    updatedividend_1.updateAllDividend;
+    updatedividend_1.updateAllDividend();
     res.json({ "magic": "updateAllDividend" });
 }));
 exports.default = magicRouter;
