@@ -7,7 +7,7 @@
   "sqlType": "mysql",
   "uploadPath": "../uploads/",
   "connection": {
-    "host": "106.14.213.254",
+    "host": "127.0.0.1",
     "user": "aduser",
     "password": "Admin@12345u",
     "multipleStatements": true

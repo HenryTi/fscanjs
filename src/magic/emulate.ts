@@ -21,14 +21,21 @@ export interface EmulateResult {
   money: number,
   share: number,
   gain: number
-}
+};
 
 export interface EmulateStockResultItem {
-    stock: number,
-    priceBegin: number,
-    dayBegin: number,
-    priceEnd: number,
-    dayEnd: number,
-    rate: number,
-    bonus: number
+  stock: number,
+  priceBegin: number,
+  dayBegin: number,
+  priceEnd: number,
+  dayEnd: number,
+  rate: number,
+  bonus: number
+};
+
+export interface SelectStockResultItem {
+  stock: number,
+  order: number,
+  pe: number,
+  roe: number
 }

@@ -103,7 +103,6 @@ class FechStockContents {
                     financeSeasonContent = yield this.fetchJson(url);
                 }
                 yield this.saveFinanceAnalysisSeason(id, financeSeasonContent, scode);
-                console.log(id + ' : ' + scode);
                 return 1;
             }
             catch (err) {

@@ -1,10 +1,12 @@
+import * as _ from 'lodash';
 import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { Const_dbname } from '../const';
-import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem } from './emulate';
+import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem } from './emulate';
 
 const GroupSize = 30;
-const EmulatePlanName = '一直持股';
+const cont_amountInit = 3000000;
+const const_EmulatePlanName = '一直持股';
 
 export async function emulateTrade() {
   if (RemoteIsRun())
@@ -12,10 +14,18 @@ export async function emulateTrade() {
   RemoteRun(true);
   try {
     let runner: Runner = await getRunner(Const_dbname);
-    let em = new EmulateTrades(runner);
 
+    let param = { yearBegin: 0, monthBegin: 1, yearEnd: 2019, monthEnd: 6 };
 
-
+    for (let year = 2001; year < 2019; ++year) {
+      for (let month = 1; month <= 12; month += 3) {
+        let em = new EmulateTrades(runner);
+        param.yearBegin = year;
+        param.monthBegin = month;
+        await em.processOne(param);
+        console.log('emulate: ' + param);
+      }
+    }
   }
   catch (err) {
     console.log(err);
@@ -23,21 +33,37 @@ export async function emulateTrade() {
   RemoteRun(false);
 }
 
+function dayFromYearMonth(year: number, month: number) {
+  return year * 10000 + month * 100 + 1;
+}
+
 class EmulateTrades {
   private runner: Runner;
+  private typeID: number;
+  private typeBeginDay: number;
+  private typeEndDay: number;
+  private emuShares: EmulateShare[];
+  private emuReulst: EmulateResult;
+  private amountInit: number;
 
   constructor(runner: Runner) {
     this.runner = runner;
+    this.emuShares = [];
+    this.amountInit = cont_amountInit;
   }
 
-  private async GetEmulateTypeID(dayBegin: number, dayEnd: number): Promise<any> {
-    let qr = await this.runner.query('tv_getemulateTypeID', [EmulatePlanName, dayBegin, dayEnd]);
+  private async initTypeID(dayBegin: number, dayEnd: number): Promise<any> {
+    let qr = await this.runner.query('tv_getemulateTypeID', [const_EmulatePlanName, dayBegin, dayEnd]);
     let arr = qr as any[];
-    if (arr.length >= 0) {
-      return arr[0];
+    if (arr.length > 0) {
+      let r = arr[0];
+      this.typeID = r.id;
+      this.typeBeginDay = dayBegin;
+      this.typeEndDay = dayEnd;
+      return r;
     }
 
-    qr = await this.runner.call('tv_emulateType$save', [undefined, EmulatePlanName, dayBegin, dayEnd]);
+    qr = await this.runner.call('tv_emulateType$save', [undefined, const_EmulatePlanName, dayBegin, dayEnd]);
     arr = qr as any[];
     if (arr.length <= 0) {
       return undefined;
@@ -45,58 +71,141 @@ class EmulateTrades {
     let id = arr[0].id as number;
     if (id === undefined || id <= 0)
       return undefined;
-    let ret = { id: id, name: EmulatePlanName, begin: dayBegin, end: dayEnd };
+    let ret = { id: id, name: const_EmulatePlanName, begin: dayBegin, end: dayEnd };
+    this.typeID = id;
+    this.typeBeginDay = dayBegin;
+    this.typeEndDay = dayEnd;
     return ret;
   }
 
-  async proceeOne(p: any): Promise<any> {
+  async processOne(p: { yearBegin: number, monthBegin: number, yearEnd: number, monthEnd: number }): Promise<any> {
     try {
-      let { dateBegin, dateEnd } = p as { yearBegin: number, monthBegin: number, dateBegin: number, yearEnd: number, monthEnd: number, dateEnd: number }
-      let type = await this.GetEmulateTypeID(dateBegin, dateEnd);
+      let dayBegin = dayFromYearMonth(p.yearBegin, p.monthBegin);
+      let dayEnd = dayFromYearMonth(p.yearEnd, p.monthEnd);
+      let type = await this.initTypeID(dayBegin, dayEnd);
       if (type === undefined)
         throw 'cant get emulatetypeid :' + p;
-      let { id } = type as { id: number };
-      await this.runner.call('tv_emulatetype$deletedata', [id]);
-      await this.CalculateOneDay(id, p);
+      await this.runner.call('tv_emulatetype$deletedata', [this.typeID]);
+      await this.CalculateFirst(p.yearBegin, p.monthBegin);
+      for (let y = p.yearBegin; y <= p.yearEnd; ++y) {
+        for (let m = p.monthBegin + 1; y == p.yearEnd ? m <= p.monthEnd : m <= 12; ++m) {
+          await this.CalculateNext(y, m);
+        }
+      }
     }
     catch (err) {
       console.log(err);
     }
   }
 
-  protected async CalculateOneDay(id: number, p: any) {
-    let { dateBegin, dateEnd } = p as { yearBegin: number, monthBegin: number, dateBegin: number, yearEnd: number, monthEnd: number, dateEnd: number }
-    await this.runner.call('tv_calcemulateyzcg', [dateBegin]);
-    let ret = await this.runner.query('tv_getyzcgorderresult', [50]);
-    let arr = ret as any[];
+  protected async CalculateFirst(year: number, month: number) {
+    let dayBegin = dayFromYearMonth(year, month);
+    let arr = await this.SelectStocks(dayBegin);
 
-    let shares: EmulateStockResultItem[] = [];
-    let i = 0;
-    for (; i < 30 && i < arr.length; ++i) {
+    let shares: EmulateShare[] = [];
+    let tcount = 0;
+    let i: number;
+    let amountOne = this.amountInit / 30;
+    let amountSum = 0;
+    let emuTrades: EmulateTrade[] = [];
+
+    for (i = 0; i < arr.length; ++i) {
       let item = arr[i];
-      let { stock } = item as { stock: number };
-      let r = await this.GetOneStockResult(stock, dateBegin, dateEnd);
-      if (r !== undefined) {
-        shares.push(r);
+      let pi: { price: number, day: number } = await this.GetStockNextPrice(item.stock, dayBegin);
+      if (pi === undefined || pi.day > dayBegin + 15) {
+        continue;
       }
+      let volume = Math.floor(amountOne / pi.price / 100) * 100;
+      let s: EmulateShare = { type: this.typeID, day: dayBegin, stock: item.stock, price: pi.price, volume: volume };
+      amountSum += volume * pi.price;
+      shares.push(s);
+      emuTrades.push({ type: this.typeID, day: dayBegin, stock: item.stock, tradeType: 1, price: pi.price, volume: volume });
+      ++tcount;
+      if (tcount >= 30)
+        break;
     }
 
-    let count = shares.length;
-    if (count <= 0)
-      return;
-    let amountAll = 3000000;
-    let amountOne = amountAll / count;
-    let emuTrades: EmulateTrade[] = [];
-    let emuShares: EmulateShare[] = [];
-    let emuResult: EmulateResult = {
-      type:id, day:dateEnd, money:0, share:0,gain:0
-    };
-    for (i = 0; i < count; ++i) {
-      let item = shares[i];
+    this.emuShares = shares;
+    this.emuReulst = { type: this.typeID, day: dayBegin, money: this.amountInit - amountSum, share: amountSum, gain: 1 };
+    this.SaveTrades(emuTrades);
+    this.SaveCurrentStatus();
+  }
+
+  protected async CalculateNext(year: number, month: number) {
+    let dayEnd = dayFromYearMonth(year, month);
+    let shares: EmulateShare[] = [];
+    let i = 0;
+    let amoutShares = 0;
+    let bonus = 0;
+    for (; i < this.emuShares.length; ++i) {
+      let si = this.emuShares[i];
+      let ci = await this.GetOneStockResult(si.stock, si.day, dayEnd);
+      let s = _.clone(si);
+      s.day = dayEnd;
+      if (ci === undefined) {
+        let li = await this.GetStockLastPrice(si.stock, dayEnd);
+        if (li !== undefined) {
+          s.price = li.price;
+        }
+      }
+      else {
+        if (ci.bonus > 0) {
+          bonus += si.volume * ci.bonus;
+        }
+        s.price = ci.priceEnd;
+        if (ci.rate !== 1) {
+          s.volume = s.volume / ci.rate;
+        }
+      }
+      shares.push(s);
+      amoutShares += s.price * s.volume;
+    }
+
+    let er = _.clone(this.emuReulst);
+    er.day = dayEnd;
+    er.money += bonus;
+    er.share = amoutShares;
+    er.gain = (er.money + er.share) / this.amountInit;
+    this.emuShares = shares;
+    this.emuReulst = er;
+    await this.SaveCurrentStatus();
+  }
+
+  protected async SaveCurrentStatus() {
+    let i = 0;
+    for (; i < this.emuShares.length; ++i) {
+      let ei = this.emuShares[i];
+      await this.runner.call('tv_emulateshares$save', [ei.type, ei.day, ei.stock, ei.price, ei.volume]);
+    }
+
+    await this.runner.call('tv_emulateresult$save',
+      [this.emuReulst.type, this.emuReulst.day, this.emuReulst.money, this.emuReulst.share, this.emuReulst.gain]);
+  }
+
+  protected async SaveTrades(p: EmulateTrade[]) {
+    for (let i = 0; i < p.length; ++i) {
+      let ti = p[i];
+      await this.runner.call('tv_emulatetrade$save', [ti.type, ti.day, ti.stock, ti.tradeType, ti.price, ti.volume]);
     }
   }
 
-  protected async GetOneStockResult(stock: number, dayBegin: number, dayEnd: number) : Promise<EmulateStockResultItem> {
+  protected async SelectStocks(dayBegin: number) {
+    await this.runner.call('tv_calcemulateyzcg', [dayBegin]);
+    let ret = await this.runner.query('tv_getyzcgorderresult', [50]);
+    let arr = ret as any[];
+
+    let shares: SelectStockResultItem[] = [];
+    let i = 0;
+    for (; i < arr.length; ++i) {
+      let item = arr[i];
+      let { stock, order, pe, roe } = item as { stock: number, order: number, pe: number, roe: number };
+      let r: SelectStockResultItem = { stock: stock, order: order, pe: pe, roe: roe };
+      shares.push(r);
+    }
+    return shares;
+  }
+
+  protected async GetOneStockResult(stock: number, dayBegin: number, dayEnd: number): Promise<EmulateStockResultItem> {
     let ret = await this.runner.query('tv_getStockRestoreShare', [stock, dayBegin, dayEnd]);
     if (ret.length <= 0)
       return undefined;
@@ -112,38 +221,19 @@ class EmulateTrades {
     };
   }
 
-  protected async CalculateOneGroup(dayBegin: number, dayEnd: number, codes: any[], groupIndex: number, p: any) {
-    let { year, month, yearlen, date } = p as { year: number, month: number, yearlen: number, date: number }
-    let count = codes.length;
-    let i = groupIndex * GroupSize;
-    let end = i + GroupSize;
-    if (end > count)
-      return;
+  protected async GetStockNextPrice(stock: number, day: number) {
+    let ret = await this.runner.query('tv_getstockpriceafterday', [stock, day]);
+    if (ret.length <= 0)
+      return undefined;
+    let item: { price: number, day: number } = ret[0];
+    return { price: item.price, day: item.day };
+  }
 
-    let rCount = 0;
-    let sum = 0;
-    for (; i < end; ++i) {
-      let code = codes[i];
-      let { stock } = code;
-      let pret = await this.runner.query('tv_getStockRestorePrice', [stock, dayBegin, dayEnd]);
-      let parr = pret as any[];
-      let r = parr[0];
-      if (r !== undefined) {
-        let { priceBegin, priceEx, bonus } = r as { priceBegin: number, priceEx: number, bonus: number };
-        priceEx = priceEx + bonus;
-        if (priceBegin > 0 && priceEx > 0) {
-          ++rCount;
-          let zf = (priceEx / priceBegin - 1) * 100;
-          sum += zf;
-          await this.runner.call('tv_神奇公式模拟结果明细$save', [groupIndex, date, stock, zf]);
-        }
-      }
-    }
-
-    if (rCount > 0 && rCount >= GroupSize / 2) {
-      sum /= rCount;
-      await this.runner.call('tv_神奇公式模拟结果$save',
-        [groupIndex, year, month, sum, rCount]);
-    }
+  protected async GetStockLastPrice(stock: number, day: number) {
+    let ret = await this.runner.query('tv_getstocklastprice', [stock, day]);
+    if (ret.length <= 0)
+      return undefined;
+    let item: { price: number, day: number } = ret[0];
+    return { price: item.price, day: item.day };
   }
 }

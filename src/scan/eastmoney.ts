@@ -99,8 +99,6 @@ class FechStockContents {
         financeSeasonContent = await this.fetchJson(url);
       }
       await this.saveFinanceAnalysisSeason(id, financeSeasonContent, scode);
-
-      console.log(id + ' : ' + scode);
       return 1;
     }
     catch (err) {

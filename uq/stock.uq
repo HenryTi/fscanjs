@@ -1,5 +1,5 @@
 TUID 股票 ver 0.1 (
-  id,
+  id _,
   main symbol char(16) not null,
   main market char(8) not null,
   main code char(16) not null,

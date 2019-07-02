@@ -7,8 +7,6 @@ import eastmoneyRouter from './router/eastmoney';
 import { doTest } from './test';
 import magicRouter from './router/magic';
 
-doTest();
-
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 (async function () {
 
