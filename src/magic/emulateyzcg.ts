@@ -18,7 +18,7 @@ export async function emulateTrade() {
     let param = { yearBegin: 0, monthBegin: 1, yearEnd: 2019, monthEnd: 6 };
 
     for (let year = 2001; year < 2019; ++year) {
-      for (let month = 1; month <= 12; month += 3) {
+      for (let month = 4; month <= 12; month += 3) {
         let em = new EmulateTrades(runner);
         param.yearBegin = year;
         param.monthBegin = month;
@@ -126,8 +126,8 @@ class EmulateTrades {
 
     this.emuShares = shares;
     this.emuReulst = { type: this.typeID, day: dayBegin, money: this.amountInit - amountSum, share: amountSum, gain: 1 };
-    this.SaveTrades(emuTrades);
-    this.SaveCurrentStatus();
+    await this.SaveTrades(emuTrades);
+    await this.SaveCurrentStatus();
   }
 
   protected async CalculateNext(year: number, month: number) {
@@ -177,8 +177,7 @@ class EmulateTrades {
       await this.runner.call('tv_emulateshares$save', [ei.type, ei.day, ei.stock, ei.price, ei.volume]);
     }
 
-    await this.runner.call('tv_emulateresult$save',
-      [this.emuReulst.type, this.emuReulst.day, this.emuReulst.money, this.emuReulst.share, this.emuReulst.gain]);
+    await this.runner.call('tv_emulateresult$save', [this.emuReulst.type, this.emuReulst.day, this.emuReulst.money, this.emuReulst.share, this.emuReulst.gain]);
   }
 
   protected async SaveTrades(p: EmulateTrade[]) {

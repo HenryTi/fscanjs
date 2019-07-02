@@ -24,7 +24,7 @@ function emulateTrade() {
             let runner = yield db_1.getRunner(const_1.Const_dbname);
             let param = { yearBegin: 0, monthBegin: 1, yearEnd: 2019, monthEnd: 6 };
             for (let year = 2001; year < 2019; ++year) {
-                for (let month = 1; month <= 12; month += 3) {
+                for (let month = 4; month <= 12; month += 3) {
                     let em = new EmulateTrades(runner);
                     param.yearBegin = year;
                     param.monthBegin = month;
@@ -123,8 +123,8 @@ class EmulateTrades {
             }
             this.emuShares = shares;
             this.emuReulst = { type: this.typeID, day: dayBegin, money: this.amountInit - amountSum, share: amountSum, gain: 1 };
-            this.SaveTrades(emuTrades);
-            this.SaveCurrentStatus();
+            yield this.SaveTrades(emuTrades);
+            yield this.SaveCurrentStatus();
         });
     }
     CalculateNext(year, month) {
