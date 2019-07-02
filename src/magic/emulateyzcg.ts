@@ -41,7 +41,6 @@ class EmulateTrades {
   private runner: Runner;
   private typeID: number;
   private typeBeginDay: number;
-  private typeEndDay: number;
   private emuShares: EmulateShare[];
   private emuReulst: EmulateResult;
   private amountInit: number;
@@ -52,18 +51,17 @@ class EmulateTrades {
     this.amountInit = cont_amountInit;
   }
 
-  private async initTypeID(dayBegin: number, dayEnd: number): Promise<any> {
-    let qr = await this.runner.query('tv_getemulateTypeID', [const_EmulatePlanName, dayBegin, dayEnd]);
+  private async initTypeID(dayBegin: number): Promise<any> {
+    let qr = await this.runner.query('tv_emulatetype$getid', [const_EmulatePlanName, dayBegin]);
     let arr = qr as any[];
     if (arr.length > 0) {
       let r = arr[0];
       this.typeID = r.id;
       this.typeBeginDay = dayBegin;
-      this.typeEndDay = dayEnd;
       return r;
     }
 
-    qr = await this.runner.call('tv_emulateType$save', [undefined, const_EmulatePlanName, dayBegin, dayEnd]);
+    qr = await this.runner.call('tv_emulateType$save', [undefined, const_EmulatePlanName, dayBegin]);
     arr = qr as any[];
     if (arr.length <= 0) {
       return undefined;
@@ -71,10 +69,9 @@ class EmulateTrades {
     let id = arr[0].id as number;
     if (id === undefined || id <= 0)
       return undefined;
-    let ret = { id: id, name: const_EmulatePlanName, begin: dayBegin, end: dayEnd };
+    let ret = { id: id, name: const_EmulatePlanName, begin: dayBegin};
     this.typeID = id;
     this.typeBeginDay = dayBegin;
-    this.typeEndDay = dayEnd;
     return ret;
   }
 
@@ -82,15 +79,17 @@ class EmulateTrades {
     try {
       let dayBegin = dayFromYearMonth(p.yearBegin, p.monthBegin);
       let dayEnd = dayFromYearMonth(p.yearEnd, p.monthEnd);
-      let type = await this.initTypeID(dayBegin, dayEnd);
+      let type = await this.initTypeID(dayBegin);
       if (type === undefined)
         throw 'cant get emulatetypeid :' + p;
       await this.runner.call('tv_emulatetype$deletedata', [this.typeID]);
       await this.CalculateFirst(p.yearBegin, p.monthBegin);
+      let mb = p.monthBegin + 1;
       for (let y = p.yearBegin; y <= p.yearEnd; ++y) {
-        for (let m = p.monthBegin + 1; y == p.yearEnd ? m <= p.monthEnd : m <= 12; ++m) {
+        for (let m = mb; y == p.yearEnd ? m <= p.monthEnd : m <= 12; ++m) {
           await this.CalculateNext(y, m);
         }
+        mb = 1;
       }
     }
     catch (err) {
