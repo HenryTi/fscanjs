@@ -23,7 +23,7 @@ export async function emulateTrade() {
         param.yearBegin = year;
         param.monthBegin = month;
         await em.processOne(param);
-        console.log('emulate: ' + param);
+        console.log('emulate: ' + year + ' - ' + month);
       }
     }
   }
@@ -154,7 +154,7 @@ class EmulateTrades {
         }
         s.price = ci.priceEnd;
         if (ci.rate !== 1) {
-          s.volume = s.volume / ci.rate;
+          s.volume = s.volume * ci.rate;
         }
       }
       shares.push(s);
