@@ -30,9 +30,7 @@ function emulateTrade() {
                     param.monthBegin = month;
                     yield em.processOne(param);
                     console.log('emulate: ' + year + ' - ' + month);
-                    break;
                 }
-                break;
             }
         }
         catch (err) {
@@ -108,7 +106,7 @@ class EmulateTrades {
             let amountOne = this.amountInit / 30;
             let amountSum = 0;
             let emuTrades = [];
-            for (i = 60; i < arr.length; ++i) {
+            for (i = 0; i < arr.length; ++i) {
                 let item = arr[i];
                 let pi = yield this.GetStockNextPrice(item.stock, dayBegin);
                 if (pi === undefined || pi.day > dayBegin + 15) {
@@ -148,12 +146,19 @@ class EmulateTrades {
                     }
                 }
                 else {
+                    let b = 0;
                     if (ci.bonus > 0) {
-                        bonus += si.volume * ci.bonus;
+                        b = si.volume * ci.bonus;
                     }
-                    s.price = ci.priceEnd;
                     if (ci.rate !== 1) {
                         s.volume = s.volume * ci.rate;
+                    }
+                    s.price = ci.priceEnd;
+                    if (b > 0) {
+                        let v = Math.floor(b / s.price / 100) * 100;
+                        let m = v * s.price;
+                        s.volume += v;
+                        bonus += b - m;
                     }
                 }
                 shares.push(s);
