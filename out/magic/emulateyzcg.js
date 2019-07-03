@@ -106,7 +106,7 @@ class EmulateTrades {
             let amountOne = this.amountInit / 30;
             let amountSum = 0;
             let emuTrades = [];
-            for (i = 0; i < arr.length; ++i) {
+            for (i = 30; i < arr.length; ++i) {
                 let item = arr[i];
                 let pi = yield this.GetStockNextPrice(item.stock, dayBegin);
                 if (pi === undefined || pi.day > dayBegin + 15) {
@@ -188,7 +188,7 @@ class EmulateTrades {
     SelectStocks(dayBegin) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.runner.call('tv_calcemulateyzcg', [dayBegin]);
-            let ret = yield this.runner.query('tv_getyzcgorderresult', [50]);
+            let ret = yield this.runner.query('tv_getyzcgorderresult', [200]);
             let arr = ret;
             let shares = [];
             let i = 0;

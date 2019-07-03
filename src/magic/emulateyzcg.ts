@@ -108,7 +108,7 @@ class EmulateTrades {
     let amountSum = 0;
     let emuTrades: EmulateTrade[] = [];
 
-    for (i = 0; i < arr.length; ++i) {
+    for (i = 30; i < arr.length; ++i) {
       let item = arr[i];
       let pi: { price: number, day: number } = await this.GetStockNextPrice(item.stock, dayBegin);
       if (pi === undefined || pi.day > dayBegin + 15) {
@@ -189,7 +189,7 @@ class EmulateTrades {
 
   protected async SelectStocks(dayBegin: number) {
     await this.runner.call('tv_calcemulateyzcg', [dayBegin]);
-    let ret = await this.runner.query('tv_getyzcgorderresult', [50]);
+    let ret = await this.runner.query('tv_getyzcgorderresult', [200]);
     let arr = ret as any[];
 
     let shares: SelectStockResultItem[] = [];
