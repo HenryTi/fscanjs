@@ -24,7 +24,9 @@ export async function emulateTrade() {
         param.monthBegin = month;
         await em.processOne(param);
         console.log('emulate: ' + year + ' - ' + month);
+        break;
       }
+      break;
     }
   }
   catch (err) {
@@ -108,7 +110,7 @@ class EmulateTrades {
     let amountSum = 0;
     let emuTrades: EmulateTrade[] = [];
 
-    for (i = 30; i < arr.length; ++i) {
+    for (i = 60; i < arr.length; ++i) {
       let item = arr[i];
       let pi: { price: number, day: number } = await this.GetStockNextPrice(item.stock, dayBegin);
       if (pi === undefined || pi.day > dayBegin + 15) {

@@ -30,7 +30,9 @@ function emulateTrade() {
                     param.monthBegin = month;
                     yield em.processOne(param);
                     console.log('emulate: ' + year + ' - ' + month);
+                    break;
                 }
+                break;
             }
         }
         catch (err) {
@@ -106,7 +108,7 @@ class EmulateTrades {
             let amountOne = this.amountInit / 30;
             let amountSum = 0;
             let emuTrades = [];
-            for (i = 30; i < arr.length; ++i) {
+            for (i = 60; i < arr.length; ++i) {
                 let item = arr[i];
                 let pi = yield this.GetStockNextPrice(item.stock, dayBegin);
                 if (pi === undefined || pi.day > dayBegin + 15) {
