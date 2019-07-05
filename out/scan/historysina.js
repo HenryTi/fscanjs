@@ -126,6 +126,8 @@ class SinaHistory {
                 if (date === undefined)
                     continue;
                 let row = [id, date, close, open, high, low, volume];
+                if (date < 19950101)
+                    continue;
                 promiseArr.push(this.runner.call('tv_股票价格历史$save', row));
                 if (promiseArr.length >= 200) {
                     yield Promise.all(promiseArr);
