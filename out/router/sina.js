@@ -24,15 +24,15 @@ sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, functio
     }
     let len = Number(req.query['len']);
     let start = Number(req.query['start']);
+    if (start === undefined || isNaN(start)) {
+        start = 0;
+    }
     if (len !== undefined && len >= 10 && len <= 5000) {
         historysina_1.scanSinaHistory(len, start);
     }
     else {
         res.json({ "sina": "scan history ", "len": len, "start": start, "error": "param" });
         return;
-    }
-    if (start === undefined || isNaN(start)) {
-        start = 0;
     }
     res.json({ "sina": "scan history ", "len": len, "start": start });
 }));
