@@ -24,8 +24,11 @@ sinaRouter.get('/history', (req, res) => __awaiter(this, void 0, void 0, functio
     }
     let len = Number(req.query['len']);
     let start = Number(req.query['start']);
-    if (len > 0 && len <= 5000) {
+    if (len !== null && len !== undefined && len > 0 && len <= 5000) {
         historysina_1.scanSinaHistory(len, start);
+    }
+    if (start === null || start === undefined) {
+        start = 0;
     }
     res.json({ "sina": "scan history ", "len": len, "start": start });
 }));
