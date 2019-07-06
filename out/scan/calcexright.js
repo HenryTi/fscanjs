@@ -97,7 +97,7 @@ class CalculateSinaExRight {
     scanItem(item) {
         return __awaiter(this, void 0, void 0, function* () {
             let { id, symbol, code } = item;
-            yield this.runner.call('tv_计算除权因子', [id]);
+            yield this.runner.call('c_calculateexrightinfo', [id]);
         });
     }
 }

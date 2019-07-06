@@ -1,8 +1,6 @@
 
 import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
-import { fetchSinaContent } from './sina';
 import { Const_dbname } from '../const';
-import * as cheerio from 'cheerio';
 import { getRunner, Runner } from '../db';
 
 export async function caclulateExRight() {
@@ -90,6 +88,6 @@ class CalculateSinaExRight {
 
   protected async scanItem(item: any) {
     let { id, symbol, code } = item as { id: number, symbol: string, code: string };
-    await this.runner.call('tv_计算除权因子', [id]);
+    await this.runner.call('c_calculateexrightinfo', [id]);
   }
 }
