@@ -10,7 +10,7 @@ const const_type_sinaBalanceSheet = '新浪资产负债表';
 const const_type_sinaProfitStatement = '新浪利润表';
 const const_type_sinaCashFlow = '新浪现金流量表';
 
-export async function scanSinaFiles(start:number, scanType:'finance'|'stockstructure'|'balancesheet'|'profitstatement'|'cashflow') : Promise<void> {
+export async function scanSinaFiles(start:number, scanAll:boolean, scanType:'finance'|'stockstructure'|'balancesheet'|'profitstatement'|'cashflow') : Promise<void> {
   if (RemoteIsRun())
     return;
   RemoteRun(true);
@@ -19,11 +19,14 @@ export async function scanSinaFiles(start:number, scanType:'finance'|'stockstruc
     let runner = await getRunner(Const_dbname);
     let sinascanner:sinaFiles;
     switch (scanType) {
-      default: sinascanner = new sinaFinance(runner); break;
-      case 'stockstructure': sinascanner = new sinaStockStructure(runner);
-      case 'balancesheet': sinascanner = new sinaBalanceSheet(runner);
-      case 'profitstatement': sinascanner = new sinaProfitStatement(runner);
-      case 'cashflow': sinascanner = new sinaCashFlow(runner);
+      default:
+        RemoteRun(false);
+        return;
+      case 'finance': sinascanner = new sinaFinance(runner, scanAll); break;
+      case 'stockstructure': sinascanner = new sinaStockStructure(runner, scanAll); break;
+      case 'balancesheet': sinascanner = new sinaBalanceSheet(runner, scanAll); break;
+      case 'profitstatement': sinascanner = new sinaProfitStatement(runner, scanAll); break;
+      case 'cashflow': sinascanner = new sinaCashFlow(runner, scanAll); break;
     }
     let pageStart = start, pageSize = 100;
     for (; ;) {
@@ -53,10 +56,12 @@ export async function scanSinaFiles(start:number, scanType:'finance'|'stockstruc
 abstract class sinaFiles {
   protected runner: Runner;
   protected retryArr: any[];
+  protected scanAll:boolean;
 
-  constructor(runner: Runner) {
+  constructor(runner: Runner, all:boolean) {
     this.runner = runner;
     this.retryArr = [];
+    this.scanAll = all;
   }
 
   async processGroup(items: any[]) {
@@ -102,15 +107,38 @@ abstract class sinaFiles {
     return true;
   }
 
-  protected abstract scanItem(item: any) : Promise<void>;
+  protected abstract async scanAllYears(item: any) : Promise<void>;
+  protected abstract async scanOneYear(item: any, year:string) : Promise<void>;
+
+  protected async scanItem(item: any) {
+    if (this.scanAll) {
+      await this.scanAllYears(item);
+    }
+    else {
+      await this.scanRecentYears(item);
+    }
+  }
+
+  protected async scanRecentYears(item: any) {
+    let date = new Date();
+    let yn = date.getFullYear();
+    try {
+      await this.scanOneYear(item, yn.toString());
+      --yn;
+      await this.scanOneYear(item, yn.toString());
+    }
+    catch (err) {
+
+    }
+  }
 }
 
 class sinaFinance extends sinaFiles {
-  constructor(runner: Runner) {
-    super(runner);
+  constructor(runner: Runner, all:boolean) {
+    super(runner, all);
   }
 
-  protected async scanItem(item: any) {
+  protected async scanAllYears(item:any) {
     let { id, symbol, code } = item as { id: number, symbol: string, code: string };
     let url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_FinancialGuideLine/stockid/'
        + code + '/displaytype/4.phtml';
@@ -124,33 +152,48 @@ class sinaFinance extends sinaFiles {
 
     for (let i = 0; i < years.length; ++i) {
       let year = years[i].trim();
-      let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_FinancialGuideLine/stockid/'
-        + code + '/ctrl/' + year +'/displaytype/4.phtml';
-      let cont = await fetchSinaContent(urlone);
-      let row:any[][] = [];
-      let $ = cheerio.load(cont);
-      $('#BalanceSheetNewTable0').find('>tbody').first().find('>tr')
-        .map((index: number, element: CheerioElement) => {
-        let subarr:any[] = [];
-        $(element).find('>td').map((index: number, element: CheerioElement) => {
-          subarr.push($(element).text().trim());
-        });
-        row.push(subarr);
-      });
-
-      let contentStr = JSON.stringify(row);
-      await this.runner.call('t_stockarchives$save', [id, const_type_sinaFinance, year, contentStr]);
+      if (year.length > 0) {
+        await this.scanOneYear(item, year);
+      }
     }
-    console.log('scan sinaFinance, code: ' + id + ' - ' + symbol);
+    console.log('sinaFinance, scanall, code: ' + id + ' - ' + symbol);
   }
-}
+  
+  protected async scanOneYear(item: any, year:string) {
+    let { id, symbol, code } = item as { id: number, symbol: string, code: string };
+
+    let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_FinancialGuideLine/stockid/'
+      + code + '/ctrl/' + year +'/displaytype/4.phtml';
+    let cont = await fetchSinaContent(urlone);
+    let row:any[][] = [];
+    let $ = cheerio.load(cont);
+    $('#BalanceSheetNewTable0').find('>tbody').first().find('>tr')
+      .map((index: number, element: CheerioElement) => {
+      let subarr:any[] = [];
+      $(element).find('>td').map((index: number, element: CheerioElement) => {
+        subarr.push($(element).text().trim());
+      });
+      row.push(subarr);
+    });
+
+    let contentStr = JSON.stringify(row);
+    await this.runner.call('t_stockarchives$save', [id, const_type_sinaFinance, year, contentStr]);
+    if (!this.scanAll) {
+      console.log('sinaFinance, code: ' + id + ' - ' + symbol + ' year:' + year);
+    }
+  }
+};
 
 class sinaStockStructure extends sinaFiles {
-  constructor(runner: Runner) {
-    super(runner);
+  constructor(runner: Runner, all:boolean) {
+    super(runner, false);
   }
 
-  protected async scanItem(item: any) {
+  protected async scanItem(item: any) : Promise<void> {
+    await this.scanAllYears(item);
+  }
+
+  protected async scanAllYears(item: any) : Promise<void> {
     let { id, symbol, code } = item as { id: number, symbol: string, code: string };
     let url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_StockStructure/stockid/' + code + '.phtml';
     let content = await fetchSinaContent(url);
@@ -171,16 +214,19 @@ class sinaStockStructure extends sinaFiles {
 
     let contentStr = JSON.stringify(rows);
     await this.runner.call('t_stockarchives$save', [id, const_type_sinaStockStructure, '', contentStr]);
-    console.log('scan sinaStockStructure, code: ' + id + ' - ' + symbol);
+    console.log('sinaStockStructure, code: ' + id + ' - ' + symbol);
+  }
+
+  protected async scanOneYear(item: any, year:string) : Promise<void> {
   }
 }
 
 class sinaBalanceSheet extends sinaFiles {
-  constructor(runner: Runner) {
-    super(runner);
+  constructor(runner: Runner, all:boolean) {
+    super(runner, all);
   }
 
-  protected async scanItem(item: any) {
+  protected async scanAllYears(item: any) {
     let { id, symbol, code } = item as { id: number, symbol: string, code: string };
     let url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_BalanceSheet/stockid/'
        + code + '/ctrl/part/displaytype/4.phtml';
@@ -196,33 +242,42 @@ class sinaBalanceSheet extends sinaFiles {
 
     for (let i = 0; i < years.length; ++i) {
       let year = years[i].trim();
-      let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_BalanceSheet/stockid/'
-        + code + '/ctrl/' + year +'/displaytype/4.phtml';
-      let cont = await fetchSinaContent(urlone);
-      let row:any[][] = [];
-      let $ = cheerio.load(cont);
-      $('#BalanceSheetNewTable0').find('>tbody').first().find('>tr')
-        .map((index: number, element: CheerioElement) => {
-        let subarr:any[] = [];
-        $(element).find('>td').map((index: number, element: CheerioElement) => {
-          subarr.push($(element).text().trim());
-        });
-        row.push(subarr);
-      });
-
-      let contentStr = JSON.stringify(row);
-      await this.runner.call('t_stockarchives$save', [id, const_type_sinaBalanceSheet, year, contentStr]);
+      if (year.length > 0)
+        await this.scanOneYear(item, year);
     }
-    console.log('scan scanBalanceSheet, code: ' + id + ' - ' + symbol);
+    console.log('scanBalanceSheet, scanall, code: ' + id + ' - ' + symbol);
+  }
+
+  protected async scanOneYear(item: any, year:string) : Promise<void> {
+    let { id, symbol, code } = item as { id: number, symbol: string, code: string };
+    let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_BalanceSheet/stockid/'
+      + code + '/ctrl/' + year +'/displaytype/4.phtml';
+    let cont = await fetchSinaContent(urlone);
+    let row:any[][] = [];
+    let $ = cheerio.load(cont);
+    $('#BalanceSheetNewTable0').find('>tbody').first().find('>tr')
+      .map((index: number, element: CheerioElement) => {
+      let subarr:any[] = [];
+      $(element).find('>td').map((index: number, element: CheerioElement) => {
+        subarr.push($(element).text().trim());
+      });
+      row.push(subarr);
+    });
+
+    let contentStr = JSON.stringify(row);
+    await this.runner.call('t_stockarchives$save', [id, const_type_sinaBalanceSheet, year, contentStr]);
+    if (!this.scanAll) {
+      console.log('scanBalanceSheet, code: ' + id + ' - ' + symbol + ' year:' + year);
+    }
   }
 }
 
 class sinaProfitStatement extends sinaFiles {
-  constructor(runner: Runner) {
-    super(runner);
+  constructor(runner: Runner, all:boolean) {
+    super(runner, all);
   }
 
-  protected async scanItem(item: any) {
+  protected async scanAllYears(item: any) {
     let { id, symbol, code } = item as { id: number, symbol: string, code: string };
     let url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_ProfitStatement/stockid/'
        + code + '/ctrl/part/displaytype/4.phtml';
@@ -238,33 +293,42 @@ class sinaProfitStatement extends sinaFiles {
 
     for (let i = 0; i < years.length; ++i) {
       let year = years[i].trim();
-      let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_ProfitStatement/stockid/'
-        + code + '/ctrl/' + year +'/displaytype/4.phtml';
-      let cont = await fetchSinaContent(urlone);
-      let row:any[][] = [];
-      let $ = cheerio.load(cont);
-      $('#ProfitStatementNewTable0').find('>tbody').first().find('>tr')
-        .map((index: number, element: CheerioElement) => {
-        let subarr:any[] = [];
-        $(element).find('>td').map((index: number, element: CheerioElement) => {
-          subarr.push($(element).text().trim());
-        });
-        row.push(subarr);
-      });
-
-      let contentStr = JSON.stringify(row);
-      await this.runner.call('t_stockarchives$save', [id, const_type_sinaProfitStatement, year, contentStr]);
+      if (year.length > 0)
+        await this.scanOneYear(item, year);
     }
-    console.log('scan scanProfitStatement, code: ' + id + ' - ' + symbol);
+    console.log('scanProfitStatement, scanall, code: ' + id + ' - ' + symbol);
+  }
+
+  protected async scanOneYear(item: any, year:string) : Promise<void> {
+    let { id, symbol, code } = item as { id: number, symbol: string, code: string };
+    let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_ProfitStatement/stockid/'
+                  + code + '/ctrl/' + year +'/displaytype/4.phtml';
+    let cont = await fetchSinaContent(urlone);
+    let row:any[][] = [];
+    let $ = cheerio.load(cont);
+    $('#ProfitStatementNewTable0').find('>tbody').first().find('>tr')
+      .map((index: number, element: CheerioElement) => {
+      let subarr:any[] = [];
+      $(element).find('>td').map((index: number, element: CheerioElement) => {
+        subarr.push($(element).text().trim());
+      });
+      row.push(subarr);
+    });
+
+    let contentStr = JSON.stringify(row);
+    await this.runner.call('t_stockarchives$save', [id, const_type_sinaProfitStatement, year, contentStr]);
+    if (!this.scanAll) {
+      console.log('scanProfitStatement, code: ' + id + ' - ' + symbol + ' year:' + year);
+    }
   }
 }
 
 class sinaCashFlow extends sinaFiles {
-  constructor(runner: Runner) {
-    super(runner);
+  constructor(runner: Runner, all:boolean) {
+    super(runner, all);
   }
 
-  protected async scanItem(item: any) {
+  protected async scanAllYears(item: any) {
     let { id, symbol, code } = item as { id: number, symbol: string, code: string };
     let url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
        + code + '/ctrl/part/displaytype/4.phtml';
@@ -280,23 +344,33 @@ class sinaCashFlow extends sinaFiles {
 
     for (let i = 0; i < years.length; ++i) {
       let year = years[i].trim();
-      let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
-        + code + '/ctrl/' + year +'/displaytype/4.phtml';
-      let cont = await fetchSinaContent(urlone);
-      let row:any[][] = [];
-      let $ = cheerio.load(cont);
-      $('#ProfitStatementNewTable0').find('>tbody').first().find('>tr')
-        .map((index: number, element: CheerioElement) => {
-        let subarr:any[] = [];
-        $(element).find('>td').map((index: number, element: CheerioElement) => {
-          subarr.push($(element).text().trim());
-        });
-        row.push(subarr);
-      });
-
-      let contentStr = JSON.stringify(row);
-      await this.runner.call('t_stockarchives$save', [id, const_type_sinaCashFlow, year, contentStr]);
+      if (year.length > 0) {
+        await this.scanOneYear(item, year);
+      }
     }
-    console.log('scan scanCashFlow, code: ' + id + ' - ' + symbol);
+    console.log('scanCashFlow, scanall, code: ' + id + ' - ' + symbol);
+  }
+
+  protected async scanOneYear(item: any, year:string) : Promise<void> {
+    let { id, symbol, code } = item as { id: number, symbol: string, code: string };
+    let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
+                  + code + '/ctrl/' + year +'/displaytype/4.phtml';
+    let cont = await fetchSinaContent(urlone);
+    let row:any[][] = [];
+    let $ = cheerio.load(cont);
+    $('#ProfitStatementNewTable0').find('>tbody').first().find('>tr')
+      .map((index: number, element: CheerioElement) => {
+      let subarr:any[] = [];
+      $(element).find('>td').map((index: number, element: CheerioElement) => {
+        subarr.push($(element).text().trim());
+      });
+      row.push(subarr);
+    });
+
+    let contentStr = JSON.stringify(row);
+    await this.runner.call('t_stockarchives$save', [id, const_type_sinaCashFlow, year, contentStr]);
+    if (!this.scanAll) {
+      console.log('scanCashFlow, code: ' + id + ' - ' + symbol + ' year:' + year);
+    }
   }
 }
