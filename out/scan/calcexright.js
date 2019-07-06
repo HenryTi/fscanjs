@@ -77,6 +77,7 @@ class CalculateSinaExRight {
                 yield this.scanItem(item);
             }
             catch (err) {
+                console.log(err);
                 this.retryArr.push(item);
                 return false;
             }

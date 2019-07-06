@@ -70,6 +70,7 @@ class CalculateSinaExRight {
       await this.scanItem(item);
     }
     catch (err) {
+      console.log(err);
       this.retryArr.push(item);
       return false;
     }
