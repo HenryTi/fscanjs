@@ -40,6 +40,7 @@ function scanSinaExRight() {
         catch (err) {
             console.log(err);
         }
+        console.log('scan Sina Exright completed');
     });
 }
 exports.scanSinaExRight = scanSinaExRight;

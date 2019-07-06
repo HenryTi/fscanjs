@@ -6,5 +6,6 @@ let ms = 24 * 60 * 60 * 1000;
 let d1 = new Date(d.getTime() + ms);
 let d2 = new Date(d.getTime() - ms);
 var result = 0.1 * 0.2;
+//caclulateExRight();
 //emulateTradeMonthChange();
 //# sourceMappingURL=runtest.js.map
