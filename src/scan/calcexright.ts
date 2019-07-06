@@ -90,5 +90,6 @@ class CalculateSinaExRight {
   protected async scanItem(item: any) {
     let { id, symbol, code } = item as { id: number, symbol: string, code: string };
     await this.runner.call('c_calculateexrightinfo', [id]);
+    console.log('c_calculateexrightinfo id=' + id);
   }
 }

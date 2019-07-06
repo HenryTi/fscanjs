@@ -99,6 +99,7 @@ class CalculateSinaExRight {
         return __awaiter(this, void 0, void 0, function* () {
             let { id, symbol, code } = item;
             yield this.runner.call('c_calculateexrightinfo', [id]);
+            console.log('c_calculateexrightinfo id=' + id);
         });
     }
 }
