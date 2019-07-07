@@ -1,86 +1,76 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("../db");
 const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
-function scanSinaQuotations() {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (gfuncs_1.RemoteIsRun())
-            return;
-        gfuncs_1.RemoteRun(true);
-        try {
-            let runner = yield db_1.getRunner(const_1.Const_dbname);
-            let ret = [];
-            let pageStart = 0, pageSize = 500;
-            for (;;) {
-                let ids = yield runner.query('tv_股票$search', ['', pageStart, pageSize]);
-                let arr = ids;
-                if (arr.length > pageSize) {
-                    let top = arr.pop();
-                    ret.push(...arr);
-                    pageStart = arr[pageSize - 1].id;
+async function scanSinaQuotations() {
+    if (gfuncs_1.RemoteIsRun())
+        return;
+    gfuncs_1.RemoteRun(true);
+    try {
+        let runner = await db_1.getRunner(const_1.Const_dbname);
+        let ret = [];
+        let pageStart = 0, pageSize = 500;
+        for (;;) {
+            let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
+            let arr = ids;
+            if (arr.length > pageSize) {
+                let top = arr.pop();
+                ret.push(...arr);
+                pageStart = arr[pageSize - 1].id;
+            }
+            else {
+                ret.push(...arr);
+                break;
+            }
+        }
+        let count = ret.length;
+        let i, j;
+        let retryArr = [];
+        let oneGroup = [];
+        i = 0;
+        let totalCount = 0;
+        for (;;) {
+            if (i >= count) {
+                break;
+            }
+            let code = ret[i];
+            oneGroup.push(code);
+            ++i;
+            if (oneGroup.length >= 40 || i >= count) {
+                let gv = oneGroup;
+                oneGroup = [];
+                let sqg = new SinaQuotationGroup(runner);
+                let r = await sqg.processOneGroup(gv);
+                if (r != 1) {
+                    retryArr.push(gv);
                 }
                 else {
-                    ret.push(...arr);
-                    break;
-                }
-            }
-            let count = ret.length;
-            let i, j;
-            let retryArr = [];
-            let oneGroup = [];
-            i = 0;
-            let totalCount = 0;
-            for (;;) {
-                if (i >= count) {
-                    break;
-                }
-                let code = ret[i];
-                oneGroup.push(code);
-                ++i;
-                if (oneGroup.length >= 40 || i >= count) {
-                    let gv = oneGroup;
-                    oneGroup = [];
-                    let sqg = new SinaQuotationGroup(runner);
-                    let r = yield sqg.processOneGroup(gv);
-                    if (r != 1) {
-                        retryArr.push(gv);
-                    }
-                    else {
-                        totalCount += gv.length;
-                        console.log('sinahq: count=' + totalCount);
-                    }
-                }
-            }
-            count = retryArr.length;
-            for (i = 0; i < count; ++i) {
-                let gv = retryArr[i];
-                for (j = 0; j < 10; ++j) {
-                    yield gfuncs_1.sleep(3000);
-                    let sqg = new SinaQuotationGroup(runner);
-                    let r = yield sqg.processOneGroup(gv);
-                    if (r == 1) {
-                        totalCount += gv.length;
-                        console.log('sinahq retry: count=' + totalCount);
-                        break;
-                    }
+                    totalCount += gv.length;
+                    console.log('sinahq: count=' + totalCount);
                 }
             }
         }
-        catch (err) {
-            console.log(err);
+        count = retryArr.length;
+        for (i = 0; i < count; ++i) {
+            let gv = retryArr[i];
+            for (j = 0; j < 10; ++j) {
+                await gfuncs_1.sleep(3000);
+                let sqg = new SinaQuotationGroup(runner);
+                let r = await sqg.processOneGroup(gv);
+                if (r == 1) {
+                    totalCount += gv.length;
+                    console.log('sinahq retry: count=' + totalCount);
+                    break;
+                }
+            }
         }
-        gfuncs_1.RemoteRun(false);
-    });
+    }
+    catch (err) {
+        console.log(err);
+    }
+    gfuncs_1.RemoteRun(false);
 }
 exports.scanSinaQuotations = scanSinaQuotations;
 class SinaQuotationGroup {
@@ -88,75 +78,69 @@ class SinaQuotationGroup {
         this.runner = runner;
         this.idTable = {};
     }
-    processOneGroup(items) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                this.idTable = {};
-                let lstr = '';
-                items.forEach((value, index) => {
-                    let { symbol } = value;
-                    lstr += ',' + symbol;
-                    let idname = symbol;
-                    this.idTable[idname] = value;
-                });
-                if (lstr.length <= 1)
-                    return 1;
-                let url = 'https://hq.sinajs.cn/list=' + lstr.substring(1);
-                let results = yield this.fetchString(url);
-                if (results === null || results === undefined) {
-                    results = yield this.fetchString(url);
-                }
-                if (results === null || results === undefined) {
-                    results = yield this.fetchString(url);
-                }
-                yield this.saveQutations(results);
+    async processOneGroup(items) {
+        try {
+            this.idTable = {};
+            let lstr = '';
+            items.forEach((value, index) => {
+                let { symbol } = value;
+                lstr += ',' + symbol;
+                let idname = symbol;
+                this.idTable[idname] = value;
+            });
+            if (lstr.length <= 1)
+                return 1;
+            let url = 'https://hq.sinajs.cn/list=' + lstr.substring(1);
+            let results = await this.fetchString(url);
+            if (results === null || results === undefined) {
+                results = await this.fetchString(url);
             }
-            catch (err) {
-                return 0;
+            if (results === null || results === undefined) {
+                results = await this.fetchString(url);
             }
-            return 1;
-        });
+            await this.saveQutations(results);
+        }
+        catch (err) {
+            return 0;
+        }
+        return 1;
     }
-    fetchString(url) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let ret = yield sina_1.fetchSinaContent(url);
-                return ret;
-            }
-            catch (err) {
-                console.log(err);
-                return undefined;
-            }
-        });
+    async fetchString(url) {
+        try {
+            let ret = await sina_1.fetchSinaContent(url);
+            return ret;
+        }
+        catch (err) {
+            console.log(err);
+            return undefined;
+        }
     }
-    saveQutations(values) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let lines = values.split('\n');
-            let promiseArr = [];
-            let i;
-            let count = lines.length;
-            for (i = 0; i < count; ++i) {
-                let line = lines[i];
-                if (line.length <= 0)
-                    break;
-                let arr = line.split('=');
-                let head = arr[0].substring(11);
-                let subarr = arr[1].split('"');
-                let items = subarr[1].split(',');
-                if (items.length < 6)
-                    continue;
-                let idItem = this.idTable[head];
-                let row = this.getQuotatonRow(idItem, items);
-                if (row === undefined)
-                    throw 'hqsina 返回格式错误';
-                if (row[3] === '0.000')
-                    continue;
-                promiseArr.push(this.runner.call('tv_股票价格$save', row));
-            }
-            if (promiseArr.length > 0) {
-                yield Promise.all(promiseArr);
-            }
-        });
+    async saveQutations(values) {
+        let lines = values.split('\n');
+        let promiseArr = [];
+        let i;
+        let count = lines.length;
+        for (i = 0; i < count; ++i) {
+            let line = lines[i];
+            if (line.length <= 0)
+                break;
+            let arr = line.split('=');
+            let head = arr[0].substring(11);
+            let subarr = arr[1].split('"');
+            let items = subarr[1].split(',');
+            if (items.length < 6)
+                continue;
+            let idItem = this.idTable[head];
+            let row = this.getQuotatonRow(idItem, items);
+            if (row === undefined)
+                throw 'hqsina 返回格式错误';
+            if (row[3] === '0.000')
+                continue;
+            promiseArr.push(this.runner.call('tv_股票价格$save', row));
+        }
+        if (promiseArr.length > 0) {
+            await Promise.all(promiseArr);
+        }
     }
     getQuotatonRow(idItem, arr) {
         let { id, market } = idItem;

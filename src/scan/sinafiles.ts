@@ -124,8 +124,11 @@ abstract class sinaFiles {
     let yn = date.getFullYear();
     try {
       await this.scanOneYear(item, yn.toString());
-      --yn;
-      await this.scanOneYear(item, yn.toString());
+      let month = date.getMonth();
+      if (month <= 5) {
+        --yn;
+        await this.scanOneYear(item, yn.toString());
+      }
     }
     catch (err) {
 

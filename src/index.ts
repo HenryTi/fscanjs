@@ -6,6 +6,7 @@ import sinaRouter from './router/sina';
 import eastmoneyRouter from './router/eastmoney';
 import { doTest } from './test';
 import magicRouter from './router/magic';
+import { startTimer } from './timedtask';
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 (async function () {
@@ -56,6 +57,8 @@ console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 
   let port = config.get<number>('port');
   console.log('port=', port);
+
+  startTimer();
 
   app.listen(port, async () => {
     console.log('fscanjs listening on port ' + port);

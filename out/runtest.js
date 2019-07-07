@@ -1,26 +1,44 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+const sina_1 = require("./scan/sina");
+const cheerio = require("cheerio");
 const sinafiles_1 = require("./scan/sinafiles");
+const z = require("zlib");
+const timedtask_1 = require("./timedtask");
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
-let date = new Date();
-let yn = date.getFullYear();
-function scansina() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield sinafiles_1.scanSinaFiles(0, true, 'finance');
-        yield sinafiles_1.scanSinaFiles(0, true, 'balancesheet');
-        yield sinafiles_1.scanSinaFiles(0, true, 'profitstatement');
-        yield sinafiles_1.scanSinaFiles(0, true, 'stockstructure');
+timedtask_1.startTimer();
+async function testZip() {
+    let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
+        + '600000' + '/ctrl/' + '2018' + '/displaytype/4.phtml';
+    let cont = await sina_1.fetchSinaContent(urlone);
+    let row = [];
+    let $ = cheerio.load(cont);
+    $('#ProfitStatementNewTable0').find('>tbody').first().find('>tr')
+        .map((index, element) => {
+        let subarr = [];
+        $(element).find('>td').map((index, element) => {
+            subarr.push($(element).text().trim());
+        });
+        row.push(subarr);
     });
+    let contentStr = JSON.stringify(row);
+    let contentLen = contentStr.length;
+    let buf = z.gzipSync(contentStr);
+    let bufstr = buf.toString('base64');
+    let bufstrLen = bufstr.length;
+    let bufJson = buf.toJSON();
+    let b = Buffer.from(bufstr, 'base64');
+    let bunzip = z.gunzipSync(b);
+    let unzipstr = bunzip.toString();
 }
-scansina();
+testZip();
+async function scansina() {
+    await sinafiles_1.scanSinaFiles(0, true, 'finance');
+    await sinafiles_1.scanSinaFiles(0, true, 'balancesheet');
+    await sinafiles_1.scanSinaFiles(0, true, 'profitstatement');
+    await sinafiles_1.scanSinaFiles(0, true, 'stockstructure');
+}
+//scansina();
 //caclulateExRight();
 //emulateTradeMonthChange();
 //# sourceMappingURL=runtest.js.map

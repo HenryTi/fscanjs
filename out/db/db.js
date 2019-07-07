@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const config = require("config");
 const my_1 = require("./my");
@@ -30,57 +22,39 @@ class Db {
             case 'mysql': return new my_1.MyDbServer(dbConfig);
         }
     }
-    exists() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.isExists === true)
-                return true;
-            return this.isExists = yield this.dbServer.existsDatabase(this.dbName);
-        });
+    async exists() {
+        if (this.isExists === true)
+            return true;
+        return this.isExists = await this.dbServer.existsDatabase(this.dbName);
     }
-    sql(sql, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //console.log(this.dbName, ' sql: ', params.join(','))
-            return yield this.dbServer.sql(this.dbName, sql, params);
-        });
+    async sql(sql, params) {
+        //console.log(this.dbName, ' sql: ', params.join(','))
+        return await this.dbServer.sql(this.dbName, sql, params);
     }
-    call(proc, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //console.log(this.dbName, '.', proc, ': ', params.join(','))
-            return yield this.dbServer.call(this.dbName, proc, params);
-        });
+    async call(proc, params) {
+        //console.log(this.dbName, '.', proc, ': ', params.join(','))
+        return await this.dbServer.call(this.dbName, proc, params);
     }
-    callEx(proc, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //console.log(this.dbName, '.', proc, ': ', params.join(','))
-            return yield this.dbServer.callEx(this.dbName, proc, params);
-        });
+    async callEx(proc, params) {
+        //console.log(this.dbName, '.', proc, ': ', params.join(','))
+        return await this.dbServer.callEx(this.dbName, proc, params);
     }
-    tableFromProc(proc, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //console.log(this.dbName, '.', proc, ': ', params.join(','))
-            return yield this.dbServer.tableFromProc(this.dbName, proc, params);
-        });
+    async tableFromProc(proc, params) {
+        //console.log(this.dbName, '.', proc, ': ', params.join(','))
+        return await this.dbServer.tableFromProc(this.dbName, proc, params);
     }
-    tablesFromProc(proc, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //console.log(this.dbName, '.', proc, ': ', params.join(','))
-            return yield this.dbServer.tablesFromProc(this.dbName, proc, params);
-        });
+    async tablesFromProc(proc, params) {
+        //console.log(this.dbName, '.', proc, ': ', params.join(','))
+        return await this.dbServer.tablesFromProc(this.dbName, proc, params);
     }
-    createDatabase() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.dbServer.createDatabase(this.dbName);
-        });
+    async createDatabase() {
+        return await this.dbServer.createDatabase(this.dbName);
     }
-    uqDbs() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.dbServer.uqDbs();
-        });
+    async uqDbs() {
+        return await this.dbServer.uqDbs();
     }
-    initResDb(resDbName) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.dbServer.initResDb(resDbName);
-        });
+    async initResDb(resDbName) {
+        await this.dbServer.initResDb(resDbName);
     }
 }
 exports.Db = Db;
