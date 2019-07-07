@@ -10,6 +10,8 @@ async function scanSinaQuotations() {
     gfuncs_1.RemoteRun(true);
     try {
         let runner = await db_1.getRunner(const_1.Const_dbname);
+        let dt = new Date();
+        console.log('scanSinaQuotations begin  - ' + dt.toLocaleString());
         let ret = [];
         let pageStart = 0, pageSize = 500;
         for (;;) {
@@ -48,7 +50,6 @@ async function scanSinaQuotations() {
                 }
                 else {
                     totalCount += gv.length;
-                    console.log('sinahq: count=' + totalCount);
                 }
             }
         }
@@ -61,11 +62,12 @@ async function scanSinaQuotations() {
                 let r = await sqg.processOneGroup(gv);
                 if (r == 1) {
                     totalCount += gv.length;
-                    console.log('sinahq retry: count=' + totalCount);
                     break;
                 }
             }
         }
+        dt = new Date();
+        console.log('scanSinaQuotations end  - ' + dt.toLocaleString());
     }
     catch (err) {
         console.log(err);

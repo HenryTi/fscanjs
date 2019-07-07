@@ -10,6 +10,8 @@ export async function scanSinaQuotations() {
 
   try {
     let runner = await getRunner(Const_dbname);
+    let dt = new Date();
+    console.log('scanSinaQuotations begin  - ' + dt.toLocaleString());
 
     let ret: any[] = [];
     let pageStart = 0, pageSize = 500;
@@ -50,7 +52,6 @@ export async function scanSinaQuotations() {
         }
         else {
           totalCount += gv.length;
-          console.log('sinahq: count=' + totalCount);
         }
       }
     }
@@ -64,11 +65,12 @@ export async function scanSinaQuotations() {
         let r = await sqg.processOneGroup(gv);
         if (r == 1) {
           totalCount += gv.length;
-          console.log('sinahq retry: count=' + totalCount);
           break;
         }
       }
     }
+    dt = new Date();
+    console.log('scanSinaQuotations end  - ' + dt.toLocaleString());
   }
   catch (err) {
     console.log(err);

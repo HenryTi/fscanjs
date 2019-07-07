@@ -37,7 +37,7 @@ async function CheckDayTask(dt) {
         if (day > downloadSymbolTask) {
             dayTaskRunning = true;
             await symbolsina_1.scanSinaSymbols();
-            downloadHistoryTask = day;
+            downloadSymbolTask = day;
             dayTaskRunning = false;
         }
     }

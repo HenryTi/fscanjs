@@ -10,8 +10,12 @@ async function scanSinaSymbols() {
     gfuncs_1.RemoteRun(true);
     try {
         let runner = await db_1.getRunner(const_1.Const_dbname);
+        let dt = new Date();
+        console.log('scanSinaSymbols begin  - ' + dt.toLocaleString());
         let sinaSym = new SinaSymbols(runner);
         await sinaSym.GetHS_A();
+        dt = new Date();
+        console.log('scanSinaSymbols end  - ' + dt.toLocaleString());
     }
     catch (err) {
         console.log(err);
@@ -44,7 +48,7 @@ class SinaSymbols {
                 retryArr.push(page);
             }
             else {
-                console.log('sinasymbols hsa page : ' + page);
+                //console.log('sinasymbols hsa page : ' + page);
             }
             ++page;
             readCount += 80;
@@ -57,7 +61,7 @@ class SinaSymbols {
                 let r = await this.GetHSAOnePage(p);
                 ;
                 if (r) {
-                    console.log('sinasymbols hsa page : ' + p);
+                    //console.log('sinasymbols hsa page : ' + p);
                     break;
                 }
             }

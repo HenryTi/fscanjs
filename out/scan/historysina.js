@@ -11,6 +11,8 @@ async function scanSinaHistory(len, start) {
     try {
         let runner = await db_1.getRunner(const_1.Const_dbname);
         let sqg = new SinaHistory(runner);
+        let dt = new Date();
+        console.log('scanSinaHistory begin  - ' + dt.toLocaleString());
         let ret = [];
         let pageStart = start, pageSize = 500;
         for (;;) {
@@ -42,7 +44,7 @@ async function scanSinaHistory(len, start) {
                 retryArr.push(code);
             }
             else {
-                console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
+                //console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
                 await gfuncs_1.sleep(1000);
             }
         }
@@ -53,11 +55,13 @@ async function scanSinaHistory(len, start) {
                 await gfuncs_1.sleep(3000);
                 let r = await sqg.processOne(rc, len);
                 if (r) {
-                    console.log('sinahistory retry: ' + rc['id'] + ' : ' + rc['symbol']);
+                    //console.log('sinahistory retry: ' + rc['id'] + ' : ' + rc['symbol']);
                     break;
                 }
             }
         }
+        dt = new Date();
+        console.log('scanSinaHistory end - ' + dt.toLocaleString());
     }
     catch (err) {
         console.log(err);

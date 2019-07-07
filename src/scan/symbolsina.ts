@@ -10,8 +10,13 @@ export async function scanSinaSymbols() {
 
   try {
     let runner = await getRunner(Const_dbname);
+    let dt = new Date();
+    console.log('scanSinaSymbols begin  - ' + dt.toLocaleString());
+
     let sinaSym = new SinaSymbols(runner);
     await sinaSym.GetHS_A();
+    dt = new Date();
+    console.log('scanSinaSymbols end  - ' + dt.toLocaleString());
   }
   catch (err) {
     console.log(err);
@@ -47,7 +52,7 @@ class SinaSymbols {
         retryArr.push(page);
       }
       else {
-        console.log('sinasymbols hsa page : ' + page);
+        //console.log('sinasymbols hsa page : ' + page);
       }
       ++page;
       readCount += 80;
@@ -60,7 +65,7 @@ class SinaSymbols {
         await sleep(3000);
         let r = await this.GetHSAOnePage(p);;
         if (r) {
-          console.log('sinasymbols hsa page : ' + p);
+          //console.log('sinasymbols hsa page : ' + p);
           break;
         }
       }
