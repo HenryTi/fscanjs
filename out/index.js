@@ -7,7 +7,7 @@ const sina_1 = require("./router/sina");
 const eastmoney_1 = require("./router/eastmoney");
 const magic_1 = require("./router/magic");
 const timedtask_1 = require("./timedtask");
-console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
 (async function () {
     let connection = config.get("connection");
     if (connection === undefined || connection.host === '0.0.0.0') {
@@ -45,19 +45,13 @@ console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
     app.use('/fsjs/sina', sina_1.default);
     app.use('/fsjs/eastmoney', eastmoney_1.default);
     app.use('/fsjs/magic', magic_1.default);
-    app.use('/hello', dbHello);
-    function dbHello(req, res) {
-        let db = req.params.db;
-        res.json({ "hello": 'fscanjs: hello, db is ' + db });
-    }
-    let port = config.get('port');
-    console.log('port=', port);
     timedtask_1.startTimer();
+    let port = config.get('port');
     app.listen(port, async () => {
         console.log('fscanjs listening on port ' + port);
         let connection = config.get("connection");
         let { host, user } = connection;
-        console.log('process.env.NODE_ENV: %s\nDB host: %s, user: %s', process.env.NODE_ENV, host, user);
+        console.log('DB host: %s, user: %s', host, user);
     });
 })();
 //# sourceMappingURL=index.js.map

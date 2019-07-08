@@ -8,7 +8,7 @@ import { doTest } from './test';
 import magicRouter from './router/magic';
 import { startTimer } from './timedtask';
 
-console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
 (async function () {
 
   let connection = config.get<any>("connection");
@@ -48,24 +48,15 @@ console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
   app.use('/fsjs/sina', sinaRouter);
   app.use('/fsjs/eastmoney', eastmoneyRouter);
   app.use('/fsjs/magic', magicRouter);
-  app.use('/hello', dbHello);
-
-  function dbHello(req: Request, res: Response) {
-    let db = req.params.db;
-    res.json({ "hello": 'fscanjs: hello, db is ' + db });
-  }
-
-  let port = config.get<number>('port');
-  console.log('port=', port);
 
   startTimer();
+  let port = config.get<number>('port');
 
   app.listen(port, async () => {
     console.log('fscanjs listening on port ' + port);
     let connection = config.get<any>("connection");
     let { host, user } = connection;
-    console.log('process.env.NODE_ENV: %s\nDB host: %s, user: %s',
-      process.env.NODE_ENV,
+    console.log('DB host: %s, user: %s',
       host,
       user);
   });
