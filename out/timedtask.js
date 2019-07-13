@@ -39,9 +39,10 @@ async function CheckDayTask(dt) {
             await symbolsina_1.scanSinaSymbols();
             downloadSymbolTask = day;
             dayTaskRunning = false;
+            return;
         }
     }
-    else if (hm >= 1800) {
+    if (hm >= 1800) {
         if (day > downloadHistoryTask) {
             dayTaskRunning = true;
             await historysina_1.scanSinaHistory(10, 0);
