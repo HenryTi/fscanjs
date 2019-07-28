@@ -15,6 +15,7 @@ export async function scanSinaSymbols() {
 
     let sinaSym = new SinaSymbols(runner);
     await sinaSym.GetHS_A();
+    await runner.call('t_updatestockstomi', []);
     dt = new Date();
     console.log('scanSinaSymbols end  - ' + dt.toLocaleString());
   }

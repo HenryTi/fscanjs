@@ -9,9 +9,10 @@ import * as cheerio from 'cheerio';
 import { scanSinaFiles } from "./scan/sinafiles";
 import * as z from 'zlib';
 import { startTimer } from "./timedtask";
+import { getRunner, Runner} from "./db";
+import { Const_dbname } from "./const";
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
-startTimer();
 
 async function testZip() {
   let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
@@ -41,15 +42,19 @@ async function testZip() {
 }
 
 
-testZip();
-
 async function scansina() {
-  await scanSinaFiles(0, true, 'finance');
-  await scanSinaFiles(0, true, 'balancesheet');
-  await scanSinaFiles(0, true, 'profitstatement');
-  await scanSinaFiles(0, true, 'stockstructure');
+  await scanSinaFiles(0, 'finance');
+  await scanSinaFiles(0, 'balancesheet');
+  await scanSinaFiles(0, 'profitstatement');
+  await scanSinaFiles(0, 'stockstructure');
 }
 //scansina();
 
-//caclulateExRight();
-//emulateTradeMonthChange();
+async function testa() {
+  let runner = await getRunner(Const_dbname);
+  let r = await runner.call('t_stockarchives$query', [1, '新浪利润表', undefined]);
+  let r2 = await runner.call('t_stockarchives$query', [50000, '新浪利润表', undefined]);
+  debugger
+}
+
+testa();

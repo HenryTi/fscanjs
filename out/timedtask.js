@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const hqsina_1 = require("./scan/hqsina");
 const historysina_1 = require("./scan/historysina");
 const symbolsina_1 = require("./scan/symbolsina");
+const sinafiles_1 = require("./scan/sinafiles");
 async function startTimer() {
     console.log('start timer.');
     setInterval(() => {
@@ -53,6 +54,27 @@ async function CheckDayTask(dt) {
 }
 async function CheckSundayTask(dt) {
 }
+var saturdayTaskRunning = false;
+var downloadSinaTask = 0;
 async function CheckSaturdayTask(dt) {
+    if (saturdayTaskRunning)
+        return;
+    let day = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+    let hm = dt.getHours() * 100 + dt.getMinutes();
+    if (hm >= 100) {
+        if (day > downloadSinaTask) {
+            saturdayTaskRunning = true;
+            await scanSinaAllFiles();
+            downloadSinaTask = day;
+            saturdayTaskRunning = false;
+            return;
+        }
+    }
+}
+async function scanSinaAllFiles() {
+    await sinafiles_1.scanSinaFiles(0, 'finance');
+    await sinafiles_1.scanSinaFiles(0, 'balancesheet');
+    await sinafiles_1.scanSinaFiles(0, 'profitstatement');
+    await sinafiles_1.scanSinaFiles(0, 'stockstructure');
 }
 //# sourceMappingURL=timedtask.js.map

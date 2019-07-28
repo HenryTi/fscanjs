@@ -10,7 +10,7 @@ const const_type_sinaStockStructure = '新浪股本结构';
 const const_type_sinaBalanceSheet = '新浪资产负债表';
 const const_type_sinaProfitStatement = '新浪利润表';
 const const_type_sinaCashFlow = '新浪现金流量表';
-async function scanSinaFiles(start, scanAll, scanType) {
+async function scanSinaFiles(start, scanType) {
     if (gfuncs_1.RemoteIsRun())
         return;
     gfuncs_1.RemoteRun(true);
@@ -22,19 +22,19 @@ async function scanSinaFiles(start, scanAll, scanType) {
                 gfuncs_1.RemoteRun(false);
                 return;
             case 'finance':
-                sinascanner = new sinaFinance(runner, scanAll);
+                sinascanner = new sinaFinance(runner);
                 break;
             case 'stockstructure':
-                sinascanner = new sinaStockStructure(runner, scanAll);
+                sinascanner = new sinaStockStructure(runner);
                 break;
             case 'balancesheet':
-                sinascanner = new sinaBalanceSheet(runner, scanAll);
+                sinascanner = new sinaBalanceSheet(runner);
                 break;
             case 'profitstatement':
-                sinascanner = new sinaProfitStatement(runner, scanAll);
+                sinascanner = new sinaProfitStatement(runner);
                 break;
             case 'cashflow':
-                sinascanner = new sinaCashFlow(runner, scanAll);
+                sinascanner = new sinaCashFlow(runner);
                 break;
         }
         let pageStart = start, pageSize = 100;
@@ -62,10 +62,9 @@ async function scanSinaFiles(start, scanAll, scanType) {
 }
 exports.scanSinaFiles = scanSinaFiles;
 class sinaFiles {
-    constructor(runner, all) {
+    constructor(runner) {
         this.runner = runner;
         this.retryArr = [];
-        this.scanAll = all;
     }
     async processGroup(items) {
         if (items.length <= 0)
@@ -107,12 +106,15 @@ class sinaFiles {
         return true;
     }
     async scanItem(item) {
-        if (this.scanAll) {
-            await this.scanAllYears(item);
-        }
-        else {
+        if (this.checkExist(item)) {
             await this.scanRecentYears(item);
         }
+        else {
+            await this.scanAllYears(item);
+        }
+    }
+    async checkExist(item) {
+        return true;
     }
     async scanRecentYears(item) {
         let date = new Date();
@@ -130,8 +132,22 @@ class sinaFiles {
     }
 }
 class sinaFinance extends sinaFiles {
-    constructor(runner, all) {
-        super(runner, all);
+    constructor(runner) {
+        super(runner);
+    }
+    async checkExist(item) {
+        let { id } = item;
+        try {
+            let r = await this.runner.call('t_stockarchives$query', [id, const_type_sinaFinance, undefined]);
+            if (r === undefined)
+                return false;
+            if (r.length <= 0)
+                return false;
+            return true;
+        }
+        catch (err) {
+            return false;
+        }
     }
     async scanAllYears(item) {
         let { id, symbol, code } = item;
@@ -169,15 +185,15 @@ class sinaFinance extends sinaFiles {
         });
         let contentStr = JSON.stringify(row);
         await this.runner.call('t_stockarchives$save', [id, const_type_sinaFinance, year, contentStr]);
-        if (!this.scanAll) {
-            console.log('sinaFinance, code: ' + id + ' - ' + symbol + ' year:' + year);
-        }
     }
 }
 ;
 class sinaStockStructure extends sinaFiles {
-    constructor(runner, all) {
-        super(runner, false);
+    constructor(runner) {
+        super(runner);
+    }
+    async checkExist(item) {
+        return false;
     }
     async scanItem(item) {
         await this.scanAllYears(item);
@@ -208,8 +224,22 @@ class sinaStockStructure extends sinaFiles {
     }
 }
 class sinaBalanceSheet extends sinaFiles {
-    constructor(runner, all) {
-        super(runner, all);
+    constructor(runner) {
+        super(runner);
+    }
+    async checkExist(item) {
+        let { id } = item;
+        try {
+            let r = await this.runner.call('t_stockarchives$query', [id, const_type_sinaBalanceSheet, undefined]);
+            if (r === undefined)
+                return false;
+            if (r.length <= 0)
+                return false;
+            return true;
+        }
+        catch (err) {
+            return false;
+        }
     }
     async scanAllYears(item) {
         let { id, symbol, code } = item;
@@ -248,14 +278,25 @@ class sinaBalanceSheet extends sinaFiles {
         });
         let contentStr = JSON.stringify(row);
         await this.runner.call('t_stockarchives$save', [id, const_type_sinaBalanceSheet, year, contentStr]);
-        if (!this.scanAll) {
-            console.log('scanBalanceSheet, code: ' + id + ' - ' + symbol + ' year:' + year);
-        }
     }
 }
 class sinaProfitStatement extends sinaFiles {
-    constructor(runner, all) {
-        super(runner, all);
+    constructor(runner) {
+        super(runner);
+    }
+    async checkExist(item) {
+        let { id } = item;
+        try {
+            let r = await this.runner.call('t_stockarchives$query', [id, const_type_sinaProfitStatement, undefined]);
+            if (r === undefined)
+                return false;
+            if (r.length <= 0)
+                return false;
+            return true;
+        }
+        catch (err) {
+            return false;
+        }
     }
     async scanAllYears(item) {
         let { id, symbol, code } = item;
@@ -294,14 +335,25 @@ class sinaProfitStatement extends sinaFiles {
         });
         let contentStr = JSON.stringify(row);
         await this.runner.call('t_stockarchives$save', [id, const_type_sinaProfitStatement, year, contentStr]);
-        if (!this.scanAll) {
-            console.log('scanProfitStatement, code: ' + id + ' - ' + symbol + ' year:' + year);
-        }
     }
 }
 class sinaCashFlow extends sinaFiles {
-    constructor(runner, all) {
-        super(runner, all);
+    constructor(runner) {
+        super(runner);
+    }
+    async checkExist(item) {
+        let { id } = item;
+        try {
+            let r = await this.runner.call('t_stockarchives$query', [id, const_type_sinaCashFlow, undefined]);
+            if (r === undefined)
+                return false;
+            if (r.length <= 0)
+                return false;
+            return true;
+        }
+        catch (err) {
+            return false;
+        }
     }
     async scanAllYears(item) {
         let { id, symbol, code } = item;
@@ -341,9 +393,6 @@ class sinaCashFlow extends sinaFiles {
         });
         let contentStr = JSON.stringify(row);
         await this.runner.call('t_stockarchives$save', [id, const_type_sinaCashFlow, year, contentStr]);
-        if (!this.scanAll) {
-            console.log('scanCashFlow, code: ' + id + ' - ' + symbol + ' year:' + year);
-        }
     }
 }
 //# sourceMappingURL=sinafiles.js.map

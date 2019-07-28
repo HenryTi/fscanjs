@@ -64,6 +64,7 @@ export async function scanSinaHistory(len: number, start: number) {
       }
     }
 
+    await runner.call('c_updatedayindex', []);
     dt = new Date();
     console.log('scanSinaHistory end - ' + dt.toLocaleString());
   }
