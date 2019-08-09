@@ -235,7 +235,7 @@ class sinaStockStructure extends sinaFiles {
 
     let contentStr = JSON.stringify(rows);
     await this.runner.call('t_stockarchives$save', [id, const_type_sinaStockStructure, '', contentStr]);
-    console.log('sinaStockStructure, code: ' + id + ' - ' + symbol);
+    //console.log('sinaStockStructure, code: ' + id + ' - ' + symbol);
   }
 
   protected async scanOneYear(item: any, year:string) : Promise<void> {
