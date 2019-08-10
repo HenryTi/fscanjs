@@ -77,8 +77,12 @@ async function CheckSaturdayTask(dt: Date) {
 }
 
 async function scanSinaAllFiles() {
+  let dt = new Date();
+  console.log('scanSinaAllFiles Begin  - ' + dt.toLocaleString());
   await scanSinaFiles(0, 'finance');
   await scanSinaFiles(0, 'balancesheet');
   await scanSinaFiles(0, 'profitstatement');
   await scanSinaFiles(0, 'stockstructure');
+  dt = new Date();
+  console.log('scanSinaAllFiles End  - ' + dt.toLocaleString());
 }

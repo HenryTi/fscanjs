@@ -72,9 +72,13 @@ async function CheckSaturdayTask(dt) {
     }
 }
 async function scanSinaAllFiles() {
+    let dt = new Date();
+    console.log('scanSinaAllFiles Begin  - ' + dt.toLocaleString());
     await sinafiles_1.scanSinaFiles(0, 'finance');
     await sinafiles_1.scanSinaFiles(0, 'balancesheet');
     await sinafiles_1.scanSinaFiles(0, 'profitstatement');
     await sinafiles_1.scanSinaFiles(0, 'stockstructure');
+    dt = new Date();
+    console.log('scanSinaAllFiles End  - ' + dt.toLocaleString());
 }
 //# sourceMappingURL=timedtask.js.map
