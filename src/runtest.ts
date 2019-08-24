@@ -51,9 +51,9 @@ async function scansina() {
 //scansina();
 
 async function testa() {
-  let runner = await getRunner(Const_dbname);
-  let r = await runner.call('t_stockarchives$query', [1, '新浪利润表', undefined]);
-  let r2 = await runner.call('t_stockarchives$query', [50000, '新浪利润表', undefined]);
+  let entityType = 'FS';
+  let path = '/:name/:id';
+  let str = `/${entityType}${path}`;
   debugger
 }
 

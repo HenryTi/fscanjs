@@ -4,8 +4,6 @@ const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
 const sinafiles_1 = require("./scan/sinafiles");
 const z = require("zlib");
-const db_1 = require("./db");
-const const_1 = require("./const");
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 async function testZip() {
     let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
@@ -39,9 +37,9 @@ async function scansina() {
 }
 //scansina();
 async function testa() {
-    let runner = await db_1.getRunner(const_1.Const_dbname);
-    let r = await runner.call('t_stockarchives$query', [1, '新浪利润表', undefined]);
-    let r2 = await runner.call('t_stockarchives$query', [50000, '新浪利润表', undefined]);
+    let entityType = 'FS';
+    let path = '/:name/:id';
+    let str = `/${entityType}${path}`;
     debugger;
 }
 testa();

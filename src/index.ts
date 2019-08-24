@@ -4,11 +4,13 @@ import * as bodyParser from 'body-parser';
 import * as config from 'config';
 import sinaRouter from './router/sina';
 import eastmoneyRouter from './router/eastmoney';
+import sqlRouter from './router/sqlapi'
 import { doTest } from './test';
 import magicRouter from './router/magic';
 import { startTimer } from './timedtask';
 
 console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
+const c_isDevelopment = process.env.NODE_ENV === 'development';
 (async function () {
 
   let connection = config.get<any>("connection");
@@ -17,6 +19,7 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
     return;
   }
 
+  var cors = require('cors')
   let app = express();
   app.use(express.static('public'));
   app.use(function (err, req, res, next) {
@@ -27,6 +30,7 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
     });
   });
   app.use(bodyParser.json());
+  app.use(cors());
   app.set('json replacer', (key: any, value: any) => {
     if (value === null) return undefined;
     return value;
@@ -48,8 +52,11 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
   app.use('/fsjs/sina', sinaRouter);
   app.use('/fsjs/eastmoney', eastmoneyRouter);
   app.use('/fsjs/magic', magicRouter);
+  app.use('/fsjs/sql', sqlRouter);
 
-  startTimer();
+  if (!c_isDevelopment) {
+    startTimer();
+  }
   let port = config.get<number>('port');
 
   app.listen(port, async () => {

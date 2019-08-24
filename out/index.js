@@ -5,15 +5,18 @@ const bodyParser = require("body-parser");
 const config = require("config");
 const sina_1 = require("./router/sina");
 const eastmoney_1 = require("./router/eastmoney");
+const sqlapi_1 = require("./router/sqlapi");
 const magic_1 = require("./router/magic");
 const timedtask_1 = require("./timedtask");
 console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
+const c_isDevelopment = process.env.NODE_ENV === 'development';
 (async function () {
     let connection = config.get("connection");
     if (connection === undefined || connection.host === '0.0.0.0') {
         console.log("mysql connection must defined in config/default.json or config/production.json");
         return;
     }
+    var cors = require('cors');
     let app = express();
     app.use(express.static('public'));
     app.use(function (err, req, res, next) {
@@ -24,6 +27,7 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
         });
     });
     app.use(bodyParser.json());
+    app.use(cors());
     app.set('json replacer', (key, value) => {
         if (value === null)
             return undefined;
@@ -45,7 +49,10 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
     app.use('/fsjs/sina', sina_1.default);
     app.use('/fsjs/eastmoney', eastmoney_1.default);
     app.use('/fsjs/magic', magic_1.default);
-    timedtask_1.startTimer();
+    app.use('/fsjs/sql', sqlapi_1.default);
+    if (!c_isDevelopment) {
+        timedtask_1.startTimer();
+    }
     let port = config.get('port');
     app.listen(port, async () => {
         console.log('fscanjs listening on port ' + port);
