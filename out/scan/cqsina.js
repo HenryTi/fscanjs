@@ -6,6 +6,9 @@ const sina_1 = require("./sina");
 const const_1 = require("../const");
 const cheerio = require("cheerio");
 async function scanSinaExRight() {
+    if (gfuncs_1.RemoteIsRun())
+        return;
+    gfuncs_1.RemoteRun(true);
     let runner = await db_1.getRunner(const_1.Const_dbname);
     let sinaer = new SinaExRight(runner);
     try {
@@ -32,6 +35,7 @@ async function scanSinaExRight() {
         console.log(err);
     }
     console.log('scan Sina Exright completed');
+    gfuncs_1.RemoteRun(false);
 }
 exports.scanSinaExRight = scanSinaExRight;
 class SinaExRight {
@@ -46,7 +50,6 @@ class SinaExRight {
             let item = items[i];
             await this.processOne(item);
         }
-        console.log('scan sinaExRight onegroup : ' + items.length);
     }
     async processRetry() {
         for (let index = 0; index < this.retryArr.length; ++index) {

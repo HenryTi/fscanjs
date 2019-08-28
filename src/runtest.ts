@@ -11,6 +11,7 @@ import * as z from 'zlib';
 import { startTimer } from "./timedtask";
 import { getRunner, Runner} from "./db";
 import { Const_dbname } from "./const";
+import { scanSinaFinance, SinaFinace } from "./scan/financesina";
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 
@@ -42,18 +43,9 @@ async function testZip() {
 }
 
 
-async function scansina() {
-  await scanSinaFiles(0, 'finance');
-  await scanSinaFiles(0, 'balancesheet');
-  await scanSinaFiles(0, 'profitstatement');
-  await scanSinaFiles(0, 'stockstructure');
-}
-//scansina();
-
 async function testa() {
-  let entityType = 'FS';
-  let path = '/:name/:id';
-  let str = `/${entityType}${path}`;
+  let run = await getRunner(Const_dbname);
+  
   debugger
 }
 

@@ -5,13 +5,13 @@ const gfuncs_1 = require("../gfuncs");
 const sina_1 = require("./sina");
 const const_1 = require("../const");
 const cheerio = require("cheerio");
-async function scanSinaFinance(start) {
+async function scanSinaFinance(start, scanAll = false) {
     if (gfuncs_1.RemoteIsRun())
         return;
     gfuncs_1.RemoteRun(true);
     try {
         let runner = await db_1.getRunner(const_1.Const_dbname);
-        let sinaer = new SinaFinace(runner);
+        let sinaer = new SinaFinace(runner, scanAll);
         let ret = [];
         let pageStart = start, pageSize = 100;
         for (;;) {
@@ -56,6 +56,105 @@ function checkparseNumber(s) {
     return ret;
 }
 class SinaFinace {
+    constructor(runner, scanAll) {
+        this.runner = runner;
+        this.scanAll = scanAll;
+        this.retryArr = [];
+    }
+    async processGroup(items) {
+        if (items.length <= 0)
+            return;
+        for (let i = 0; i < items.length; ++i) {
+            let item = items[i];
+            await this.processOne(item);
+        }
+    }
+    async processRetry() {
+        for (let index = 0; index < this.retryArr.length; ++index) {
+            let item = this.retryArr[index];
+            for (let i = 0; i < 5; ++i) {
+                let r = await this.retryOne(item);
+                if (r)
+                    break;
+                else
+                    gfuncs_1.sleep(3000);
+            }
+        }
+    }
+    async processOne(item) {
+        try {
+            await this.scanItem(item);
+        }
+        catch (err) {
+            this.retryArr.push(item);
+            return false;
+        }
+        return true;
+    }
+    async retryOne(item) {
+        try {
+            await this.scanItem(item);
+        }
+        catch (err) {
+            return false;
+        }
+        return true;
+    }
+    async scanItem(item) {
+        let { id } = item;
+        let ret = await this.runner.query('t_stockarchives$query', [id, '新浪财务指标', null]);
+        if (ret === undefined || ret.length <= 0) {
+            return;
+        }
+        for (let i = 0; i < ret.length; ++i) {
+            let item = ret[i];
+            await this.scanOneYear(id, item);
+        }
+    }
+    async checkDataExist(id, year) {
+        let ret = await this.runner.query('tv_新浪财务指标$query', [id, year, 12]);
+        if (ret === undefined || ret.length < 1) {
+            return false;
+        }
+        return true;
+    }
+    async scanOneYear(id, item) {
+        let { name, text } = item;
+        let year = name;
+        if (!this.scanAll) {
+            let fcheck = await this.checkDataExist(id, year);
+            if (fcheck) {
+                return;
+            }
+        }
+        let values = JSON.parse(text);
+        let row = values;
+        if (row.length < 11)
+            return;
+        let dateArr = row[0];
+        for (let k = 1; k < dateArr.length; ++k) {
+            let nitem = [id];
+            let date = parseToDate(dateArr[k]);
+            if (date === undefined)
+                break;
+            nitem.push(date.year);
+            nitem.push(date.month);
+            let findData = false;
+            for (let ni = 2; ni < 11; ++ni) {
+                let s = row[ni][k];
+                let value = checkparseNumber(s);
+                if (value !== undefined)
+                    findData = true;
+                nitem.push(value);
+            }
+            if (findData) {
+                await this.runner.query('tv_新浪财务指标$save', nitem);
+            }
+        }
+    }
+}
+exports.SinaFinace = SinaFinace;
+class SinaFinaceFromWeb {
     constructor(runner) {
         this.runner = runner;
         this.retryArr = [];

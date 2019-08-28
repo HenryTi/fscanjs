@@ -2,8 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
-const sinafiles_1 = require("./scan/sinafiles");
 const z = require("zlib");
+const db_1 = require("./db");
+const const_1 = require("./const");
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 async function testZip() {
     let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
@@ -29,17 +30,8 @@ async function testZip() {
     let bunzip = z.gunzipSync(b);
     let unzipstr = bunzip.toString();
 }
-async function scansina() {
-    await sinafiles_1.scanSinaFiles(0, 'finance');
-    await sinafiles_1.scanSinaFiles(0, 'balancesheet');
-    await sinafiles_1.scanSinaFiles(0, 'profitstatement');
-    await sinafiles_1.scanSinaFiles(0, 'stockstructure');
-}
-//scansina();
 async function testa() {
-    let entityType = 'FS';
-    let path = '/:name/:id';
-    let str = `/${entityType}${path}`;
+    let run = await db_1.getRunner(const_1.Const_dbname);
     debugger;
 }
 testa();

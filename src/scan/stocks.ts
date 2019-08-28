@@ -3,6 +3,7 @@ import * as path from 'path';
 import { getRunner, Runner } from '../db';
 import { Const_dbname } from '../const';
 
+/*
 const jsonPath = '../data/shsz.json';
 
 getRunner(Const_dbname).then(async (runner) => {
@@ -38,3 +39,4 @@ getRunner(Const_dbname).then(async (runner) => {
 });
 
 let a =1;
+*/

@@ -1,10 +1,13 @@
 import { getRunner, Runner } from '../db';
-import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
+import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { fetchSinaContent } from './sina';
 import { Const_dbname } from '../const';
 import * as cheerio from 'cheerio';
 
 export async function scanSinaExRight() {
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
   let runner = await getRunner(Const_dbname);
   let sinaer = new SinaExRight(runner);
   try {
@@ -32,6 +35,7 @@ export async function scanSinaExRight() {
     console.log(err);
   }
   console.log('scan Sina Exright completed');
+  RemoteRun(false);
 }
 
 class SinaExRight {
@@ -50,8 +54,6 @@ class SinaExRight {
       let item = items[i];
       await this.processOne(item);
     }
-
-    console.log('scan sinaExRight onegroup : ' + items.length);
   }
 
   async processRetry() {

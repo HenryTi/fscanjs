@@ -4,6 +4,8 @@ const hqsina_1 = require("./scan/hqsina");
 const historysina_1 = require("./scan/historysina");
 const symbolsina_1 = require("./scan/symbolsina");
 const sinafiles_1 = require("./scan/sinafiles");
+const financesina_1 = require("./scan/financesina");
+const cqsina_1 = require("./scan/cqsina");
 async function startTimer() {
     console.log('start timer.');
     setInterval(() => {
@@ -52,8 +54,6 @@ async function CheckDayTask(dt) {
         }
     }
 }
-async function CheckSundayTask(dt) {
-}
 var saturdayTaskRunning = false;
 var downloadSinaTask = 0;
 async function CheckSaturdayTask(dt) {
@@ -78,7 +78,32 @@ async function scanSinaAllFiles() {
     await sinafiles_1.scanSinaFiles(0, 'balancesheet');
     await sinafiles_1.scanSinaFiles(0, 'profitstatement');
     await sinafiles_1.scanSinaFiles(0, 'stockstructure');
+    await financesina_1.scanSinaFinance(0, false);
+    await cqsina_1.scanSinaExRight();
     dt = new Date();
     console.log('scanSinaAllFiles End  - ' + dt.toLocaleString());
+}
+var sundayTaskRunning = false;
+async function CheckSundayTask(dt) {
+    if (sundayTaskRunning)
+        return;
+    let day = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+    let hm = dt.getHours() * 100 + dt.getMinutes();
+    if (hm >= 100) {
+        if (day > downloadSinaTask) {
+            sundayTaskRunning = true;
+            await scanSinaFilesSunday();
+            downloadSinaTask = day;
+            sundayTaskRunning = false;
+            return;
+        }
+    }
+}
+async function scanSinaFilesSunday() {
+    let dt = new Date();
+    console.log('scanSinaFilesSunday Begin  - ' + dt.toLocaleString());
+    await cqsina_1.scanSinaExRight();
+    dt = new Date();
+    console.log('scanSinaFilesSunday End  - ' + dt.toLocaleString());
 }
 //# sourceMappingURL=timedtask.js.map
