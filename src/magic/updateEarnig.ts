@@ -1,8 +1,11 @@
 import { getRunner, Runner } from '../db';
-import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
+import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { Const_dbname } from '../const';
 
 export async function updateAllEarning() {
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
   let runner: Runner = await getRunner(Const_dbname);
 
   let ret: any[] = [];
@@ -24,6 +27,7 @@ export async function updateAllEarning() {
 
   try {
     await runner.query('tv_capitalearning$clear', []);
+    await runner.sql('delete from l_earning where 1=1;', []);
   }
   catch (err) {
 
@@ -33,7 +37,11 @@ export async function updateAllEarning() {
   for (let i = 0; i < count; ++i) {
     await calculateOne(ret[i], runner);
   }
+  
+  await calculateLastEarning(ret, runner);
+
   console.log('updateAllEarning completed')
+  RemoteRun(false);
 }
 
 function checkNull(v:any) {
@@ -77,3 +85,50 @@ async function calculateOne(code: any, runner: Runner) {
     console.log(err);
   }
 }
+
+async function calculateLastEarning(codes:any[], runner: Runner) {
+  try {
+    let maxyear:any[] = await runner.sql('select max(`year`) as year from tv_capitalearning;', []) as [];
+    if (maxyear === undefined || maxyear.length < 1)
+      return;
+    let lastyear = maxyear[0].year;
+
+    let count = codes.length;
+    for (let i = 0; i < count; ++i) {
+      await calculateOneEarning(codes[i], runner, lastyear);
+    }
+  }
+  catch (err) {
+  }
+}
+
+async function calculateOneEarning(code: any, runner: Runner, lastyear:number) {
+  try {
+    let { id } = code;
+    let pret = await runner.query('tv_capitalearning$querylast', [id, lastyear-6]);
+    let parr = pret as any[];
+    if (parr.length <= 0)
+      return;
+
+    let count = parr.length;
+    let ce = {};
+    let i = 0;
+    let iEnd = count > 5 ? 5 : count;
+    let yearEnd = parr[0].year;
+    if (yearEnd < lastyear - 1)
+      return;
+    let sum = 0;
+    for (; i < iEnd; ++i) {
+      let { year, capital, earning } = parr[i] as { year: number, capital: number, earning: number };
+      if (year < yearEnd - i)
+        break;
+      sum += earning;
+      let e = sum / (i + 1);
+      await this.runner.call('l_earning$save', [id, i+1, e]);
+    }
+  }
+  catch (err) {
+    console.log(err);
+  }
+}
+

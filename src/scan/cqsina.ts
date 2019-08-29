@@ -147,5 +147,6 @@ class SinaExRight {
     if (promiseArr.length > 0)
       await Promise.all(promiseArr);
     await this.runner.call('tv_计算除权因子', [id]);
+    await this.runner.call('c_calculateexrightinfo', [id]);
   }
 }

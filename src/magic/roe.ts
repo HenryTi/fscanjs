@@ -27,9 +27,10 @@ export async function calculateAllRoe() {
     }
 
     console.log('calculateAllRoe get stocks id');
+    let lastyear = await getEarningLastYear(runner);
     try {
       await runner.call('tv_roe$clearall', []);
-      console.log('calculateAllRoe clearroe');
+      await runner.sql('delete from l_roe where 1=1;', []);
     }
     catch (err) {
       console.log(err);
@@ -38,18 +39,19 @@ export async function calculateAllRoe() {
     let count = ret.length;
 
     for (let i = 0; i < count; ++i) {
-      await calculateOne(ret[i], runner);
+      await calculateOne(ret[i], runner, lastyear);
     }
+
     console.log('calculateAllRoe completed');
   }
   catch (err) { }
   RemoteRun(false);
 }
 
-async function calculateOne(code: any, runner: Runner) {
+async function calculateOne(code: any, runner: Runner, lastYear:number) {
   try {
     let { id } = code;
-    let pret = await runner.query('tv_getcapitalearning', [id]);
+    let pret = await runner.query('tv_capitalearning$query', [id]);
     let parr = pret as any[];
     if (parr.length <= 0)
       return;
@@ -65,6 +67,7 @@ async function calculateOne(code: any, runner: Runner) {
     });
 
     let count = parr.length;
+    let roerows = [];
     for (let i = 0; i < count; ++i) {
       let item = parr[i];
       let { year, capital } = item as { year: number, capital: number, earning: number };
@@ -90,15 +93,38 @@ async function calculateOne(code: any, runner: Runner) {
           if (roeavg > 0 && k == 5) {
             let m = Math.max(...rowarr);
             if (m < roeavg * 3) {
+              let oneRoe = [id, year, roeavg, roeavg * capital];
               await runner.call('tv_roe$save', [id, year, roeavg, roeavg * capital]);
+              roerows.push(oneRoe);
             }
           }
           rowarr.push(lastRoe);
         }
       }
     }
+
+    if (roerows.length > 0) {
+      let item = roerows[roerows.length-1];
+      let year = item[1] as number;
+      if (year >= lastYear - 1) {
+        await runner.call('l_roe$save', [id, item[2], item[3]]);
+      }
+    }
   }
   catch (err) {
     console.log(err);
+  }
+}
+
+async function getEarningLastYear(runner: Runner):Promise<number> {
+  try {
+    let maxyear:any[] = await runner.sql('select max(`year`) as year from tv_capitalearning;', []) as [];
+    if (maxyear === undefined || maxyear.length < 1)
+      return 0;
+    let lastyear = maxyear[0].year;
+    return lastyear;
+  }
+  catch (err) {
+    return 0;
   }
 }

@@ -6,6 +6,8 @@ const symbolsina_1 = require("./scan/symbolsina");
 const sinafiles_1 = require("./scan/sinafiles");
 const financesina_1 = require("./scan/financesina");
 const cqsina_1 = require("./scan/cqsina");
+const updateEarnig_1 = require("./magic/updateEarnig");
+const roe_1 = require("./magic/roe");
 async function startTimer() {
     console.log('start timer.');
     setInterval(() => {
@@ -80,6 +82,8 @@ async function scanSinaAllFiles() {
     await sinafiles_1.scanSinaFiles(0, 'stockstructure');
     await financesina_1.scanSinaFinance(0, false);
     await cqsina_1.scanSinaExRight();
+    await updateEarnig_1.updateAllEarning();
+    await roe_1.calculateAllRoe();
     dt = new Date();
     console.log('scanSinaAllFiles End  - ' + dt.toLocaleString());
 }

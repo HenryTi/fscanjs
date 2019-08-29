@@ -1,8 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("../db");
+const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
 async function updateAllDividend() {
+    if (gfuncs_1.RemoteIsRun())
+        return;
+    gfuncs_1.RemoteRun(true);
     let runner = await db_1.getRunner(const_1.Const_dbname);
     console.log('updateAllDividend start');
     let ret = [];
@@ -32,6 +36,7 @@ async function updateAllDividend() {
         await calculateOne(ret[i], runner);
     }
     console.log('updateAllDividend completed');
+    gfuncs_1.RemoteRun(false);
 }
 exports.updateAllDividend = updateAllDividend;
 function checkNull(v) {

@@ -12,6 +12,7 @@ import { startTimer } from "./timedtask";
 import { getRunner, Runner} from "./db";
 import { Const_dbname } from "./const";
 import { scanSinaFinance, SinaFinace } from "./scan/financesina";
+import { updateAllEarning } from "./magic/updateEarnig";
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 
@@ -44,8 +45,10 @@ async function testZip() {
 
 
 async function testa() {
-  let run = await getRunner(Const_dbname);
-  
+  //let runner = await getRunner(Const_dbname);
+  //let ret = await runner.sql('select max(`year`) as year from tv_capitalearning;', []);
+  await updateAllEarning();
+  await calculateAllRoe();
   debugger
 }
 

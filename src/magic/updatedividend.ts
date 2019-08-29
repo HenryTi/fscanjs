@@ -1,8 +1,12 @@
 import { getRunner, Runner } from '../db';
-import { sleep, checkToDateInt, checkNumberNaNToZero } from '../gfuncs';
+import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { Const_dbname } from '../const';
 
 export async function updateAllDividend() {
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
+  
   let runner: Runner = await getRunner(Const_dbname);
   console.log('updateAllDividend start')
 
@@ -35,6 +39,7 @@ export async function updateAllDividend() {
     await calculateOne(ret[i], runner);
   }
   console.log('updateAllDividend completed')
+  RemoteRun(false);
 }
 
 function checkNull(v:any) {

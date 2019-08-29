@@ -4,6 +4,8 @@ import { scanSinaSymbols } from "./scan/symbolsina";
 import { scanSinaFiles } from "./scan/sinafiles";
 import { scanSinaFinance } from "./scan/financesina";
 import { scanSinaExRight } from "./scan/cqsina";
+import { updateAllEarning } from "./magic/updateEarnig";
+import { calculateAllRoe } from "./magic/roe";
 
 export async function startTimer() {
   console.log('start timer.');
@@ -83,6 +85,8 @@ async function scanSinaAllFiles() {
   await scanSinaFiles(0, 'stockstructure');
   await scanSinaFinance(0, false);
   await scanSinaExRight();
+  await updateAllEarning();
+  await calculateAllRoe();
   dt = new Date();
   console.log('scanSinaAllFiles End  - ' + dt.toLocaleString());
 }

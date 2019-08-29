@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const roe_1 = require("./magic/roe");
 const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
 const z = require("zlib");
-const db_1 = require("./db");
-const const_1 = require("./const");
+const updateEarnig_1 = require("./magic/updateEarnig");
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 async function testZip() {
     let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
@@ -31,7 +31,10 @@ async function testZip() {
     let unzipstr = bunzip.toString();
 }
 async function testa() {
-    let run = await db_1.getRunner(const_1.Const_dbname);
+    //let runner = await getRunner(Const_dbname);
+    //let ret = await runner.sql('select max(`year`) as year from tv_capitalearning;', []);
+    await updateEarnig_1.updateAllEarning();
+    await roe_1.calculateAllRoe();
     debugger;
 }
 testa();
