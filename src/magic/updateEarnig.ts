@@ -124,7 +124,7 @@ async function calculateOneEarning(code: any, runner: Runner, lastyear:number) {
         break;
       sum += earning;
       let e = sum / (i + 1);
-      await runner.call('l_earning$save', [id, i+1, e]);
+      await runner.call('l_earning$save', [id, i+1, e, yearEnd]);
     }
   }
   catch (err) {

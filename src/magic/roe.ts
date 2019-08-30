@@ -107,7 +107,7 @@ async function calculateOne(code: any, runner: Runner, lastYear:number) {
       let item = roerows[roerows.length-1];
       let year = item[1] as number;
       if (year >= lastYear - 1) {
-        await runner.call('l_roe$save', [id, item[2], item[3]]);
+        await runner.call('l_roe$save', item);
       }
     }
   }
