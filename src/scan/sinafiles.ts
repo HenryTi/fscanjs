@@ -15,6 +15,8 @@ export async function scanSinaFiles(start:number, scanType:'finance'|'stockstruc
     return;
   RemoteRun(true);
 
+  console.log(`scanSinaAllFiles(${scanType}) Begin`);
+
   try {
     let runner = await getRunner(Const_dbname);
     let sinascanner:sinaFiles;
@@ -50,6 +52,7 @@ export async function scanSinaFiles(start:number, scanType:'finance'|'stockstruc
   catch (err) {
     console.log(err);
   }
+  console.log(`scanSinaAllFiles(${scanType}) End`);
   RemoteRun(false);
 }
 

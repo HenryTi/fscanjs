@@ -8,6 +8,8 @@ export async function scanSinaExRight() {
   if (RemoteIsRun())
     return;
   RemoteRun(true);
+  console.log(`scanSinaExRight Begin`);
+
   let runner = await getRunner(Const_dbname);
   let sinaer = new SinaExRight(runner);
   try {
@@ -34,7 +36,7 @@ export async function scanSinaExRight() {
   catch (err) {
     console.log(err);
   }
-  console.log('scan Sina Exright completed');
+  console.log('scanSinaExRight End');
   RemoteRun(false);
 }
 

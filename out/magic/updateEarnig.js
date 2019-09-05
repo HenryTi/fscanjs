@@ -7,6 +7,7 @@ async function updateAllEarning() {
     if (gfuncs_1.RemoteIsRun())
         return;
     gfuncs_1.RemoteRun(true);
+    console.log(`updateAllEarning Begin`);
     let runner = await db_1.getRunner(const_1.Const_dbname);
     let ret = [];
     let pageStart = 0, pageSize = 500;
@@ -36,7 +37,7 @@ async function updateAllEarning() {
         await calculateOne(ret[i], runner);
     }
     await calculateLastEarning(ret, runner);
-    console.log('updateAllEarning completed');
+    console.log('updateAllEarning End');
     gfuncs_1.RemoteRun(false);
 }
 exports.updateAllEarning = updateAllEarning;

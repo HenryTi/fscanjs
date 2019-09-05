@@ -7,7 +7,7 @@ async function calculateAllRoe() {
     if (gfuncs_1.RemoteIsRun())
         return;
     gfuncs_1.RemoteRun(true);
-    console.log('calculateAllRoe start');
+    console.log('calculateAllRoe Begin');
     try {
         let runner = await db_1.getRunner(const_1.Const_dbname);
         let ret = [];
@@ -38,7 +38,7 @@ async function calculateAllRoe() {
         for (let i = 0; i < count; ++i) {
             await calculateOne(ret[i], runner, lastyear);
         }
-        console.log('calculateAllRoe completed');
+        console.log('calculateAllRoe End');
     }
     catch (err) { }
     gfuncs_1.RemoteRun(false);

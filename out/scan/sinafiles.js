@@ -14,6 +14,7 @@ async function scanSinaFiles(start, scanType) {
     if (gfuncs_1.RemoteIsRun())
         return;
     gfuncs_1.RemoteRun(true);
+    console.log(`scanSinaAllFiles(${scanType}) Begin`);
     try {
         let runner = await db_1.getRunner(const_1.Const_dbname);
         let sinascanner;
@@ -58,6 +59,7 @@ async function scanSinaFiles(start, scanType) {
     catch (err) {
         console.log(err);
     }
+    console.log(`scanSinaAllFiles(${scanType}) End`);
     gfuncs_1.RemoteRun(false);
 }
 exports.scanSinaFiles = scanSinaFiles;

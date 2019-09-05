@@ -75,7 +75,7 @@ async function CheckSaturdayTask(dt) {
 }
 async function scanSinaAllFiles() {
     let dt = new Date();
-    console.log('scanSinaAllFiles Begin  - ' + dt.toLocaleString());
+    console.log('scanSinaAllFiles at Saturday Begin  - ' + dt.toLocaleString());
     await sinafiles_1.scanSinaFiles(0, 'finance');
     await sinafiles_1.scanSinaFiles(0, 'balancesheet');
     await sinafiles_1.scanSinaFiles(0, 'profitstatement');
@@ -85,7 +85,7 @@ async function scanSinaAllFiles() {
     await updateEarnig_1.updateAllEarning();
     await roe_1.calculateAllRoe();
     dt = new Date();
-    console.log('scanSinaAllFiles End  - ' + dt.toLocaleString());
+    console.log('scanSinaAllFiles at Saturday End  - ' + dt.toLocaleString());
 }
 var sundayTaskRunning = false;
 async function CheckSundayTask(dt) {

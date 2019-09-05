@@ -6,6 +6,8 @@ export async function updateAllEarning() {
   if (RemoteIsRun())
     return;
   RemoteRun(true);
+  console.log(`updateAllEarning Begin`);
+
   let runner: Runner = await getRunner(Const_dbname);
 
   let ret: any[] = [];
@@ -40,7 +42,7 @@ export async function updateAllEarning() {
   
   await calculateLastEarning(ret, runner);
 
-  console.log('updateAllEarning completed')
+  console.log('updateAllEarning End')
   RemoteRun(false);
 }
 

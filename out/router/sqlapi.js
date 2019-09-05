@@ -19,5 +19,21 @@ sqlRouter.post('/call', async (req, res) => {
         res.end();
     }
 });
+sqlRouter.post('/query', async (req, res) => {
+    let query = req.body['query'];
+    let params = req.body['params'];
+    let runner = await db_1.getRunner(const_1.Const_dbname);
+    try {
+        let dbproc = new db_1.DbQuery(runner);
+        let r = await dbproc.process(query, params);
+        res.json({ ok: true, res: r });
+    }
+    catch (error) {
+        res.json({ ok: false, error: JSON.stringify(error) });
+    }
+    finally {
+        res.end();
+    }
+});
 exports.default = sqlRouter;
 //# sourceMappingURL=sqlapi.js.map

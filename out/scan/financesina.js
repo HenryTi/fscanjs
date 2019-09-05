@@ -9,6 +9,7 @@ async function scanSinaFinance(start, scanAll = false) {
     if (gfuncs_1.RemoteIsRun())
         return;
     gfuncs_1.RemoteRun(true);
+    console.log(`scanSinaFinance Begin`);
     try {
         let runner = await db_1.getRunner(const_1.Const_dbname);
         let sinaer = new SinaFinace(runner, scanAll);
@@ -34,6 +35,7 @@ async function scanSinaFinance(start, scanAll = false) {
     catch (err) {
         console.log(err);
     }
+    console.log(`scanSinaFinance End`);
     gfuncs_1.RemoteRun(false);
 }
 exports.scanSinaFinance = scanSinaFinance;

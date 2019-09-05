@@ -6,7 +6,7 @@ export async function calculateAllRoe() {
   if (RemoteIsRun())
     return;
   RemoteRun(true);
-  console.log('calculateAllRoe start');
+  console.log('calculateAllRoe Begin');
   try {
     let runner: Runner = await getRunner(Const_dbname);
 
@@ -42,7 +42,7 @@ export async function calculateAllRoe() {
       await calculateOne(ret[i], runner, lastyear);
     }
 
-    console.log('calculateAllRoe completed');
+    console.log('calculateAllRoe End');
   }
   catch (err) { }
   RemoteRun(false);
