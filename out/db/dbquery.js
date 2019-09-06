@@ -7,6 +7,16 @@ class DbQuery {
     }
     async process(query, params) {
         let spc = new querycreator_1.QueryCreator(query, params);
+        if (spc.IsValid()) {
+            if (spc.firstPage) {
+                let csqlstr = spc.GetCreateSql();
+                await this.runner.sql(csqlstr, []);
+            }
+            return await this.runner.sql(spc.GetQuerySql(), []);
+        }
+        else {
+            throw 'query传入参数错误:' + JSON.stringify(query);
+        }
     }
 }
 exports.DbQuery = DbQuery;

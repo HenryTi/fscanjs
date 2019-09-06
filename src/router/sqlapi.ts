@@ -20,7 +20,7 @@ sqlRouter.post('/call', async (req: Request, res: Response) => {
 });
 
 sqlRouter.post('/query', async (req: Request, res: Response) => {
-  let query = req.body['query'];
+  let query = req.body['proc'];
   let params = req.body['params'] as any[];
 
   let runner = await getRunner(Const_dbname);

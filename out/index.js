@@ -8,6 +8,8 @@ const eastmoney_1 = require("./router/eastmoney");
 const sqlapi_1 = require("./router/sqlapi");
 const magic_1 = require("./router/magic");
 const timedtask_1 = require("./timedtask");
+let dt = new Date();
+console.log('fscanjs start at - ' + dt.toLocaleString());
 console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
 const c_isDevelopment = process.env.NODE_ENV === 'development';
 (async function () {
@@ -40,7 +42,7 @@ const c_isDevelopment = process.env.NODE_ENV === 'development';
             p = JSON.stringify(req.body);
         console.log('%s:%s - %s %s %s', s.remoteAddress, s.remotePort, req.method, req.originalUrl, p);
         try {
-            await next();
+            next();
         }
         catch (e) {
             console.error(e);

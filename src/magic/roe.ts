@@ -26,7 +26,6 @@ export async function calculateAllRoe() {
       }
     }
 
-    console.log('calculateAllRoe get stocks id');
     let lastyear = await getEarningLastYear(runner);
     try {
       await runner.call('tv_roe$clearall', []);
