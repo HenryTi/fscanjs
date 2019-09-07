@@ -12,7 +12,8 @@ class DbQuery {
                 let csqlstr = spc.GetCreateSql();
                 await this.runner.sql(csqlstr, []);
             }
-            return await this.runner.sql(spc.GetQuerySql(), []);
+            let qstr = spc.GetQuerySql();
+            return await this.runner.sql(qstr, []);
         }
         else {
             throw 'query传入参数错误:' + JSON.stringify(query);

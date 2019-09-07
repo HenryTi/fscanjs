@@ -17,9 +17,9 @@ const queryTemplates: { [name: string]: QueryTemplate } = {
       return `SELECT ta.order, \`id\` AS \`id\`,t0.\`symbol\` AS \`symbol\`,t0.\`market\` AS \`market\`,t0.\`code\` AS \`code\`,
     t0.\`name\` AS \`name\`, t3.\`价格\` as price, t3.\`价格\`/ t1.earning as \`pe\`, t1.earning as \`e\`, t2.roe as \`roe\`
     FROM \`t_stocksorderbyuser\` as ta inner join \`tv_股票\` AS t0 on ta.user='${query.user}' and ta.stock = t0.id 
-    inner join \`l_earning\` as t1 on t0.id=t1.stock and t1.yearlen = '${query.yearlen}'
-    inner join \`l_roe\` as t2 on t0.id=t2.stock 
-    inner join \`tv_股票价格\` as t3 on t0.id= t3.\`股票\`
+    left join \`l_earning\` as t1 on t0.id=t1.stock and t1.yearlen = '${query.yearlen}'
+    left join \`l_roe\` as t2 on t0.id=t2.stock 
+    left join \`tv_股票价格\` as t3 on t0.id= t3.\`股票\`
     WHERE ta.order > ${query.pageStart}
     ORDER BY ta.order ASC
     LIMIT ${query.pageSize};
@@ -30,7 +30,7 @@ const queryTemplates: { [name: string]: QueryTemplate } = {
 delete from t_stocksorderbyuser where \`user\`='${query.user}';
 insert into t_tmporder (stock) select a.\`股票\` as stock from tv_股票价格 as a inner join l_earning as b 
   on a.\`股票\` = b.stock and b.yearlen = '${query.yearlen}' and b.earning > 0
-  order by a.\`价格\` / b.earning limit 2000;
+  order by a.\`价格\` / b.earning ASC limit 2000;
 insert into t_stocksorderbyuser (\`user\`, \`order\`, \`stock\`) select '${query.user}' as \`user\`, \`no\` as \`order\`, \`stock\` from t_tmporder;
 ` 
     },
