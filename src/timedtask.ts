@@ -111,7 +111,7 @@ async function CheckSundayTask(dt: Date) {
 async function scanSinaFilesSunday() {
   let dt = new Date();
   console.log('scanSinaFilesSunday Begin  - ' + dt.toLocaleString());
-  await scanSinaExRight();
+  //await scanSinaExRight();
   dt = new Date();
   console.log('scanSinaFilesSunday End  - ' + dt.toLocaleString());
 }

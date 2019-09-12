@@ -45,10 +45,9 @@ async function testZip() {
 
 
 async function testa() {
-  //let runner = await getRunner(Const_dbname);
+  let runner = await getRunner(Const_dbname);
   //let ret = await runner.sql('select max(`year`) as year from tv_capitalearning;', []);
-  await updateAllEarning();
-  await calculateAllRoe();
+  let ret = await runner.call('q_stockallinfo', [100000]);
   debugger
 }
 

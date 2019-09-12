@@ -175,7 +175,7 @@ export class SinaFinace {
   }
 }
 
-class SinaFinaceFromWeb {
+/* class SinaFinaceFromWeb {
   private runner: Runner;
   private retryArr: any[];
 
@@ -282,4 +282,4 @@ class SinaFinaceFromWeb {
 
     console.log('scan sinaFinance, code: ' + id + ' - ' + symbol);
   }
-}
+} */
