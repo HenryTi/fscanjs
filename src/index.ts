@@ -42,7 +42,7 @@ const c_isDevelopment = process.env.NODE_ENV === 'development';
     let s = req.socket;
     let p = '';
     if (req.method !== 'GET') p = JSON.stringify(req.body);
-    console.log('%s:%s - %s %s %s', s.remoteAddress, s.remotePort, req.method, req.originalUrl, p);
+    //console.log('%s:%s - %s %s %s', s.remoteAddress, s.remotePort, req.method, req.originalUrl, p);
     try {
       next();
     }
