@@ -14,7 +14,22 @@ const queryTemplates: { [name: string]: QueryTemplate } = {
             query.pageSize !== undefined && query.pageStart !== null 
     },
     sql: (query: any, params: any[]) => { 
+      let blackID = query.blackID === undefined || query.blackID === null ? 0 : query.blackID;
+      if (blackID > 0) {
       return `SELECT ta.order, \`id\` AS \`id\`,t0.\`symbol\` AS \`symbol\`,t0.\`market\` AS \`market\`,t0.\`code\` AS \`code\`,
+    t0.\`name\` AS \`name\`, t3.\`价格\` as price, t3.\`价格\`/ t1.earning as \`pe\`, t1.earning as \`e\`, t2.roe as \`roe\`
+    FROM \`t_stocksorderbyuser\` as ta inner join \`tv_股票\` AS t0 on ta.user='${query.user}' and ta.stock = t0.id 
+    left join l_earning as t1 on t0.id=t1.stock and t1.yearlen = '${query.yearlen}'
+    left join l_roe as t2 on t0.id=t2.stock 
+    left join tv_股票价格 as t3 on t0.id= t3.股票
+    left join mi.tv_tagstock as t4 on ta.user=t4.user and t4.tag='${blackID}' and ta.stock=t4.stock
+    WHERE ta.order > ${query.pageStart} and t4.stock is null
+    ORDER BY ta.order ASC
+    LIMIT ${query.pageSize};
+` 
+      }
+      else {
+        return `SELECT ta.order, \`id\` AS \`id\`,t0.\`symbol\` AS \`symbol\`,t0.\`market\` AS \`market\`,t0.\`code\` AS \`code\`,
     t0.\`name\` AS \`name\`, t3.\`价格\` as price, t3.\`价格\`/ t1.earning as \`pe\`, t1.earning as \`e\`, t2.roe as \`roe\`
     FROM \`t_stocksorderbyuser\` as ta inner join \`tv_股票\` AS t0 on ta.user='${query.user}' and ta.stock = t0.id 
     left join \`l_earning\` as t1 on t0.id=t1.stock and t1.yearlen = '${query.yearlen}'
@@ -24,6 +39,7 @@ const queryTemplates: { [name: string]: QueryTemplate } = {
     ORDER BY ta.order ASC
     LIMIT ${query.pageSize};
 ` 
+      }
     },
     createsql: (query: any, parasm: any[]) => {
       let user = query.user as number;
@@ -50,7 +66,7 @@ insert into t_stocksorderbyuser (\`user\`, \`order\`, \`stock\`) select '${query
     sql: (query: any, params: any[]) => { 
       return `SELECT ta.order, \`id\` AS \`id\`,t0.\`symbol\` AS \`symbol\`,t0.\`market\` AS \`market\`,t0.\`code\` AS \`code\`,
     t0.\`name\` AS \`name\`, t3.\`价格\` as price, t3.\`价格\`/ t1.earning as \`pe\`, t1.earning as \`e\`, t2.roe as \`roe\`
-    FROM \`t_stocksorderbyuser\` as ta inner join \`tv_股票\` AS t0 on ta.user='${query.user}' and ta.stock = t0.id 
+    FROM \`t_stocksorderbyusertag\` as ta inner join \`tv_股票\` AS t0 on ta.user='${query.user}' and ta.stock = t0.id 
     left join \`l_earning\` as t1 on t0.id=t1.stock and t1.yearlen = '${query.yearlen}'
     left join \`l_roe\` as t2 on t0.id=t2.stock 
     left join \`tv_股票价格\` as t3 on t0.id= t3.\`股票\`
@@ -62,15 +78,15 @@ insert into t_stocksorderbyuser (\`user\`, \`order\`, \`stock\`) select '${query
     createsql: (query: any, parasm: any[]) => {
       let user = query.user as number;
       let userStr = Number.isNaN(user) ? '' : user.toString();
-      let tempTableName = '_tmporderbyuser_' + userStr;
+      let tempTableName = '_tmporderbyusertag_' + userStr;
       return `DROP TEMPORARY TABLE IF EXISTS \`${tempTableName}\`;
 CREATE TEMPORARY TABLE \`${tempTableName}\` (\`no\` INT NOT NULL AUTO_INCREMENT, \`stock\` INT NULL, PRIMARY KEY(\`no\`)) ENGINE=MyISAM;
-delete from t_stocksorderbyuser where \`user\`='${query.user}';
+delete from t_stocksorderbyusertag where \`user\`='${query.user}';
 insert into \`${tempTableName}\` (stock) select a.\`股票\` as stock from tv_股票价格 as a inner join l_earning as b 
   on a.\`股票\` = b.stock and b.yearlen = '${query.yearlen}' and b.earning > 0 
   inner join mi.tv_tagstock as c on c.user='${query.user}' and c.tag=${query.tag} and c.stock=a.\`股票\`
   order by a.\`价格\` / b.earning ASC limit 2000;
-insert into t_stocksorderbyuser (\`user\`, \`order\`, \`stock\`) select '${query.user}' as \`user\`, \`no\` as \`order\`, \`stock\` from \`${tempTableName}\`;
+insert into t_stocksorderbyusertag (\`user\`, \`order\`, \`stock\`) select '${query.user}' as \`user\`, \`no\` as \`order\`, \`stock\` from \`${tempTableName}\`;
 ` 
     },
   },
