@@ -42,7 +42,7 @@ export async function scanSinaQuotations() {
       oneGroup.push(code);
       ++i;
 
-      if (oneGroup.length >= 40 || i >= count) {
+      if (oneGroup.length >= 30 || i >= count) {
         let gv = oneGroup;
         oneGroup = [];
         let sqg = new SinaQuotationGroup(runner);
@@ -149,6 +149,7 @@ class SinaQuotationGroup {
       if (row[3] === '0.000')
         continue;
       promiseArr.push(this.runner.call('tv_股票价格$save', row));
+      promiseArr.push(this.calculateExPrice(row));
     }
     if (promiseArr.length > 0) {
       await Promise.all(promiseArr);
@@ -183,5 +184,39 @@ class SinaQuotationGroup {
     }
 
     return row;
+  }
+
+  protected async calculateExPrice(item: any[]) {
+    try {
+      let id = item[0];
+      let row: any[] = [id];
+      row.push(item[1]);
+      row.push(item[2]);
+      let day = Number.parseInt(item[1]);
+      let price = Number.parseFloat(item[2]);
+      let priceEx = price;
+      let year = Math.floor(day/10000);
+      let dayBegin:string = year.toString() + '0101';
+      let ret = await this.runner.query('t_exrightinfo$query', [id, dayBegin, day]) as any[];
+      if (!(ret === undefined || ret.length < 1)) {
+        let bonus = 0;
+        for (let i = 0; i < ret.length; ++i) {
+          let fitem = ret[i];
+          let e = fitem.factor;
+          let e2 = fitem.factore;
+          if (e === 0 || e2 === 0)
+            continue;
+          bonus += fitem.bonus;
+          priceEx = priceEx / e;
+          bonus = bonus / e2;
+        }
+        priceEx += bonus;
+      }
+
+      await this.runner.call('t_股票价格复权$save', [id, day, price, priceEx]);
+    }
+    catch(error) {
+      let e = error;
+    }
   }
 }
