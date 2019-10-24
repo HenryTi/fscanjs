@@ -8,6 +8,7 @@ const financesina_1 = require("./scan/financesina");
 const cqsina_1 = require("./scan/cqsina");
 const updateEarnig_1 = require("./magic/updateEarnig");
 const roe_1 = require("./magic/roe");
+const updatedividend_1 = require("./magic/updatedividend");
 async function startTimer() {
     console.log('start timer.');
     setInterval(() => {
@@ -38,7 +39,7 @@ async function CheckDayTask(dt) {
         await hqsina_1.scanSinaQuotations();
         dayTaskRunning = false;
     }
-    else if (hm >= 1700) {
+    else if (hm >= 1700 && hm < 2100) {
         if (day > downloadSymbolTask) {
             dayTaskRunning = true;
             await symbolsina_1.scanSinaSymbols();
@@ -47,7 +48,7 @@ async function CheckDayTask(dt) {
             return;
         }
     }
-    if (hm >= 1800) {
+    if (hm >= 1800 && hm < 2130) {
         if (day > downloadHistoryTask) {
             dayTaskRunning = true;
             await historysina_1.scanSinaHistory(10, 0);
@@ -82,6 +83,7 @@ async function scanSinaAllFiles() {
     await sinafiles_1.scanSinaFiles(0, 'stockstructure');
     await financesina_1.scanSinaFinance(0, false);
     await cqsina_1.scanSinaExRight();
+    await updatedividend_1.updateAllDividend();
     await updateEarnig_1.updateAllEarning();
     await roe_1.calculateAllRoe();
     dt = new Date();

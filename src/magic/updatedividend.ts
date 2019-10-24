@@ -29,6 +29,7 @@ export async function updateAllDividend() {
 
   try {
     await runner.call('tv_dividend$clearall', []);
+    await runner.sql('delete from t_最近年分红 where 1=1;', []);
   }
   catch (err) {
 
@@ -37,6 +38,7 @@ export async function updateAllDividend() {
   let sum = 0;
   for (let i = 0; i < count; ++i) {
     await calculateOne(ret[i], runner);
+    await calculateLastOne(ret[i], runner);
   }
   console.log('updateAllDividend completed')
   RemoteRun(false);
@@ -49,7 +51,7 @@ function checkNull(v:any) {
 async function calculateOne(code: any, runner: Runner) {
   try {
     let { id, symbol } = code;
-    let pret = await runner.query('tv_股票分红$query', [id, -1]);
+    let pret = await runner.query('tv_股票分红$queryall', [id]);
     let parr = pret as any[];
     if (parr.length <= 0)
       return;
@@ -58,11 +60,11 @@ async function calculateOne(code: any, runner: Runner) {
     let i:number = 0;
     for (i = 0; i < parr.length; ++i) {
       let item: any = parr[i];
-      let { 日期, bonus } = item as { 日期: number, bonus: number };
+      let { day, bonus } = item as { day: number, bonus: number };
       if (bonus <= 0)
         return;
-      let year:number = Math.floor(日期/10000);
-      let priceret = await runner.query('tv_getstocklastprice', [id, 日期]);
+      let year:number = Math.floor(day/10000);
+      let priceret = await runner.query('tv_getstocklastprice', [id, day]);
       if (priceret.length <= 0)
         continue;
       let { price } = priceret[0] as { price:number};
@@ -83,7 +85,57 @@ async function calculateOne(code: any, runner: Runner) {
       let divident = ce[ys];
       await runner.call('tv_dividend$save', [id, ys, divident]); 
     }
-    //console.log('updateDividend id: ' + id + ' , ' + symbol);
+  }
+  catch (err) {
+    console.log(err);
+  }
+}
+
+async function calculateLastOne(code: any, runner: Runner) {
+  try {
+    let { id } = code;
+    let dt = new Date();
+    let year = dt.getFullYear();
+    let day = year * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+    let dayBegin = year * 10000 + 101;
+    let ret = await runner.query('tv_股票分红$query', [id, dayBegin, day]) as any[];
+    let bonus = 0;
+    if (ret === undefined || ret.length < 1) {
+      year = year - 1;
+      dayBegin = year * 10000 + 101;
+      day = year * 10000 + 1231;
+      ret = await runner.query('t_exrightinfo$query', [id, dayBegin, day]) as any[];
+      if (!(ret === undefined || ret.length < 1)) {
+        for (let i = 0; i < ret.length; ++i) {
+          let item = ret[i] as { stock:number, day:number, bonus:number, factor:number, factore:number };
+          if (item.bonus > 0) {
+            bonus += item.bonus;
+          }
+          bonus = bonus * item.factore;
+        }
+      }
+    }
+    else {
+      ret = await runner.query('t_exrightinfo$query', [id, dayBegin, day]) as any[];
+      if (!(ret === undefined || ret.length < 1)) {
+        for (let i = 0; i < ret.length; ++i) {
+          let item = ret[i] as { stock:number, day:number, bonus:number, factor:number, factore:number };
+          if (item.bonus > 0) {
+            let bi = item.bonus;
+            if (i > 0) {
+              for (let j = i -1; j >= 0; --j) {
+                let di = ret[j] as { factore:number };
+                bi = bi / di.factore;
+              }
+            }
+            bonus += bi;
+          }
+        }
+      }
+    }
+    if (bonus >  0) {
+      await runner.call('t_最近年分红$save', [id, year, bonus]);
+    }
   }
   catch (err) {
     console.log(err);

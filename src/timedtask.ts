@@ -6,6 +6,8 @@ import { scanSinaFinance } from "./scan/financesina";
 import { scanSinaExRight } from "./scan/cqsina";
 import { updateAllEarning } from "./magic/updateEarnig";
 import { calculateAllRoe } from "./magic/roe";
+import { join } from "path";
+import { updateAllDividend } from "./magic/updatedividend";
 
 export async function startTimer() {
   console.log('start timer.');
@@ -38,7 +40,7 @@ async function CheckDayTask(dt: Date) {
     await scanSinaQuotations();
     dayTaskRunning = false;
   }
-  else if (hm >= 1700) {
+  else if (hm >= 1700 && hm < 2100) {
     if (day > downloadSymbolTask) {
       dayTaskRunning = true;
       await scanSinaSymbols();
@@ -47,7 +49,7 @@ async function CheckDayTask(dt: Date) {
       return;
     }
   }
-  if (hm >= 1800) {
+  if (hm >= 1800 && hm < 2130) {
     if (day > downloadHistoryTask) {
       dayTaskRunning = true;
       await scanSinaHistory(10, 0);
@@ -85,6 +87,7 @@ async function scanSinaAllFiles() {
   await scanSinaFiles(0, 'stockstructure');
   await scanSinaFinance(0, false);
   await scanSinaExRight();
+  await updateAllDividend();
   await updateAllEarning();
   await calculateAllRoe();
   dt = new Date();

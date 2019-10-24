@@ -44,10 +44,62 @@ async function testZip() {
 }
 
 
+async function calculateLastOne(code: any, runner: Runner) {
+  try {
+    let { id } = code;
+    let dt = new Date();
+    let year = dt.getFullYear();
+    let day = year * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+    let dayBegin = year * 10000 + 101;
+    let ret = await runner.query('tv_股票分红$query', [id, dayBegin, day]) as any[];
+    let bonus = 0;
+    if (ret === undefined || ret.length < 1) {
+      year = year - 1;
+      dayBegin = year * 10000 + 101;
+      day = year * 10000 + 1231;
+      ret = await runner.query('t_exrightinfo$query', [id, dayBegin, day]) as any[];
+      if (!(ret === undefined || ret.length < 1)) {
+        for (let i = 0; i < ret.length; ++i) {
+          let item = ret[i] as { stock:number, day:number, bonus:number, factor:number, factore:number };
+          if (item.bonus > 0) {
+            bonus += item.bonus;
+          }
+          bonus = bonus * item.factore;
+        }
+      }
+    }
+    else {
+      ret = await runner.query('t_exrightinfo$query', [id, dayBegin, day]) as any[];
+      if (!(ret === undefined || ret.length < 1)) {
+        for (let i = 0; i < ret.length; ++i) {
+          let item = ret[i] as { stock:number, day:number, bonus:number, factor:number, factore:number };
+          if (item.bonus > 0) {
+            let bi = item.bonus;
+            if (i > 0) {
+              for (let j = i -1; j >= 0; --j) {
+                let di = ret[j] as { factore:number };
+                bi = bi / di.factore;
+              }
+            }
+            bonus += bi;
+          }
+        }
+      }
+    }
+    if (bonus >  0) {
+      await runner.call('t_最近年分红$save', [id, year, bonus]);
+    }
+  }
+  catch (err) {
+    console.log(err);
+  }
+}
+
+
 async function testa() {
-  let runner = await getRunner(Const_dbname);
-  //let ret = await runner.sql('select max(`year`) as year from tv_capitalearning;', []);
-  let ret = await runner.call('q_stockallinfo', [100000]);
+  //let runner = await getRunner(Const_dbname);
+  //await calculateLastOne({id:1}, runner);
+  await updateAllDividend();
   debugger
 }
 
