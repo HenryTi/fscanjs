@@ -8,7 +8,8 @@ async function updateAllDividend() {
         return;
     gfuncs_1.RemoteRun(true);
     let runner = await db_1.getRunner(const_1.Const_dbname);
-    console.log('updateAllDividend start');
+    let dt = new Date();
+    console.log('updateAllDividend begin  - ' + dt.toLocaleString());
     let ret = [];
     let pageStart = 0, pageSize = 500;
     for (;;) {
@@ -37,7 +38,8 @@ async function updateAllDividend() {
         await calculateOne(ret[i], runner);
         await calculateLastOne(ret[i], runner);
     }
-    console.log('updateAllDividend completed');
+    dt = new Date();
+    console.log('updateAllDividend end  - ' + dt.toLocaleString());
     gfuncs_1.RemoteRun(false);
 }
 exports.updateAllDividend = updateAllDividend;

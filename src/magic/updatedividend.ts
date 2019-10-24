@@ -8,7 +8,8 @@ export async function updateAllDividend() {
   RemoteRun(true);
   
   let runner: Runner = await getRunner(Const_dbname);
-  console.log('updateAllDividend start')
+  let dt = new Date();
+  console.log('updateAllDividend begin  - ' + dt.toLocaleString());
 
   let ret: any[] = [];
   let pageStart = 0, pageSize = 500;
@@ -40,7 +41,9 @@ export async function updateAllDividend() {
     await calculateOne(ret[i], runner);
     await calculateLastOne(ret[i], runner);
   }
-  console.log('updateAllDividend completed')
+
+  dt = new Date();
+  console.log('updateAllDividend end  - ' + dt.toLocaleString());
   RemoteRun(false);
 }
 
