@@ -67,7 +67,7 @@ async function CheckSaturdayTask(dt: Date) {
     return;
   let day = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
   let hm = dt.getHours() * 100 + dt.getMinutes();
-  if (hm >= 100) {
+  if (hm >= 100 && hm < 500) {
     if (day > downloadSinaTask) {
       saturdayTaskRunning = true;
       await scanSinaAllFiles();
