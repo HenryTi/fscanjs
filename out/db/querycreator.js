@@ -195,11 +195,11 @@ class QueryCreator {
         }
         if (this.qt === undefined || !this.qt.check(this.query, this.params))
             return;
-        this.firstPage = pageStart <= 0;
+        this.firstPage = pageStart !== undefined && pageStart <= 0;
         this.valid = true;
     }
     GetCreateSql() {
-        if (this.valid)
+        if (this.valid && this.qt.createsql !== undefined)
             return this.qt.createsql(this.query, this.params);
         return undefined;
     }

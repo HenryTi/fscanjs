@@ -10,7 +10,8 @@ class DbQuery {
         if (spc.IsValid()) {
             if (spc.firstPage) {
                 let csqlstr = spc.GetCreateSql();
-                await this.runner.sql(csqlstr, []);
+                if (csqlstr !== undefined)
+                    await this.runner.sql(csqlstr, []);
             }
             let qstr = spc.GetQuerySql();
             return await this.runner.sql(qstr, []);
