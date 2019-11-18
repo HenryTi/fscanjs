@@ -290,9 +290,9 @@ INSERT INTO \`${ttNameROE}\` (stock) SELECT stock FROM l_roe ORDER BY roe DESC L
 INSERT INTO \`${ttNameR}\` (stock) (SELECT a.stock
   FROM \`${ttNamePE}\` AS a 
   JOIN \`${ttNameROE}\` AS b ON a.stock=b.stock
-  ORDER BY (5 - FLOOR((a.\`no\`-1)/300)) + (5 - FLOOR((b.\`no\`-1)/300)) DESC);
+  ORDER BY (5 - FLOOR((a.no-1)/300)) + (5 - FLOOR((b.no-1)/300)) DESC, a.no ASC);
 INSERT INTO t_userselectstock (\`user\`,\`order\`,\`stock\`, m1, m2)
-  SELECT '${user}', a.\`no\`, a.stock, (5 - FLOOR((b.\`no\`-1)/300)) AS m1, (5 - FLOOR((c.\`no\`-1)/300)) AS m2
+  SELECT '${user}', a.no, a.stock, (5 - FLOOR((b.no-1)/300)) AS m1, (5 - FLOOR((c.no-1)/300)) AS m2
   FROM \`${ttNameR}\` AS a 
   JOIN \`${ttNamePE}\` AS b ON a.stock=b.stock
   JOIN \`${ttNameROE}\` AS c ON a.stock=c.stock;
@@ -360,9 +360,9 @@ INSERT INTO \`${ttNameR}\` (stock) (SELECT a.stock
   FROM \`${ttNameDV}\` AS a 
   JOIN \`${ttNamePE}\` AS b ON a.stock=b.stock
   JOIN \`${ttNameROE}\` AS c ON a.stock=c.stock
-  ORDER BY (5 - FLOOR((a.\`no\`-1)/300)) + (5 - FLOOR((b.\`no\`-1)/300)) + (5 - FLOOR((c.\`no\`-1)/300)) DESC);
+  ORDER BY (5 - FLOOR((a.no-1)/300)) + (5 - FLOOR((b.no-1)/300)) + (5 - FLOOR((c.no-1)/300)) DESC, a.no ASC);
 INSERT INTO t_userselectstock (\`user\`,\`order\`,\`stock\`, m1, m2, m3)
-  SELECT '${user}', a.\`no\`, a.stock, (5 - FLOOR((b.\`no\`-1)/300)) AS m1, (5 - FLOOR((c.\`no\`-1)/300)) AS m2, (5 - FLOOR((d.\`no\`-1)/300)) AS m3 
+  SELECT '${user}', a.no, a.stock, (5 - FLOOR((b.no-1)/300)) AS m1, (5 - FLOOR((c.no-1)/300)) AS m2, (5 - FLOOR((d.no-1)/300)) AS m3 
   FROM \`${ttNameR}\` AS a 
   JOIN \`${ttNameDV}\` AS b ON a.stock=b.stock
   JOIN \`${ttNamePE}\` AS c ON a.stock=c.stock
