@@ -89,7 +89,7 @@ class SinaHistory {
             await this.saveHistory(id, results);
         }
         catch (err) {
-            console.log("fetch sina history err " + item);
+            console.log("fetch sina history err " + item.symbol);
             return false;
         }
         return true;

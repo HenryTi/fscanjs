@@ -40,7 +40,7 @@ async function CheckDayTask(dt: Date) {
     await scanSinaQuotations();
     dayTaskRunning = false;
   }
-  else if (hm >= 1700 && hm < 2100) {
+  else if (hm >= 1700 && hm < 1900) {
     if (day > downloadSymbolTask) {
       dayTaskRunning = true;
       await scanSinaSymbols();
@@ -49,7 +49,7 @@ async function CheckDayTask(dt: Date) {
       return;
     }
   }
-  if (hm >= 1800 && hm < 2130) {
+  if (hm >= 1800 && hm < 2000) {
     if (day > downloadHistoryTask) {
       dayTaskRunning = true;
       await scanSinaHistory(10, 0);

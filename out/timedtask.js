@@ -39,7 +39,7 @@ async function CheckDayTask(dt) {
         await hqsina_1.scanSinaQuotations();
         dayTaskRunning = false;
     }
-    else if (hm >= 1700 && hm < 2100) {
+    else if (hm >= 1700 && hm < 1900) {
         if (day > downloadSymbolTask) {
             dayTaskRunning = true;
             await symbolsina_1.scanSinaSymbols();
@@ -48,7 +48,7 @@ async function CheckDayTask(dt) {
             return;
         }
     }
-    if (hm >= 1800 && hm < 2130) {
+    if (hm >= 1800 && hm < 2000) {
         if (day > downloadHistoryTask) {
             dayTaskRunning = true;
             await historysina_1.scanSinaHistory(10, 0);

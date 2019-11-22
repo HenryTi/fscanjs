@@ -65,7 +65,8 @@ insert into \`${ttNamePE}\` (stock) select a.stock as stock from t_股票价格�
   order by a.复权 / b.earning ASC LIMIT 1500;
 INSERT INTO t_userselectstock (\`user\`,\`order\`,\`stock\`, m1)
 SELECT '${user}', a.\`no\`, a.stock, (10 - FLOOR((a.\`no\`-1)/150)) AS m1
-  FROM \`${ttNamePE}\` AS a order by a.\`no\` ASC;
+  FROM \`${ttNamePE}\` AS a order by a.\`no\` ASC
+  limit 400;
 COMMIT;
 DROP TEMPORARY TABLE IF EXISTS \`${ttNamePE}\`;
 `;
@@ -180,7 +181,8 @@ insert into \`${ttNameDV}\` (stock) select a.stock as stock from t_股票价格�
   order by b.bonus / a.复权 DESC LIMIT 1500;
 INSERT INTO t_userselectstock (\`user\`,\`order\`,\`stock\`, m1)
   SELECT '${user}', a.\`no\`, a.stock, (10 - FLOOR((a.\`no\`-1)/150)) AS m1 
-  FROM \`${ttNameDV}\` AS a order by a.\`no\` ASC;
+  FROM \`${ttNameDV}\` AS a order by a.\`no\` ASC
+  limit 400;
 COMMIT;
 DROP TEMPORARY TABLE IF EXISTS \`${ttNameDV}\`;
 `;
@@ -295,7 +297,8 @@ INSERT INTO t_userselectstock (\`user\`,\`order\`,\`stock\`, m1, m2)
   SELECT '${user}', a.no, a.stock, (5 - FLOOR((b.no-1)/300)) AS m1, (5 - FLOOR((c.no-1)/300)) AS m2
   FROM \`${ttNameR}\` AS a 
   JOIN \`${ttNamePE}\` AS b ON a.stock=b.stock
-  JOIN \`${ttNameROE}\` AS c ON a.stock=c.stock;
+  JOIN \`${ttNameROE}\` AS c ON a.stock=c.stock
+  limit 300;
 COMMIT;
 DROP TEMPORARY TABLE IF EXISTS \`${ttNamePE}\`;
 DROP TEMPORARY TABLE IF EXISTS \`${ttNameROE}\`;
@@ -313,7 +316,7 @@ DROP TEMPORARY TABLE IF EXISTS \`${ttNameR}\`;
         sql: (query, params) => {
             let blackID = query.blackID === undefined || query.blackID === null ? 0 : query.blackID;
             if (blackID > 0) {
-                return `SELECT a.order, \`id\`, a.ma, a.m1, a.m2, a.m3, a.symbol, a.market, a.code, a.name, a.price, a.exprice / a.e as \`pe\`, a.e,
+                return `SELECT a.order, \`id\`, ROUND(a.ma/3,1) as ma, a.m1, a.m2, a.m3, a.symbol, a.market, a.code, a.name, a.price, a.exprice / a.e as \`pe\`, a.e,
     a.roe, a.bonus / a.exprice as divyield
     FROM v_userselectstock as a
     left join mi.tv_tagstock as b on a.user=b.user and b.tag='${blackID}' and a.id=b.stock
@@ -323,7 +326,7 @@ DROP TEMPORARY TABLE IF EXISTS \`${ttNameR}\`;
 `;
             }
             else {
-                return `SELECT a.order, \`id\`, a.ma, a.m1, a.m2, a.m3, a.symbol, a.market, a.code, a.name, a.price, a.exprice / a.e as \`pe\`, a.e,
+                return `SELECT a.order, \`id\`, ROUND(a.ma/3,1) as ma, a.m1, a.m2, a.m3, a.symbol, a.market, a.code, a.name, a.price, a.exprice / a.e as \`pe\`, a.e,
     a.roe, a.bonus / a.exprice as divyield
     FROM v_userselectstock as a
     WHERE a.user='${query.user}' and a.yearlen='${query.yearlen}' and a.order > ${query.pageStart}
@@ -348,7 +351,7 @@ CREATE TEMPORARY TABLE \`${ttNamePE}\` (\`no\` int not null auto_increment prima
 DROP TEMPORARY TABLE IF EXISTS \`${ttNameROE}\`;
 CREATE TEMPORARY TABLE \`${ttNameROE}\` (\`no\` int not null auto_increment primary key, stock int not null, INDEX (stock)) ENGINE=MYISAM;
 DROP TEMPORARY TABLE IF EXISTS \`${ttNameR}\`;
-CREATE TEMPORARY TABLE \`${ttNameR}\` (\`no\` int not null auto_increment primary key, stock int not null, INDEX (stock)) ENGINE=MYISAM;
+CREATE TEMPORARY TABLE \`${ttNameR}\` (\`no\` int not null auto_increment primary key, stock int not null, ma INT, m1 INT, m2 INT, m3 INT, INDEX (stock)) ENGINE=MYISAM;
 insert into \`${ttNamePE}\` (stock) select a.stock as stock from t_股票价格复权 as a inner join l_earning as b 
   on a.stock = b.stock and b.yearlen = '${query.yearlen}' and b.earning > 0
   order by a.复权 / b.earning ASC LIMIT 1500;
@@ -356,17 +359,17 @@ insert into \`${ttNameDV}\` (stock) select a.stock as stock from t_股票价格�
   on a.stock = b.stock and b.bonus>0
   order by b.bonus / a.复权 DESC LIMIT 1500;
 INSERT INTO \`${ttNameROE}\` (stock) SELECT stock FROM l_roe ORDER BY roe DESC LIMIT 1500;
-INSERT INTO \`${ttNameR}\` (stock) (SELECT a.stock
+INSERT INTO \`${ttNameR}\` (stock, ma, m1, m2, m3) (SELECT a.stock,
+  (10 - FLOOR((a.\`no\`-1)/150)) + (10 - FLOOR((b.\`no\`-1)/150)) + (10 - FLOOR((c.\`no\`-1)/150)) AS ma,
+  (10 - FLOOR((a.\`no\`-1)/150)) AS m1, (10 - FLOOR((b.\`no\`-1)/150)) AS m2, (10 - FLOOR((c.\`no\`-1)/150)) AS m3
   FROM \`${ttNameDV}\` AS a 
   JOIN \`${ttNamePE}\` AS b ON a.stock=b.stock
   JOIN \`${ttNameROE}\` AS c ON a.stock=c.stock
-  ORDER BY (5 - FLOOR((a.no-1)/300)) + (5 - FLOOR((b.no-1)/300)) + (5 - FLOOR((c.no-1)/300)) DESC, a.no ASC);
+  ORDER BY  ma DESC, (m1+m2) DESC, b.no ASC);
 INSERT INTO t_userselectstock (\`user\`,\`order\`,\`stock\`, m1, m2, m3)
-  SELECT '${user}', a.no, a.stock, (5 - FLOOR((b.no-1)/300)) AS m1, (5 - FLOOR((c.no-1)/300)) AS m2, (5 - FLOOR((d.no-1)/300)) AS m3 
+  SELECT '${user}', a.no, a.stock, a.m1, a.m2, a.m3 
   FROM \`${ttNameR}\` AS a 
-  JOIN \`${ttNameDV}\` AS b ON a.stock=b.stock
-  JOIN \`${ttNamePE}\` AS c ON a.stock=c.stock
-  JOIN \`${ttNameROE}\` AS d ON a.stock=d.stock;
+  limit 200;
 COMMIT;
 DROP TEMPORARY TABLE IF EXISTS \`${ttNameDV}\`;
 DROP TEMPORARY TABLE IF EXISTS \`${ttNamePE}\`;
