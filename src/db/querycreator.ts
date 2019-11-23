@@ -326,7 +326,7 @@ DROP TEMPORARY TABLE IF EXISTS \`${ttNameR}\`;
     sql: (query: any, params: any[]) => { 
       let blackID = query.blackID === undefined || query.blackID === null ? 0 : query.blackID;
       if (blackID > 0) {
-        return `SELECT a.order, \`id\`, ROUND(a.ma/3,1) as ma, a.m1, a.m2, a.m3, a.symbol, a.market, a.code, a.name, a.price, a.exprice / a.e as \`pe\`, a.e,
+        return `SELECT a.order, \`id\`, a.ma, a.m1, a.m2, a.m3, a.symbol, a.market, a.code, a.name, a.price, a.exprice / a.e as \`pe\`, a.e,
     a.roe, a.bonus / a.exprice as divyield
     FROM v_userselectstock as a
     left join mi.tv_tagstock as b on a.user=b.user and b.tag='${blackID}' and a.id=b.stock
@@ -336,7 +336,7 @@ DROP TEMPORARY TABLE IF EXISTS \`${ttNameR}\`;
 `
       }
       else {
-        return `SELECT a.order, \`id\`, ROUND(a.ma/3,1) as ma, a.m1, a.m2, a.m3, a.symbol, a.market, a.code, a.name, a.price, a.exprice / a.e as \`pe\`, a.e,
+        return `SELECT a.order, \`id\`, a.ma, a.m1, a.m2, a.m3, a.symbol, a.market, a.code, a.name, a.price, a.exprice / a.e as \`pe\`, a.e,
     a.roe, a.bonus / a.exprice as divyield
     FROM v_userselectstock as a
     WHERE a.user='${query.user}' and a.yearlen='${query.yearlen}' and a.order > ${query.pageStart}
@@ -367,8 +367,11 @@ insert into \`${ttNamePE}\` (stock) select a.stock as stock from t_股票价格�
   order by a.复权 / b.e ASC LIMIT 1500;
 insert into \`${ttNameDV}\` (stock) select a.stock as stock from t_股票价格复权 as a inner join t_最近年分红 as b 
   on a.stock = b.stock and b.bonus>0
+  inner join l_earningchecked as c on a.stock = c.stock
   order by b.bonus / a.复权 DESC LIMIT 1500;
-INSERT INTO \`${ttNameROE}\` (stock) SELECT stock FROM l_roe ORDER BY roe DESC LIMIT 1500;
+INSERT INTO \`${ttNameROE}\` (stock) SELECT a.stock FROM l_roe as a
+  inner join l_earningchecked as b on a.stock = b.stock
+  ORDER BY roe DESC LIMIT 1500;
 INSERT INTO \`${ttNameR}\` (stock, ma, m1, m2, m3) (SELECT a.stock,
   (10 - FLOOR((a.\`no\`-1)/150)) + (10 - FLOOR((b.\`no\`-1)/150)) + (10 - FLOOR((c.\`no\`-1)/150)) AS ma,
   (10 - FLOOR((a.\`no\`-1)/150)) AS m1, (10 - FLOOR((b.\`no\`-1)/150)) AS m2, (10 - FLOOR((c.\`no\`-1)/150)) AS m3
