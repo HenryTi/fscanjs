@@ -26,8 +26,9 @@ async function updateAllEarning() {
     }
     let count = ret.length;
     try {
-        await runner.query('tv_capitalearning$clear', []);
-        await runner.sql('delete from l_earning where 1=1;', []);
+        await runner.sql(`delete from tv_capitalearning where 1=1;
+delete from l_earning where 1=1;
+delete from l_earningchecked where 1=1;`, []);
     }
     catch (err) {
     }
@@ -102,10 +103,10 @@ async function calculateOneEarning(code, runner, lastyear) {
         if (parr.length <= 0)
             return;
         let count = parr.length;
-        let ce = {};
         let i = 0;
         let iEnd = count > 5 ? 5 : count;
-        let yearEnd = parr[0].year;
+        let lastItem = parr[0];
+        let yearEnd = lastItem.year;
         if (yearEnd < lastyear - 1)
             return;
         let sum = 0;
@@ -116,6 +117,19 @@ async function calculateOneEarning(code, runner, lastyear) {
             sum += earning;
             let e = sum / (i + 1);
             await runner.call('l_earning$save', [id, i + 1, e, yearEnd]);
+        }
+        if (count <= 3)
+            return;
+        iEnd = count > 6 ? 6 : count;
+        sum = 0;
+        let lastE = lastItem.earning;
+        for (i = 1; i < iEnd; ++i) {
+            let { earning } = parr[i];
+            sum += earning;
+        }
+        let eavg = sum / (iEnd - 1);
+        if (lastE < eavg * 2) {
+            await runner.call('l_earingchecked$save', [id, lastE, yearEnd]);
         }
     }
     catch (err) {

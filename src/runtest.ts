@@ -99,7 +99,7 @@ async function calculateLastOne(code: any, runner: Runner) {
 async function testa() {
   //let runner = await getRunner(Const_dbname);
   //await calculateLastOne({id:1}, runner);
-  await updateAllDividend();
+  await updateAllEarning();
   debugger
 }
 
