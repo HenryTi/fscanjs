@@ -82,7 +82,7 @@ async function calculateLastOne(code, runner) {
 async function testa() {
     //let runner = await getRunner(Const_dbname);
     //await calculateLastOne({id:1}, runner);
-    await updateEarnig_1.updateAllEarning();
+    await updateEarnig_1.updateAllLastEarning();
     debugger;
 }
 testa();

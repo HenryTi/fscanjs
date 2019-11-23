@@ -49,6 +49,47 @@ delete from l_earningchecked where 1=1;`,
   RemoteRun(false);
 }
 
+export async function updateAllLastEarning() {
+  if (RemoteIsRun())
+    return;
+  RemoteRun(true);
+  console.log(`updateAllLastEarning Begin`);
+
+  let runner: Runner = await getRunner(Const_dbname);
+
+  let ret: any[] = [];
+  let pageStart = 0, pageSize = 500;
+  for (; ;) {
+    let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
+    let arr = ids as any[];
+    if (arr.length > pageSize) {
+      let top = arr.pop();
+      ret.push(...arr);
+      pageStart = arr[pageSize - 1].id;
+    }
+    else {
+      ret.push(...arr);
+      break;
+    }
+  }
+  let count = ret.length;
+
+  try {
+    await runner.sql(
+`delete from l_earning where 1=1;
+delete from l_earningchecked where 1=1;`,
+       []);
+  }
+  catch (err) {
+    
+  }
+  
+  await calculateLastEarning(ret, runner);
+
+  console.log('updateAllLastEarning End')
+  RemoteRun(false);
+}
+
 function checkNull(v:any) {
   return v===null || v=== undefined;
 }
@@ -143,7 +184,7 @@ async function calculateOneEarning(code: any, runner: Runner, lastyear:number) {
     }
     let eavg = sum / (iEnd - 1);
     if (lastE < eavg * 2) {
-      await runner.call('l_earingchecked$save', [id, lastE, yearEnd]);
+      await runner.call('l_earningchecked$save', [id, lastE, yearEnd]);
     }
   }
   catch (err) {
