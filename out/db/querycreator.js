@@ -352,9 +352,9 @@ DROP TEMPORARY TABLE IF EXISTS \`${ttNameROE}\`;
 CREATE TEMPORARY TABLE \`${ttNameROE}\` (\`no\` int not null auto_increment primary key, stock int not null, INDEX (stock)) ENGINE=MYISAM;
 DROP TEMPORARY TABLE IF EXISTS \`${ttNameR}\`;
 CREATE TEMPORARY TABLE \`${ttNameR}\` (\`no\` int not null auto_increment primary key, stock int not null, ma INT, m1 INT, m2 INT, m3 INT, INDEX (stock)) ENGINE=MYISAM;
-insert into \`${ttNamePE}\` (stock) select a.stock as stock from t_股票价格复权 as a inner join l_earning as b 
-  on a.stock = b.stock and b.yearlen = '${query.yearlen}' and b.earning > 0
-  order by a.复权 / b.earning ASC LIMIT 1500;
+insert into \`${ttNamePE}\` (stock) select a.stock as stock from t_股票价格复权 as a inner join l_earningchecked as b 
+  on a.stock = b.stock and  b.e > 0
+  order by a.复权 / b.e ASC LIMIT 1500;
 insert into \`${ttNameDV}\` (stock) select a.stock as stock from t_股票价格复权 as a inner join t_最近年分红 as b 
   on a.stock = b.stock and b.bonus>0
   order by b.bonus / a.复权 DESC LIMIT 1500;
