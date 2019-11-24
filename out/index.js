@@ -4,9 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const config = require("config");
 const sina_1 = require("./router/sina");
-const eastmoney_1 = require("./router/eastmoney");
 const sqlapi_1 = require("./router/sqlapi");
-const magic_1 = require("./router/magic");
 const timedtask_1 = require("./timedtask");
 let dt = new Date();
 console.log('fscanjs start at - ' + dt.toLocaleString());
@@ -49,8 +47,8 @@ const c_isDevelopment = process.env.NODE_ENV === 'development';
         }
     });
     app.use('/fsjs/sina', sina_1.default);
-    app.use('/fsjs/eastmoney', eastmoney_1.default);
-    app.use('/fsjs/magic', magic_1.default);
+    // app.use('/fsjs/eastmoney', eastmoneyRouter);
+    // app.use('/fsjs/magic', magicRouter);
     app.use('/fsjs/sql', sqlapi_1.default);
     if (!c_isDevelopment) {
         timedtask_1.startTimer();

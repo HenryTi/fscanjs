@@ -60,7 +60,7 @@ async function calculateOne(code, runner) {
             let item = parr[i];
             let { day, bonus } = item;
             if (bonus <= 0)
-                return;
+                continue;
             let year = Math.floor(day / 10000);
             let priceret = await runner.query('tv_getstocklastprice', [id, day]);
             if (priceret.length <= 0)
@@ -132,6 +132,80 @@ async function calculateLastOne(code, runner) {
         }
         if (bonus > 0) {
             await runner.call('t_最近年分红$save', [id, year, bonus]);
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+async function updateAllBonusPerYear() {
+    if (gfuncs_1.RemoteIsRun())
+        return;
+    gfuncs_1.RemoteRun(true);
+    let runner = await db_1.getRunner(const_1.Const_dbname);
+    let dt = new Date();
+    console.log('updateAllBonusPerYear begin  - ' + dt.toLocaleString());
+    let ret = [];
+    let pageStart = 0, pageSize = 500;
+    for (;;) {
+        let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
+        let arr = ids;
+        if (arr.length > pageSize) {
+            let top = arr.pop();
+            ret.push(...arr);
+            pageStart = arr[pageSize - 1].id;
+        }
+        else {
+            ret.push(...arr);
+            break;
+        }
+    }
+    let count = ret.length;
+    try {
+        await runner.sql('delete from t_bonusperyear where 1=1;', []);
+    }
+    catch (err) {
+    }
+    let rCount = 0;
+    let sum = 0;
+    for (let i = 0; i < count; ++i) {
+        await calculateOneBonusperyear(ret[i], runner);
+    }
+    dt = new Date();
+    console.log('updateAllBonusPerYear end  - ' + dt.toLocaleString());
+    gfuncs_1.RemoteRun(false);
+}
+exports.updateAllBonusPerYear = updateAllBonusPerYear;
+async function calculateOneBonusperyear(code, runner) {
+    try {
+        let { id, symbol } = code;
+        let pret = await runner.query('tv_股票分红$queryallperyear', [id]);
+        let parr = pret;
+        if (parr.length <= 0)
+            return;
+        let ce = {};
+        let years = [];
+        let i = 0;
+        for (i = 0; i < parr.length; ++i) {
+            let item = parr[i];
+            let { day, bonusyearend } = item;
+            if (bonusyearend <= 0)
+                continue;
+            let year = Math.floor(day / 10000);
+            let ys = year.toString();
+            let bonus = ce[ys];
+            if (bonus !== undefined) {
+                ce[ys] = bonus + bonusyearend;
+            }
+            else {
+                ce[ys] = bonusyearend;
+                years.push(ys);
+            }
+        }
+        for (i = 0; i < years[i]; ++i) {
+            let ys = years[i];
+            let bonus = ce[ys];
+            await runner.call('t_bonusperyear$save', [id, ys, bonus]);
         }
     }
     catch (err) {

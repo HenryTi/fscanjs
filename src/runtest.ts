@@ -1,4 +1,4 @@
-import { updateAllDividend } from "./magic/updatedividend";
+import { updateAllDividend, updateAllBonusPerYear } from "./magic/updatedividend";
 import { scanSinaExRight } from "./scan/cqsina";
 import { caclulateExRight } from "./scan/calcexright";
 import { calculateAllRoe } from "./magic/roe";
@@ -99,7 +99,7 @@ async function calculateLastOne(code: any, runner: Runner) {
 async function testa() {
   //let runner = await getRunner(Const_dbname);
   //await calculateLastOne({id:1}, runner);
-  await updateAllLastEarning();
+  await updateAllBonusPerYear();
   debugger
 }
 

@@ -52,8 +52,8 @@ const c_isDevelopment = process.env.NODE_ENV === 'development';
   });
 
   app.use('/fsjs/sina', sinaRouter);
-  app.use('/fsjs/eastmoney', eastmoneyRouter);
-  app.use('/fsjs/magic', magicRouter);
+  // app.use('/fsjs/eastmoney', eastmoneyRouter);
+  // app.use('/fsjs/magic', magicRouter);
   app.use('/fsjs/sql', sqlRouter);
 
   if (!c_isDevelopment) {
