@@ -169,4 +169,79 @@ async function calculateOneEarning(code, runner, lastyear) {
         console.log(err);
     }
 }
+async function updateAllCheckEarningPerYear() {
+    if (gfuncs_1.RemoteIsRun())
+        return;
+    gfuncs_1.RemoteRun(true);
+    console.log(`updateAllCheckEarningPerYear Begin`);
+    let runner = await db_1.getRunner(const_1.Const_dbname);
+    let ret = [];
+    let pageStart = 0, pageSize = 500;
+    for (;;) {
+        let ids = await runner.query('tv_股票$search', ['', pageStart, pageSize]);
+        let arr = ids;
+        if (arr.length > pageSize) {
+            let top = arr.pop();
+            ret.push(...arr);
+            pageStart = arr[pageSize - 1].id;
+        }
+        else {
+            ret.push(...arr);
+            break;
+        }
+    }
+    let count = ret.length;
+    try {
+        await runner.sql(`delete from t_earningcheckedperyear where 1=1;`, []);
+    }
+    catch (err) {
+    }
+    await calculateCheckedEarningPerYear(ret, runner);
+    console.log('updateAllCheckEarningPerYear End');
+    gfuncs_1.RemoteRun(false);
+}
+exports.updateAllCheckEarningPerYear = updateAllCheckEarningPerYear;
+async function calculateCheckedEarningPerYear(codes, runner) {
+    try {
+        let count = codes.length;
+        for (let i = 0; i < count; ++i) {
+            await calculateOneEarningPeryear(codes[i], runner);
+        }
+    }
+    catch (err) {
+    }
+}
+async function calculateOneEarningPeryear(code, runner) {
+    try {
+        let { id } = code;
+        let pret = await runner.query('tv_capitalearning$query', [id]);
+        let parr = pret;
+        if (parr.length <= 4)
+            return;
+        let count = parr.length;
+        for (let yi = count - 1; yi > 3; --yi) {
+            let lastItem = parr[yi];
+            let lastE = lastItem.earning;
+            if (lastE <= 0)
+                continue;
+            let yearEnd = lastItem.year;
+            let i = yi - 5;
+            if (i < 0)
+                i = 0;
+            let nc = yi - i;
+            let sum = 0;
+            for (; i < yi; ++i) {
+                let { year, earning } = parr[i];
+                sum += earning;
+            }
+            let eavg = sum / nc;
+            if (lastE < eavg * 2) {
+                await runner.call('t_earningcheckedperyear$save', [id, yearEnd, lastE]);
+            }
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
 //# sourceMappingURL=updateEarnig.js.map

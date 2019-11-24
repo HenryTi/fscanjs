@@ -12,7 +12,7 @@ import { startTimer } from "./timedtask";
 import { getRunner, Runner} from "./db";
 import { Const_dbname } from "./const";
 import { scanSinaFinance, SinaFinace } from "./scan/financesina";
-import { updateAllEarning, updateAllLastEarning } from "./magic/updateEarnig";
+import { updateAllEarning, updateAllLastEarning, updateAllCheckEarningPerYear } from "./magic/updateEarnig";
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 
@@ -99,7 +99,7 @@ async function calculateLastOne(code: any, runner: Runner) {
 async function testa() {
   //let runner = await getRunner(Const_dbname);
   //await calculateLastOne({id:1}, runner);
-  await updateAllBonusPerYear();
+  await updateAllCheckEarningPerYear();
   debugger
 }
 
