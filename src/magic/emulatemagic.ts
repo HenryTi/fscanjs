@@ -3,7 +3,7 @@ import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } f
 import { Const_dbname } from '../const';
 
 const GroupSize = 30;
-const MaxGroup = 80;
+const MaxGroup = 20;
 
 export async function emulateAtDay(date: number) {
   if (RemoteIsRun())
@@ -40,7 +40,7 @@ export async function emulateAll() {
     await runner.call('tv_神奇公式模拟结果明细$delete', [-1, -1]);
 
     for (let year = 2001; year < 2019; ++year) {
-      for (let month = 1; month <= 1; month += 1) {
+      for (let month = 1; month < 12; month += 3) {
         let date = year * 10000 + month * 100 + 1;
         if (date > 20180601)
           break;
@@ -125,9 +125,9 @@ class EmulateMagic {
     try {
       let { year, month, date } = p as { year: number, month: number, date: number }
       let rowroe: any[] = [date];
-      await this.runner.call('tv_calcMagicOrder', rowroe);
+      let ret = await this.runner.call('tv_calcmagicorderdpr', rowroe);
 
-      let ret = await this.runner.query('tv_getmagicorderresult', [2000]);
+      //let ret = await this.runner.query('tv_getmagicorderresult', [2000]);
       let arr = ret as any[];
 
       let dayEnd = date + 10000;

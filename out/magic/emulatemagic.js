@@ -4,7 +4,7 @@ const db_1 = require("../db");
 const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
 const GroupSize = 30;
-const MaxGroup = 80;
+const MaxGroup = 20;
 async function emulateAtDay(date) {
     if (gfuncs_1.RemoteIsRun())
         return;
@@ -39,7 +39,7 @@ async function emulateAll() {
         await runner.call('tv_神奇公式模拟结果$delete', [-1, -1]);
         await runner.call('tv_神奇公式模拟结果明细$delete', [-1, -1]);
         for (let year = 2001; year < 2019; ++year) {
-            for (let month = 1; month <= 1; month += 1) {
+            for (let month = 1; month < 12; month += 3) {
                 let date = year * 10000 + month * 100 + 1;
                 if (date > 20180601)
                     break;
@@ -117,8 +117,8 @@ class EmulateMagic {
         try {
             let { year, month, date } = p;
             let rowroe = [date];
-            await this.runner.call('tv_calcMagicOrder', rowroe);
-            let ret = await this.runner.query('tv_getmagicorderresult', [2000]);
+            let ret = await this.runner.call('tv_calcmagicorderdpr', rowroe);
+            //let ret = await this.runner.query('tv_getmagicorderresult', [2000]);
             let arr = ret;
             let dayEnd = date + 10000;
             for (let i = 0; i < MaxGroup; ++i) {
