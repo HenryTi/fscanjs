@@ -145,6 +145,21 @@ class EmulateTrades {
         this.weekBuyCount++;
         return true;
     }
+    async sellShareItem(stock, item) {
+        let money = item.volume * item.price * 0.998;
+        let p = {
+            type: this.typeID,
+            day: this.currentTradeDay.day,
+            stock: stock,
+            tradeType: 2,
+            price: item.price,
+            volume: item.volume
+        };
+        await this.SaveTrade(p);
+        this.emuDetails.moneyCount += item.count;
+        this.emuDetails.shareCount -= item.count;
+        this.emuResult.money += money;
+    }
     async updateLastStatus() {
         this.emuResult.money = this.emuDetails.money;
         let shareSum = 0;
@@ -224,9 +239,39 @@ class EmulateTrades {
     addBouns(money) {
         this.emuDetails.money += money;
     }
+    async removeStock(stock) {
+        let i = 0;
+        while (i < this.emuDetails.shares.length) {
+            let share = this.emuDetails.shares[i];
+            if (share.stock === stock) {
+                for (i = 0; i < share.items.length; ++i) {
+                    this.sellShareItem(share.stock, share.items[i]);
+                }
+                this.emuDetails.shares.splice(i, 1);
+                break;
+            }
+            ++i;
+        }
+    }
+    async loadNewPE() {
+        let shares = this.emuDetails.shares;
+        let pes = [];
+        for (let i = 0; i < shares.length; ++i) {
+            let stock = shares[i].stock;
+            let r = await this.runner.call('q_getstockpeatday', [stock, this.currentTradeDay.day]);
+            if (r.length <= 0) {
+                pes.push({ stock: stock, pe: undefined });
+            }
+            else {
+                pes.push({ stock: stock, pe: r[0].pe });
+            }
+        }
+        return pes;
+    }
     async CalculateNextDay() {
+        let pelist = await this.loadNewPE();
         await updateStockStatus_1.updateStockStatus(this);
-        await checkSell_1.checkSell(this);
+        await checkSell_1.checkSell(this, pelist);
         await checkBuyOld_1.checkBuyOld(this);
         await checkBuyNew_1.checkBuyNew(this);
         await this.updateLastStatus();

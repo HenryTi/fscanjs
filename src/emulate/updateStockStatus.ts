@@ -6,7 +6,7 @@ import { pathToFileURL } from 'url';
 
 export async function updateStockStatus(et:EmulateTrades) {
   let shares = et.emuDetails.shares;
-  for (let i=0; i < shares.length; ++i) {
+  for (let i = 0; i < shares.length; ++i) {
     await updateOne(et, shares[i]);
   }
 }
