@@ -14,7 +14,7 @@ export async function checkSell(et:EmulateTrades, pelist:any[]) {
     let pe: number = undefined;
     if (index >= 0)
       pe = pelist[index].pe;
-    if (pe === undefined || pe < 0 || pe >= 30) {
+    if (pe < 0 || pe >= 30) {
       sellAllStocks.push(si.stock);
     }
   }

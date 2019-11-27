@@ -11,7 +11,7 @@ async function checkSell(et, pelist) {
         let pe = undefined;
         if (index >= 0)
             pe = pelist[index].pe;
-        if (pe === undefined || pe < 0 || pe >= 30) {
+        if (pe < 0 || pe >= 30) {
             sellAllStocks.push(si.stock);
         }
     }
