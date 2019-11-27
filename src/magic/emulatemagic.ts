@@ -124,7 +124,7 @@ class EmulateMagic {
   async proceeOneDay(p: any): Promise<any> {
     try {
       let { year, month, date } = p as { year: number, month: number, date: number }
-      let rowroe: any[] = [date];
+      let rowroe: any[] = [date, 800];
       let ret = await this.runner.call('tv_calcmagicorderdpr', rowroe);
 
       //let ret = await this.runner.query('tv_getmagicorderresult', [2000]);

@@ -1,3 +1,11 @@
+export interface EmulateDetail {
+  moneyinit: number,
+  money: number,
+  moneyCount: number,
+  shareCount: number,
+  shares: EmulateShare[]
+}
+
 export interface EmulateTrade {
   type: number,
   day: number,
@@ -8,12 +16,18 @@ export interface EmulateTrade {
 };
 
 export interface EmulateShare {
-  type: number,
-  day: number,
   stock: number,
-  price: number,
-  volume: number
+  count: number,
+  items: EmulateShareItem[]
 };
+
+export interface EmulateShareItem {
+  buyDay: number,
+  count: number,
+  volume: number,
+  costprice: number,
+  price: number
+}
 
 export interface EmulateResult {
   type: number,

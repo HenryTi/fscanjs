@@ -43,3 +43,9 @@ export function checkToDateIntHK(str: string) {
     return undefined;
   return ret;
 }
+
+export function LogWithTime(info:string) {
+  let dt = new Date();
+  console.log(info + ' - ' + dt.toLocaleString());
+}
+

@@ -2,8 +2,9 @@ import * as _ from 'lodash';
 import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun } from '../gfuncs';
 import { Const_dbname } from '../const';
-import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem } from './emulate';
+//import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem } from '../emulate/emulate';
 
+/*
 const GroupSize = 30;
 const cont_amountInit = 3000000;
 const const_EmulatePlanName = '月换股1号';
@@ -258,3 +259,4 @@ class EmulateTrades {
     return { price: item.price, day: item.day };
   }
 }
+*/

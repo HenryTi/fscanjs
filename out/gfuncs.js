@@ -47,4 +47,9 @@ function checkToDateIntHK(str) {
     return ret;
 }
 exports.checkToDateIntHK = checkToDateIntHK;
+function LogWithTime(info) {
+    let dt = new Date();
+    console.log(info + ' - ' + dt.toLocaleString());
+}
+exports.LogWithTime = LogWithTime;
 //# sourceMappingURL=gfuncs.js.map

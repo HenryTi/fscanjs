@@ -49,7 +49,7 @@ async function CheckDayTask(dt: Date) {
       return;
     }
   }
-  if (hm >= 1800 && hm < 2000) {
+  if (hm >= 1800 && hm < 1930) {
     if (day > downloadHistoryTask) {
       dayTaskRunning = true;
       await scanSinaHistory(10, 0);

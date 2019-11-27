@@ -2,8 +2,6 @@ import { updateAllDividend, updateAllBonusPerYear } from "./magic/updatedividend
 import { scanSinaExRight } from "./scan/cqsina";
 import { caclulateExRight } from "./scan/calcexright";
 import { calculateAllRoe } from "./magic/roe";
-import { emulateTrade } from "./magic/emulateyzcg";
-import { emulateTradeMonthChange } from "./magic/emulatemonthchange";
 import { fetchSinaContent } from "./scan/sina";
 import * as cheerio from 'cheerio';
 import { scanSinaFiles } from "./scan/sinafiles";
@@ -14,6 +12,8 @@ import { Const_dbname } from "./const";
 import { scanSinaFinance, SinaFinace } from "./scan/financesina";
 import { updateAllEarning, updateAllLastEarning, updateAllCheckEarningPerYear } from "./magic/updateEarnig";
 import { emulateAll } from "./magic/emulatemagic";
+import * as TradDay from "./emulate/tradeday";
+import { emulateTrade61 } from "./emulate/emulate61";
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 
@@ -99,8 +99,9 @@ async function calculateLastOne(code: any, runner: Runner) {
 
 async function testa() {
   //let runner = await getRunner(Const_dbname);
+  //await TradDay.initTradeDay(runner, 20010101, 20190101);
   //await calculateLastOne({id:1}, runner);
-  await emulateAll();
+  await emulateTrade61(2009, 1, 2019, 1);
   debugger
 }
 
