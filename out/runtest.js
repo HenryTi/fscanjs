@@ -81,7 +81,7 @@ async function calculateLastOne(code, runner) {
 }
 async function testa() {
     //let runner = await getRunner(Const_dbname);
-    await emulate61_1.emulateTrade61(2009, 1, 2019, 1);
+    await emulate61_1.emulateTrade61(2010, 1, 2019, 1);
     debugger;
 }
 testa();
