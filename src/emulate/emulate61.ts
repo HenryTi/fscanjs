@@ -189,7 +189,7 @@ export class EmulateTrades {
     await this.SaveTrade(p);
     this.emuDetails.moneyCount += item.count;
     this.emuDetails.shareCount -= item.count;
-    this.emuResult.money += money;
+    this.emuDetails.money += money;
   }
 
   async updateLastStatus() {
