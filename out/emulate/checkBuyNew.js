@@ -5,14 +5,14 @@ async function checkBuyNew(et) {
     if (et.weekBuyCount >= 3 || et.emuDetails.moneyCount <= 0)
         return;
     let lastDay = tradeday_1.getLastTradeDay(et.currentTradeDay.day);
-    let ret = await et.runner.call('tv_calcmagicorderdpr', [lastDay, 60]);
+    let ret = await et.runner.call('tv_calcmagicorderdpr', [lastDay, 100]);
     if (!CheckAllPE(ret))
         return;
     let length = ret.length;
     let i = 0;
     for (; i < length; ++i) {
         let item = ret[i];
-        if (item.pe >= 15)
+        if (item.pe >= 12)
             continue;
         let fi = et.emuDetails.shares.findIndex(v => v.stock === item.stock);
         if (fi >= 0)
