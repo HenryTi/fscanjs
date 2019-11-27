@@ -175,7 +175,7 @@ class EmulateTrades {
         await this.SaveCurrentDetail(this.currentTradeDay.day);
     }
     async SaveCurrentStatus() {
-        await this.runner.call('tv_emulateresult$save', [this.emuResult.type, this.emuResult.day, this.emuResult.money, this.emuResult.share, this.emuResult.gain]);
+        await this.runner.call('tv_emulateresult$save', [this.emuResult.type, Math.floor(this.emuResult.day / 100), this.emuResult.money, this.emuResult.share, this.emuResult.gain]);
     }
     async SaveCurrentDetail(day) {
         await this.runner.call('tv_emulateshares$save', [this.typeID, day, JSON.stringify(this.emuDetails)]);
