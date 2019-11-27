@@ -3,8 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
 const z = require("zlib");
-const db_1 = require("./db");
-const const_1 = require("./const");
 const emulate61_1 = require("./emulate/emulate61");
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 async function testZip() {
@@ -82,7 +80,7 @@ async function calculateLastOne(code, runner) {
     }
 }
 async function testa() {
-    let runner = await db_1.getRunner(const_1.Const_dbname);
+    //let runner = await getRunner(Const_dbname);
     await emulate61_1.emulateTrade61(2009, 1, 2019, 1);
     debugger;
 }

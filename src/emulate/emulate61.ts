@@ -288,10 +288,10 @@ export class EmulateTrades {
       let share = this.emuDetails.shares[i];
       if (share.stock === stock) {
         for (i = 0; i < share.items.length; ++i) {
-          this.sellShareItem(share.stock, share.items[i]);
+          await this.sellShareItem(share.stock, share.items[i]);
         }
         this.emuDetails.shares.splice(i, 1);
-        break;
+        return;
       }
       ++i;
     }

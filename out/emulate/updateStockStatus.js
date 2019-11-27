@@ -31,7 +31,7 @@ async function updateOne(et, share) {
                     type: et.typeID,
                     day: et.currentTradeDay.day,
                     stock: share.stock,
-                    tradeType: 5,
+                    tradeType: 10,
                     price: bonus / 10,
                     volume: v.volume
                 };
@@ -62,12 +62,12 @@ async function updateOne(et, share) {
                         type: et.typeID,
                         day: et.currentTradeDay.day,
                         stock: share.stock,
-                        tradeType: 2,
+                        tradeType: 4,
                         price: v.price,
                         volume: adjustVolume
                     };
                     await (et.SaveTrade(p));
-                    p.tradeType = 4;
+                    p.tradeType = 5;
                     p.price = price;
                     p.volume = pvolume;
                     await (et.SaveTrade(p));
