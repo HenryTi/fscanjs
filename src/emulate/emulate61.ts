@@ -11,7 +11,7 @@ import { checkBuyNew } from './checkBuyNew';
 
 const GroupSize = 30;
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = '6+1';
+const const_EmulatePlanName = 'pe10';
 
 export async function emulateTrade61(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
   if (RemoteIsRun())

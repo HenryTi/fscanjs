@@ -10,7 +10,7 @@ const checkBuyOld_1 = require("./checkBuyOld");
 const checkBuyNew_1 = require("./checkBuyNew");
 const GroupSize = 30;
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = '6+1';
+const const_EmulatePlanName = 'pe10';
 async function emulateTrade61(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
         return;
