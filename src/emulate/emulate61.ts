@@ -287,8 +287,8 @@ export class EmulateTrades {
     while (i < this.emuDetails.shares.length) {
       let share = this.emuDetails.shares[i];
       if (share.stock === stock) {
-        for (i = 0; i < share.items.length; ++i) {
-          await this.sellShareItem(share.stock, share.items[i]);
+        for (let k = 0; k < share.items.length; ++k) {
+          await this.sellShareItem(share.stock, share.items[k]);
         }
         this.emuDetails.shares.splice(i, 1);
         return;
