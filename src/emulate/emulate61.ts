@@ -10,7 +10,7 @@ import { checkOld } from './checkOld';
 import { checkBuyNew } from './checkBuyNew';
 
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe12-5';
+const const_EmulatePlanName = 'pe12-onestockmax3';
 const const_weekMaxBuyCount = 5;
 
 export async function emulateTrade61(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {

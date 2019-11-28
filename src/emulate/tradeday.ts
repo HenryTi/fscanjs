@@ -58,3 +58,27 @@ export function getLastTradeDay(day:number) {
   }
   return day;
 }
+
+export function getTrdaeDayDif(begin:number, end:number) {
+  let bi: TradeDay;
+  let i = 0;
+  for (; i < tradeDays.length; ++i) {
+    let item = tradeDays[i];
+    if (item.day >= begin) {
+      bi = item;
+      break;
+    }
+  }
+
+  for (; i < tradeDays.length; ++i) {
+    let item = tradeDays[i];
+    if (item.day >= end) {
+      if (bi !== undefined) {
+        return item.dayno - bi.dayno;
+      }
+      break;
+    }
+  }
+
+  return undefined;
+}
