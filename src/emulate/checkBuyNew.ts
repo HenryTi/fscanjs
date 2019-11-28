@@ -15,12 +15,12 @@ export async function checkBuyNew(et:EmulateTrades) {
   let i = 0;
   for (; i < length; ++i) {
     let item = ret[i] as {stock: number, pe: number};
-    if (item.pe >= 12)
+    if (item.pe >= 9)
       continue;
     let fi = et.emuDetails.shares.findIndex(v=>v.stock === item.stock);
     if (fi >= 0) {
-      let r = await CheckBuyExist(et, et.emuDetails.shares[fi]);
-      if (r)
+      //let r = await CheckBuyExist(et, et.emuDetails.shares[fi]);
+      //if (r)
         return;
       continue;
     }

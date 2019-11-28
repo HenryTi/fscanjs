@@ -12,13 +12,13 @@ async function checkBuyNew(et) {
     let i = 0;
     for (; i < length; ++i) {
         let item = ret[i];
-        if (item.pe >= 12)
+        if (item.pe >= 9)
             continue;
         let fi = et.emuDetails.shares.findIndex(v => v.stock === item.stock);
         if (fi >= 0) {
-            let r = await CheckBuyExist(et, et.emuDetails.shares[fi]);
-            if (r)
-                return;
+            //let r = await CheckBuyExist(et, et.emuDetails.shares[fi]);
+            //if (r)
+            return;
             continue;
         }
         let retPrice = await et.runner.call('tv_getstockpriceatday', [item.stock, et.currentTradeDay.day]);
