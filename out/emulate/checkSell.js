@@ -12,7 +12,10 @@ async function checkSell(et, pelist) {
         if (index >= 0)
             pe = pelist[index].pe;
         if (pe < 0 || pe >= 30) {
-            sellAllStocks.push(si.stock);
+            let item = si.items[0];
+            //if (item.price >= item.costprice) {
+            //  sellAllStocks.push(si.stock);
+            //}
         }
     }
     for (i = 0; i < sellAllStocks.length; ++i) {

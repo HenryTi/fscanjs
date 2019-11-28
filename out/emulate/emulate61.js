@@ -9,7 +9,7 @@ const checkSell_1 = require("./checkSell");
 const checkBuyNew_1 = require("./checkBuyNew");
 const cont_amountInit = 3000000;
 const const_EmulatePlanName = 'pe12-onestockmax3';
-const const_weekMaxBuyCount = 5;
+const const_weekMaxBuyCount = 3;
 async function emulateTrade61(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
         return;
