@@ -4,7 +4,7 @@ import { TradeDay, initTradeDay, getTradeDayAt, getNextTradeDay, getLastTradeDay
 import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem, EmulateDetail, EmulateShareItem } from './emulate';
 
 export async function checkBuyNew(et:EmulateTrades) {
-  if (et.weekBuyCount >= 3 || et.emuDetails.moneyCount <= 0)
+  if (et.weekBuyCount >= et.maxWeekBuyCount || et.emuDetails.moneyCount <= 0)
     return;
   let lastDay = getLastTradeDay(et.currentTradeDay.day);
   let ret = await et.runner.call('tv_calcmagicorderdpr', [lastDay, 100]);
