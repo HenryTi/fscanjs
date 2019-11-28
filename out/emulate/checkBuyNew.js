@@ -12,7 +12,7 @@ async function checkBuyNew(et) {
     let i = 0;
     for (; i < length; ++i) {
         let item = ret[i];
-        if (item.pe >= 9)
+        if (item.pe > 10)
             continue;
         let fi = et.emuDetails.shares.findIndex(v => v.stock === item.stock);
         if (fi >= 0) {

@@ -10,7 +10,7 @@ import { checkOld } from './checkOld';
 import { checkBuyNew } from './checkBuyNew';
 
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe9-max5';
+const const_EmulatePlanName = 'pe10-6+1';
 const const_weekMaxBuyCount = 5;
 
 export async function emulateTrade61(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
@@ -323,7 +323,7 @@ export class EmulateTrades {
     let pelist = await this.loadNewPE();
     await updateStockStatus(this);
     await checkSell(this, pelist);
-    //await checkOld(this);
+    await checkOld(this);
     await checkBuyNew(this);
     await this.updateLastStatus();
   }

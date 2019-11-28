@@ -6,9 +6,10 @@ const const_1 = require("../const");
 const tradeday_1 = require("./tradeday");
 const updateStockStatus_1 = require("./updateStockStatus");
 const checkSell_1 = require("./checkSell");
+const checkOld_1 = require("./checkOld");
 const checkBuyNew_1 = require("./checkBuyNew");
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe9-max5';
+const const_EmulatePlanName = 'pe10-6+1';
 const const_weekMaxBuyCount = 5;
 async function emulateTrade61(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
@@ -276,7 +277,7 @@ class EmulateTrades {
         let pelist = await this.loadNewPE();
         await updateStockStatus_1.updateStockStatus(this);
         await checkSell_1.checkSell(this, pelist);
-        //await checkOld(this);
+        await checkOld_1.checkOld(this);
         await checkBuyNew_1.checkBuyNew(this);
         await this.updateLastStatus();
     }
