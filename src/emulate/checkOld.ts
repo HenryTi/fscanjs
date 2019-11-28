@@ -89,7 +89,7 @@ async function updateOne(et:EmulateTrades, share:EmulateShare) {
     }
     else if (item.level === 3) {
       let zf = item.price / item.costprice;
-      if (zf <= 0.9 && maxLevel <= 4 && et.emuDetails.moneyCount >= 8 && et.weekBuyCount < et.maxWeekBuyCount) {
+      if (zf <= 0.9 && maxLevel <= 3 && et.emuDetails.moneyCount >= 8 && et.weekBuyCount < et.maxWeekBuyCount) {
         eItemArr.push(item);
         let price = item.price;
         let money = 8 * et.emuDetails.money / et.emuDetails.moneyCount;
