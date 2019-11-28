@@ -6,12 +6,12 @@ import { TradeDay, initTradeDay, getTradeDayAt, getNextTradeDay } from "./traded
 import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem, EmulateDetail, EmulateShareItem } from './emulate';
 import { updateStockStatus } from './updateStockStatus';
 import { checkSell } from './checkSell';
-import { checkBuyOld } from './checkBuyOld';
+import { checkOld } from './checkOld';
 import { checkBuyNew } from './checkBuyNew';
 
 const GroupSize = 30;
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe10';
+const const_EmulatePlanName = '6+1:pe12';
 
 export async function emulateTrade61(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
   if (RemoteIsRun())
@@ -142,35 +142,23 @@ export class EmulateTrades {
     await this.SaveCurrentDetail(this.typeBeginDay);
   }
 
-  async AddNewStock(stock:number, volume:number, price:number):Promise<boolean> {
-    let money = volume * price * 1.002;
-    
-    let p: EmulateTrade = {
-      type: this.typeID,
-      day:this.currentTradeDay.day,
-      stock: stock,
-      tradeType: 1,
-      price: price,
-      volume: volume
-    }
-    await this.SaveTrade(p);
-
+  async AddNewStock(stock:number, volume:number, price:number, count:number=1,level:number=1):Promise<boolean> {
     let share:EmulateShare = {
       stock: stock,
-      count: 1,
+      count: count,
       items: [
         {
           buyDay: this.currentTradeDay.day,
-          count: 1,
+          count: count,
+          level: level,
           volume: volume,
           costprice: price,
           price: price
         }
       ]
     }
-    this.emuDetails.moneyCount--;
-    this.emuDetails.money -= money;
-    this.emuDetails.shareCount++;
+    await this.buyShareItem(stock, share.items[0]);
+
     this.emuDetails.shares.push(share);
     this.weekBuyCount++;
     return true;
@@ -190,6 +178,22 @@ export class EmulateTrades {
     this.emuDetails.moneyCount += item.count;
     this.emuDetails.shareCount -= item.count;
     this.emuDetails.money += money;
+  }
+
+  async buyShareItem(stock: number, item: EmulateShareItem) {
+    let money = item.volume * item.price * 1.002;
+    let p: EmulateTrade = {
+      type: this.typeID,
+      day:this.currentTradeDay.day,
+      stock: stock,
+      tradeType: 1,
+      price: item.price,
+      volume: item.volume
+    }
+    await this.SaveTrade(p);
+    this.emuDetails.moneyCount -= item.count;
+    this.emuDetails.shareCount += item.count;
+    this.emuDetails.money -= money;
   }
 
   async updateLastStatus() {
@@ -318,7 +322,7 @@ export class EmulateTrades {
     let pelist = await this.loadNewPE();
     await updateStockStatus(this);
     await checkSell(this, pelist);
-    await checkBuyOld(this);
+    await checkOld(this);
     await checkBuyNew(this);
     await this.updateLastStatus();
   }

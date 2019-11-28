@@ -24,6 +24,7 @@ export interface EmulateShare {
 export interface EmulateShareItem {
   buyDay: number,
   count: number,
+  level: number,
   volume: number,
   costprice: number,
   price: number
