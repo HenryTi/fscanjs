@@ -19,7 +19,7 @@ export async function checkBuyNew(et:EmulateTrades) {
       continue;
     let fi = et.emuDetails.shares.findIndex(v=>v.stock === item.stock);
     if (fi >= 0) {
-      let r = await CheckBuyExist(et, et.emuDetails.shares[i]);
+      let r = await CheckBuyExist(et, et.emuDetails.shares[fi]);
       if (r)
         return;
       continue;
@@ -52,7 +52,8 @@ function CheckAllPE(stockSelected:any[]) : boolean {
 }
 
 async function CheckBuyExist(et:EmulateTrades, share:EmulateShare) {
-  let items = share.items;
+  let items:EmulateShareItem[];
+  items = share.items;
   let length = items.length;
   if (length >= 3)
     return false;
