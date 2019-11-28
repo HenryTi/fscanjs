@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tradeday_1 = require("./tradeday");
 async function checkBuyNew(et) {
-    if (et.weekBuyCount >= et.maxWeekBuyCount || et.emuDetails.moneyCount <= 0)
+    if (et.weekBuyCount >= et.maxWeekBuyCount || et.emuDetails.moneyCount <= 10)
         return;
     let lastDay = tradeday_1.getLastTradeDay(et.currentTradeDay.day);
     let ret = await et.runner.call('tv_calcmagicorderdpr', [lastDay, 100]);

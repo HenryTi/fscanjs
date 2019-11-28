@@ -43,10 +43,7 @@ async function scanSinaHistory(len, start) {
             if (!r) {
                 retryArr.push(code);
             }
-            else {
-                //console.log('sinahistory: ' + code['id'] + ' : ' + code['symbol']);
-                await gfuncs_1.sleep(1000);
-            }
+            await gfuncs_1.sleep(800);
         }
         count = retryArr.length;
         for (i = 0; i < count; ++i) {
