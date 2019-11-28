@@ -10,7 +10,7 @@ import { checkOld } from './checkOld';
 import { checkBuyNew } from './checkBuyNew';
 
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe10-1248';
+const const_EmulatePlanName = 'pe11-8421';
 const const_weekMaxBuyCount = 5;
 
 export async function emulateTrade61(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
@@ -221,7 +221,7 @@ export class EmulateTrades {
   }
 
   async SaveTrade(p: EmulateTrade) {
-    await this.runner.call('tv_emulatetrade$save', [p.type, p.day, p.stock, p.tradeType, p.price, p.volume]);
+    await this.runner.call('tv_emulatetrade$add', [p.type, p.day, p.stock, p.tradeType, p.price, p.volume]);
   }
 
   async SelectStocks(dayBegin: number) {

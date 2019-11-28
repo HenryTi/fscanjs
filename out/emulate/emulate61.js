@@ -9,7 +9,7 @@ const checkSell_1 = require("./checkSell");
 const checkOld_1 = require("./checkOld");
 const checkBuyNew_1 = require("./checkBuyNew");
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe10-1248';
+const const_EmulatePlanName = 'pe11-8421';
 const const_weekMaxBuyCount = 5;
 async function emulateTrade61(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
@@ -186,7 +186,7 @@ class EmulateTrades {
         await this.runner.call('tv_emulateshares$save', [this.typeID, day, JSON.stringify(this.emuDetails)]);
     }
     async SaveTrade(p) {
-        await this.runner.call('tv_emulatetrade$save', [p.type, p.day, p.stock, p.tradeType, p.price, p.volume]);
+        await this.runner.call('tv_emulatetrade$add', [p.type, p.day, p.stock, p.tradeType, p.price, p.volume]);
     }
     async SelectStocks(dayBegin) {
         let ret = await this.runner.call('q_calcpeorder', [dayBegin, 0.1, 100]);
