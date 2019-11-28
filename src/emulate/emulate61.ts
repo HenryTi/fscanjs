@@ -11,7 +11,7 @@ import { checkBuyNew } from './checkBuyNew';
 
 const GroupSize = 30;
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = '6+1:pe12';
+const const_EmulatePlanName = 'pe12';
 
 export async function emulateTrade61(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
   if (RemoteIsRun())
@@ -322,7 +322,7 @@ export class EmulateTrades {
     let pelist = await this.loadNewPE();
     await updateStockStatus(this);
     await checkSell(this, pelist);
-    await checkOld(this);
+    //await checkOld(this);
     await checkBuyNew(this);
     await this.updateLastStatus();
   }
