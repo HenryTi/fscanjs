@@ -9,7 +9,7 @@ const checkSell_1 = require("./checkSell");
 const checkOld_1 = require("./checkOld");
 const checkBuyNew_1 = require("./checkBuyNew");
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe10-8421';
+const const_EmulatePlanName = 'pe10-7531';
 const const_weekMaxBuyCount = 5;
 async function emulateTrade61(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())

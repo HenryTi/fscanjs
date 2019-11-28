@@ -29,15 +29,15 @@ async function updateOne(et:EmulateTrades, share:EmulateShare) {
     let item = rItems[i];
     if (item.level === 1) {
       let zf = item.price / item.costprice;
-      if (zf <= 0.9 && maxLevel <= 1 && et.emuDetails.moneyCount >= 2 && et.weekBuyCount < et.maxWeekBuyCount) {
+      if (zf <= 0.9 && maxLevel <= 1 && et.emuDetails.moneyCount >= 3 && et.weekBuyCount < et.maxWeekBuyCount) {
         eItemArr.push(item);
         let price = item.price;
-        let money = 2 * et.emuDetails.money / et.emuDetails.moneyCount;
+        let money = 3 * et.emuDetails.money / et.emuDetails.moneyCount;
         let volume = Math.floor((money / (price*1.002)) / 100) * 100;
         if (volume > 0) {
           let nbItem: EmulateShareItem = {
             buyDay: et.currentTradeDay.day,
-            count: 2,
+            count: 3,
             level: 2,
             volume: volume,
             costprice: item.price,
@@ -59,15 +59,15 @@ async function updateOne(et:EmulateTrades, share:EmulateShare) {
     }
     else if (item.level === 2) {
       let zf = item.price / item.costprice;
-      if (zf <= 0.9 && maxLevel <= 2 && et.emuDetails.moneyCount >= 4 && et.weekBuyCount < et.maxWeekBuyCount) {
+      if (zf <= 0.9 && maxLevel <= 2 && et.emuDetails.moneyCount >= 5 && et.weekBuyCount < et.maxWeekBuyCount) {
         eItemArr.push(item);
         let price = item.price;
-        let money = 4 * et.emuDetails.money / et.emuDetails.moneyCount;
+        let money = 5 * et.emuDetails.money / et.emuDetails.moneyCount;
         let volume = Math.floor((money / (price*1.002)) / 100) * 100;
         if (volume > 0) {
           let nbItem: EmulateShareItem = {
             buyDay: et.currentTradeDay.day,
-            count: 4,
+            count: 5,
             level: 3,
             volume: volume,
             costprice: item.price,
@@ -89,15 +89,15 @@ async function updateOne(et:EmulateTrades, share:EmulateShare) {
     }
     else if (item.level === 3) {
       let zf = item.price / item.costprice;
-      if (zf <= 0.9 && maxLevel <= 3 && et.emuDetails.moneyCount >= 8 && et.weekBuyCount < et.maxWeekBuyCount) {
+      if (zf <= 0.9 && maxLevel <= 3 && et.emuDetails.moneyCount >= 7 && et.weekBuyCount < et.maxWeekBuyCount) {
         eItemArr.push(item);
         let price = item.price;
-        let money = 8 * et.emuDetails.money / et.emuDetails.moneyCount;
+        let money = 7 * et.emuDetails.money / et.emuDetails.moneyCount;
         let volume = Math.floor((money / (price*1.002)) / 100) * 100;
         if (volume > 0) {
           let nbItem: EmulateShareItem = {
             buyDay: et.currentTradeDay.day,
-            count: 8,
+            count: 7,
             level: 4,
             volume: volume,
             costprice: item.price,
