@@ -13,7 +13,7 @@ import { scanSinaFinance, SinaFinace } from "./scan/financesina";
 import { updateAllEarning, updateAllLastEarning, updateAllCheckEarningPerYear } from "./magic/updateEarnig";
 import { emulateAll } from "./magic/emulatemagic";
 import * as TradDay from "./emulate/tradeday";
-import { emulateTrade61 } from "./emulate/emulate61";
+import { emulateTrade61 } from "./emulate/emulate";
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 

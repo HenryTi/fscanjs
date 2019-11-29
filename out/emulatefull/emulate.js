@@ -9,9 +9,9 @@ const checkSell_1 = require("./checkSell");
 const checkOld_1 = require("./checkOld");
 const checkBuyNew_1 = require("./checkBuyNew");
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe10-7531';
+const const_EmulatePlanName = 'pe11-full';
 const const_weekMaxBuyCount = 5;
-async function emulateTrade61(yearBegin, monthBegin, yearEnd, monthEnd) {
+async function emulateTradeFull(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
         return;
     gfuncs_1.RemoteRun(true);
@@ -28,7 +28,7 @@ async function emulateTrade61(yearBegin, monthBegin, yearEnd, monthEnd) {
     gfuncs_1.LogWithTime('emulateTrade61 end');
     gfuncs_1.RemoteRun(false);
 }
-exports.emulateTrade61 = emulateTrade61;
+exports.emulateTradeFull = emulateTradeFull;
 function dayFromYearMonth(year, month) {
     return year * 10000 + month * 100 + 1;
 }

@@ -3,17 +3,17 @@ import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun, LogWithTime } from '../gfuncs';
 import { Const_dbname } from '../const';
 import { TradeDay, initTradeDay, getTradeDayAt, getNextTradeDay } from "./tradeday";
-import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem, EmulateDetail, EmulateShareItem } from './emulate';
+import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem, EmulateDetail, EmulateShareItem } from './emulatetypes';
 import { updateStockStatus } from './updateStockStatus';
 import { checkSell } from './checkSell';
 import { checkOld } from './checkOld';
 import { checkBuyNew } from './checkBuyNew';
 
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe10-7531';
+const const_EmulatePlanName = 'pe11-full';
 const const_weekMaxBuyCount = 5;
 
-export async function emulateTrade61(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
+export async function emulateTradeFull(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
   if (RemoteIsRun())
     return;
   RemoteRun(true);
