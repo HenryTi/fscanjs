@@ -13,7 +13,8 @@ const cont_amountInit = 3000000;
 const const_EmulatePlanName = 'full-pe11';
 const const_weekMaxChangeCount = 3;
 const const_pe = 11;
-const const_peforsell = 22;
+const const_peforsell = 30;
+const const_stocktotalcount = 100;
 
 export async function emulateTradeFull(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
   if (RemoteIsRun())
@@ -154,7 +155,7 @@ export class EmulateTrades {
     let details : EmulateDetail = {
       moneyinit: this.amountInit,
       money: this.amountInit,
-      moneyCount: 30,
+      moneyCount: const_stocktotalcount,
       shareCount: 0,
       shares: []
     }
@@ -343,8 +344,8 @@ export class EmulateTrades {
       return;
     
     let end = this.stockOrder.length as number;
-    if (end > 50)
-      end = 50;
+    if (end > const_stocktotalcount * 2)
+      end = const_stocktotalcount * 2;
     let i = 0;
     for (; i < end; ++i) {
       let item = this.stockOrder[i] as {stock: number, pe: number};
