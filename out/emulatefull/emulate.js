@@ -9,6 +9,7 @@ const cont_amountInit = 3000000;
 const const_EmulatePlanName = 'full-pe11';
 const const_weekMaxChangeCount = 3;
 const const_pe = 11;
+const const_peforsell = 22;
 async function emulateTradeFull(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
         return;
@@ -82,6 +83,7 @@ class EmulateTrades {
                     break;
                 this.currentTradeDay = tradeDay;
                 this.checkNewWeek(tradeDay);
+                this.tradeDayisMonthBegin = tradeday_1.isMonthBegin(this.currentTradeDay.day);
                 await this.CalculateNextDay();
                 this.lastTradeDay = tradeDay;
                 tradeDay = tradeday_1.getNextTradeDay(tradeDay.day);
@@ -100,7 +102,7 @@ class EmulateTrades {
         await updateStockStatus_1.updateStockStatus(this);
         await this.checkSell();
         await this.checkBuyNew();
-        await this.checkChange();
+        //await this.checkChange();
         await this.updateLastStatus();
     }
     checkNewWeek(tradeDay) {
@@ -118,7 +120,7 @@ class EmulateTrades {
         let details = {
             moneyinit: this.amountInit,
             money: this.amountInit,
-            moneyCount: 50,
+            moneyCount: 30,
             shareCount: 0,
             shares: []
         };
@@ -266,11 +268,15 @@ class EmulateTrades {
             let pe = undefined;
             if (index >= 0)
                 pe = this.peList[index].pe;
-            if (pe < 0 || pe >= 30 && si.count <= 1) {
-                let item = si.items[0];
-                //if (item.price >= item.costprice) {
+            if (pe < 0 || pe >= const_peforsell && si.count <= 1) {
                 sellAllStocks.push(si.stock);
-                //}
+            }
+            else if (this.tradeDayisMonthBegin) {
+                let item = si.items[0];
+                let itemTradeday = tradeday_1.getTradeDayAt(item.buyDay);
+                if (this.currentTradeDay.monthno - itemTradeday.monthno >= 12) {
+                    sellAllStocks.push(si.stock);
+                }
             }
         }
         for (i = 0; i < sellAllStocks.length; ++i) {
@@ -278,11 +284,11 @@ class EmulateTrades {
         }
     }
     async checkBuyNew() {
-        if (this.emuDetails.moneyCount <= 0 || !this.pechecked)
+        if (this.emuDetails.moneyCount <= 0 || !this.pechecked && !this.tradeDayisMonthBegin)
             return;
         let end = this.stockOrder.length;
-        if (end > 150)
-            end = 150;
+        if (end > 50)
+            end = 50;
         let i = 0;
         for (; i < end; ++i) {
             let item = this.stockOrder[i];

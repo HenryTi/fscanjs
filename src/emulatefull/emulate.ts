@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun, LogWithTime } from '../gfuncs';
 import { Const_dbname } from '../const';
-import { TradeDay, initTradeDay, getTradeDayAt, getNextTradeDay, getLastTradeDay } from "./tradeday";
+import { TradeDay, initTradeDay, getTradeDayAt, getNextTradeDay, getLastTradeDay, isMonthBegin } from "./tradeday";
 import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem, EmulateDetail, EmulateShareItem } from './emulatetypes';
 import { updateStockStatus } from './updateStockStatus';
 import { checkSell } from './checkSell';
@@ -13,6 +13,7 @@ const cont_amountInit = 3000000;
 const const_EmulatePlanName = 'full-pe11';
 const const_weekMaxChangeCount = 3;
 const const_pe = 11;
+const const_peforsell = 22;
 
 export async function emulateTradeFull(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
   if (RemoteIsRun())
@@ -53,6 +54,7 @@ export class EmulateTrades {
   maxWeekChangeCount: number = const_weekMaxChangeCount;
   lastTradeDay: TradeDay;
   currentTradeDay: TradeDay;
+  tradeDayisMonthBegin: boolean;
 
   constructor(runner: Runner) {
     this.runner = runner;
@@ -105,6 +107,7 @@ export class EmulateTrades {
           break;
         this.currentTradeDay = tradeDay;
         this.checkNewWeek(tradeDay);
+        this.tradeDayisMonthBegin = isMonthBegin(this.currentTradeDay.day);
         await this.CalculateNextDay();
         this.lastTradeDay = tradeDay;
         tradeDay = getNextTradeDay(tradeDay.day);
@@ -130,7 +133,7 @@ export class EmulateTrades {
     await updateStockStatus(this);
     await this.checkSell();
     await this.checkBuyNew();
-    await this.checkChange();
+    //await this.checkChange();
     
     await this.updateLastStatus();
   }
@@ -151,7 +154,7 @@ export class EmulateTrades {
     let details : EmulateDetail = {
       moneyinit: this.amountInit,
       money: this.amountInit,
-      moneyCount: 50,
+      moneyCount: 30,
       shareCount: 0,
       shares: []
     }
@@ -318,11 +321,15 @@ export class EmulateTrades {
       let pe: number = undefined;
       if (index >= 0)
         pe = this.peList[index].pe;
-      if (pe < 0 || pe >= 30 && si.count <= 1) {
-        let item = si.items[0];
-        //if (item.price >= item.costprice) {
+      if (pe < 0 || pe >= const_peforsell && si.count <= 1) {
         sellAllStocks.push(si.stock);
-        //}
+      }
+      else if (this.tradeDayisMonthBegin) {
+        let item = si.items[0];
+        let itemTradeday = getTradeDayAt(item.buyDay);
+        if (this.currentTradeDay.monthno - itemTradeday.monthno >= 12) {
+          sellAllStocks.push(si.stock);
+        }
       }
     }
     
@@ -332,12 +339,12 @@ export class EmulateTrades {
   }
 
   async checkBuyNew() {
-    if (this.emuDetails.moneyCount <= 0 || !this.pechecked)
+    if (this.emuDetails.moneyCount <= 0 || !this.pechecked && !this.tradeDayisMonthBegin)
       return;
     
     let end = this.stockOrder.length as number;
-    if (end > 150)
-      end = 150;
+    if (end > 50)
+      end = 50;
     let i = 0;
     for (; i < end; ++i) {
       let item = this.stockOrder[i] as {stock: number, pe: number};
