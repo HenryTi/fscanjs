@@ -10,9 +10,9 @@ import { checkOld } from './checkOld';
 import { checkBuyNew } from './checkBuyNew';
 
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'full-pe11';
+const const_EmulatePlanName = 'full-pe10';
 const const_weekMaxChangeCount = 3;
-const const_pe = 11;
+const const_pe = 10;
 const const_peforsell = 30;
 const const_stocktotalcount = 100;
 
