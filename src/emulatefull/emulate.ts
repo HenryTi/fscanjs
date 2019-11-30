@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { getRunner, Runner } from '../db';
 import { sleep, checkToDateInt, checkNumberNaNToZero, RemoteIsRun, RemoteRun, LogWithTime } from '../gfuncs';
 import { Const_dbname } from '../const';
-import { TradeDay, initTradeDay, getTradeDayAt, getNextTradeDay } from "./tradeday";
+import { TradeDay, initTradeDay, getTradeDayAt, getNextTradeDay, getLastTradeDay } from "./tradeday";
 import { EmulateTrade, EmulateResult, EmulateShare, EmulateStockResultItem, SelectStockResultItem, EmulateDetail, EmulateShareItem } from './emulatetypes';
 import { updateStockStatus } from './updateStockStatus';
 import { checkSell } from './checkSell';
@@ -10,8 +10,9 @@ import { checkOld } from './checkOld';
 import { checkBuyNew } from './checkBuyNew';
 
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'pe11-full';
-const const_weekMaxBuyCount = 5;
+const const_EmulatePlanName = 'full-pe11';
+const const_weekMaxChangeCount = 3;
+const const_pe = 11;
 
 export async function emulateTradeFull(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
   if (RemoteIsRun())
@@ -48,14 +49,14 @@ export class EmulateTrades {
 
   protected monthNo: number;
   protected weekNo: number;
-  weekBuyCount: number;
-  maxWeekBuyCount: number = const_weekMaxBuyCount;
+  weekChangeCount: number;
+  maxWeekChangeCount: number = const_weekMaxChangeCount;
   lastTradeDay: TradeDay;
   currentTradeDay: TradeDay;
 
   constructor(runner: Runner) {
     this.runner = runner;
-    this.weekBuyCount = 0;
+    this.weekChangeCount = 0;
     this.weekNo = 0;
     this.monthNo = 0;
     this.amountInit = cont_amountInit;
@@ -118,11 +119,18 @@ export class EmulateTrades {
 
   peList: any[];
 
+  sellCount: number = 0;
+  buyCount: number = 0;
+
   protected async CalculateNextDay() {
+    this.sellCount = 0;
+    this.buyCount = 0;
     this.peList = await this.loadNewPE();
     await this.loadStocksOrder();
-    
     await updateStockStatus(this);
+    await this.checkSell();
+    await this.checkBuyNew();
+    await this.checkChange();
     
     await this.updateLastStatus();
   }
@@ -136,14 +144,14 @@ export class EmulateTrades {
     }
     this.monthNo = tradeDay.monthno;
     this.weekNo = weekNo;
-    this.weekBuyCount = 0;
+    this.weekChangeCount = 0;
   }
 
   protected async CalculateFirst() {
     let details : EmulateDetail = {
       moneyinit: this.amountInit,
       money: this.amountInit,
-      moneyCount: 100,
+      moneyCount: 50,
       shareCount: 0,
       shares: []
     }
@@ -172,7 +180,6 @@ export class EmulateTrades {
     await this.buyShareItem(stock, share.items[0]);
 
     this.emuDetails.shares.push(share);
-    this.weekBuyCount++;
     return true;
   }
 
@@ -262,6 +269,7 @@ export class EmulateTrades {
       if (share.stock === stock) {
         for (let k = 0; k < share.items.length; ++k) {
           await this.sellShareItem(share.stock, share.items[k]);
+          this.sellCount++;
         }
         this.emuDetails.shares.splice(i, 1);
         return;
@@ -290,7 +298,8 @@ export class EmulateTrades {
   stockOrder: any[];
   pechecked: boolean = true;
   protected async loadStocksOrder() {
-    this.stockOrder = await this.runner.call('tv_calcmagicorderdpr', [this.currentTradeDay.day, 100]);
+    let lastDay = getLastTradeDay(this.currentTradeDay.day);
+    this.stockOrder = await this.runner.call('tv_calcmagicorderdpr', [lastDay, 500]);
     let sum = 0;
     for (let i = 0; i < 50; ++i) {
       sum += this.stockOrder[i].pe;
@@ -301,7 +310,6 @@ export class EmulateTrades {
 
   protected async checkSell() {
     let shares = this.emuDetails.shares;
-    let sellCount = 0;
     let sellAllStocks = [];
     let i = 0;
     for (; i < shares.length; ++i) {
@@ -321,5 +329,41 @@ export class EmulateTrades {
     for (i = 0; i < sellAllStocks.length; ++i) {
       await this.removeStock(sellAllStocks[i]);
     }
+  }
+
+  async checkBuyNew() {
+    if (this.emuDetails.moneyCount <= 0 || !this.pechecked)
+      return;
+    
+    let end = this.stockOrder.length as number;
+    if (end > 150)
+      end = 150;
+    let i = 0;
+    for (; i < end; ++i) {
+      let item = this.stockOrder[i] as {stock: number, pe: number};
+      if (item.pe > const_pe)
+        continue;
+      let fi = this.emuDetails.shares.findIndex(v=>v.stock === item.stock);
+      if (fi >= 0) {
+        continue;
+      }
+      let retPrice = await this.runner.call('tv_getstockpriceatday', [item.stock, this.currentTradeDay.day]) as any[];
+      if (retPrice.length <= 0)
+        continue;
+      let price = retPrice[0].price;
+      let money = this.emuDetails.money / this.emuDetails.moneyCount;
+      let volume = Math.floor((money / (price*1.002)) / 100) * 100;
+      if (volume <= 0)
+        continue;
+      let r = await this.AddNewStock(item.stock, volume, price);
+      this.buyCount++;
+      if (this.emuDetails.moneyCount <= 0)
+        break;
+    }
+  }
+
+  async checkChange() {
+    if (this.emuDetails.moneyCount > 0 || this.buyCount > 0 || this.weekChangeCount >= this.maxWeekChangeCount)
+      return;
   }
 }

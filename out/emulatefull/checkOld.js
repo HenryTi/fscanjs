@@ -25,7 +25,7 @@ async function updateOne(et, share) {
         let item = rItems[i];
         if (item.level === 1) {
             let zf = item.price / item.costprice;
-            if (zf <= 0.9 && maxLevel <= 1 && et.emuDetails.moneyCount >= 3 && et.weekBuyCount < et.maxWeekBuyCount) {
+            if (zf <= 0.9 && maxLevel <= 1 && et.emuDetails.moneyCount >= 3 && et.weekChangeCount < et.maxWeekChangeCount) {
                 eItemArr.push(item);
                 let price = item.price;
                 let money = 3 * et.emuDetails.money / et.emuDetails.moneyCount;
@@ -40,7 +40,7 @@ async function updateOne(et, share) {
                         price: item.price
                     };
                     await et.buyShareItem(stock, nbItem);
-                    et.weekBuyCount++;
+                    et.weekChangeCount++;
                     eItemArr.push(nbItem);
                     share.count += nbItem.count;
                 }
@@ -55,7 +55,7 @@ async function updateOne(et, share) {
         }
         else if (item.level === 2) {
             let zf = item.price / item.costprice;
-            if (zf <= 0.9 && maxLevel <= 2 && et.emuDetails.moneyCount >= 5 && et.weekBuyCount < et.maxWeekBuyCount) {
+            if (zf <= 0.9 && maxLevel <= 2 && et.emuDetails.moneyCount >= 5 && et.weekChangeCount < et.maxWeekChangeCount) {
                 eItemArr.push(item);
                 let price = item.price;
                 let money = 5 * et.emuDetails.money / et.emuDetails.moneyCount;
@@ -70,7 +70,7 @@ async function updateOne(et, share) {
                         price: item.price
                     };
                     await et.buyShareItem(stock, nbItem);
-                    et.weekBuyCount++;
+                    et.weekChangeCount++;
                     eItemArr.push(nbItem);
                     share.count += nbItem.count;
                 }
@@ -85,7 +85,7 @@ async function updateOne(et, share) {
         }
         else if (item.level === 3) {
             let zf = item.price / item.costprice;
-            if (zf <= 0.9 && maxLevel <= 3 && et.emuDetails.moneyCount >= 7 && et.weekBuyCount < et.maxWeekBuyCount) {
+            if (zf <= 0.9 && maxLevel <= 3 && et.emuDetails.moneyCount >= 7 && et.weekChangeCount < et.maxWeekChangeCount) {
                 eItemArr.push(item);
                 let price = item.price;
                 let money = 7 * et.emuDetails.money / et.emuDetails.moneyCount;
@@ -100,7 +100,7 @@ async function updateOne(et, share) {
                         price: item.price
                     };
                     await et.buyShareItem(stock, nbItem);
-                    et.weekBuyCount++;
+                    et.weekChangeCount++;
                     eItemArr.push(nbItem);
                     share.count += nbItem.count;
                 }
@@ -138,7 +138,7 @@ async function updateOneOld(et, share) {
         if (item.level === 1) {
             let zf = item.price / item.costprice;
             eItemArr.push(item);
-            if (zf <= 0.9 && !haveLevel[2] && et.emuDetails.moneyCount >= 2 && et.weekBuyCount < et.maxWeekBuyCount) {
+            if (zf <= 0.9 && !haveLevel[2] && et.emuDetails.moneyCount >= 2 && et.weekChangeCount < et.maxWeekChangeCount) {
                 let price = item.price;
                 let money = 2 * et.emuDetails.money / et.emuDetails.moneyCount;
                 let volume = Math.floor((money / (price * 1.002)) / 100) * 100;
@@ -152,7 +152,7 @@ async function updateOneOld(et, share) {
                         price: item.price
                     };
                     await et.buyShareItem(stock, nbItem);
-                    et.weekBuyCount++;
+                    et.weekChangeCount++;
                     eItemArr.push(nbItem);
                     share.count += nbItem.count;
                 }
@@ -160,7 +160,7 @@ async function updateOneOld(et, share) {
         }
         else if (item.level === 2) {
             let zf = item.price / item.costprice;
-            if (zf <= 0.9 && maxLevel <= 2 && et.emuDetails.moneyCount >= 4 && et.weekBuyCount < et.maxWeekBuyCount) {
+            if (zf <= 0.9 && maxLevel <= 2 && et.emuDetails.moneyCount >= 4 && et.weekChangeCount < et.maxWeekChangeCount) {
                 eItemArr.push(item);
                 let price = item.price;
                 let money = 4 * et.emuDetails.money / et.emuDetails.moneyCount;
@@ -175,7 +175,7 @@ async function updateOneOld(et, share) {
                         price: item.price
                     };
                     await et.buyShareItem(stock, nbItem);
-                    et.weekBuyCount++;
+                    et.weekChangeCount++;
                     eItemArr.push(nbItem);
                     share.count += nbItem.count;
                 }
@@ -191,7 +191,7 @@ async function updateOneOld(et, share) {
         else if (item.level === 3) {
             let zf = item.price / item.costprice;
             eItemArr.push(item);
-            if (zf <= 0.9 && !haveLevel[4] && et.emuDetails.moneyCount >= 8 && et.weekBuyCount < et.maxWeekBuyCount) {
+            if (zf <= 0.9 && !haveLevel[4] && et.emuDetails.moneyCount >= 8 && et.weekChangeCount < et.maxWeekChangeCount) {
                 let price = item.price;
                 let money = 8 * et.emuDetails.money / et.emuDetails.moneyCount;
                 let volume = Math.floor((money / (price * 1.002)) / 100) * 100;
@@ -205,7 +205,7 @@ async function updateOneOld(et, share) {
                         price: item.price
                     };
                     await et.buyShareItem(stock, nbItem);
-                    et.weekBuyCount++;
+                    et.weekChangeCount++;
                     eItemArr.push(nbItem);
                     share.count += nbItem.count;
                 }
