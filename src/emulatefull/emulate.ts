@@ -116,6 +116,17 @@ export class EmulateTrades {
     }
   }
 
+  peList: any[];
+
+  protected async CalculateNextDay() {
+    this.peList = await this.loadNewPE();
+    await this.loadStocksOrder();
+    
+    await updateStockStatus(this);
+    
+    await this.updateLastStatus();
+  }
+
   protected checkNewWeek(tradeDay : TradeDay) {
     let weekNo = Math.floor((tradeDay.day % 100) / 3);
     if (weekNo > 2)
@@ -224,49 +235,6 @@ export class EmulateTrades {
     await this.runner.call('tv_emulatetrade$add', [p.type, p.day, p.stock, p.tradeType, p.price, p.volume]);
   }
 
-  async SelectStocks(dayBegin: number) {
-    let ret = await this.runner.call('q_calcpeorder', [dayBegin, 0.1, 100]);
-    let arr = ret as any[];
-
-    let shares: SelectStockResultItem[] = [];
-    let i = 0;
-    for (; i < arr.length; ++i) {
-      let item = arr[i];
-      let { stock, o, pe, roe } = item as { stock: number, o: number, pe: number, roe: number };
-      let r: SelectStockResultItem = { stock: stock, order: o, pe: pe, roe: roe };
-      shares.push(r);
-    }
-    return shares;
-  }
-
-  CalculatePEAvg(param:SelectStockResultItem[]):number {
-    let sum = 0;
-    let count = 0;
-    param.forEach((value:SelectStockResultItem) => {
-      ++count;
-      sum += value.pe;
-    });
-    if (count <=0 )
-      return 0;
-    return sum / count;
-  }
-
-  async GetOneStockResult(stock: number, dayBegin: number, dayEnd: number): Promise<EmulateStockResultItem> {
-    let ret = await this.runner.query('tv_getStockRestoreShare', [stock, dayBegin, dayEnd]);
-    if (ret.length <= 0)
-      return undefined;
-    let { priceBegin, bday, priceEnd, eday, rate, bonus } = ret[0] as { priceBegin: number, bday: number, priceEnd: number, eday: number, rate: number, bonus: number };
-    return {
-      stock: stock,
-      priceBegin: priceBegin,
-      dayBegin: bday,
-      priceEnd: priceEnd,
-      dayEnd: eday,
-      rate: rate,
-      bonus: bonus
-    };
-  }
-
   async GetStockNextPrice(stock: number, day: number) {
     let ret = await this.runner.query('tv_getstockpriceafterday', [stock, day]);
     if (ret.length <= 0)
@@ -319,12 +287,39 @@ export class EmulateTrades {
     return pes;
   }
 
-  protected async CalculateNextDay() {
-    let pelist = await this.loadNewPE();
-    await updateStockStatus(this);
-    await checkSell(this, pelist);
-    await checkOld(this);
-    await checkBuyNew(this);
-    await this.updateLastStatus();
+  stockOrder: any[];
+  pechecked: boolean = true;
+  protected async loadStocksOrder() {
+    this.stockOrder = await this.runner.call('tv_calcmagicorderdpr', [this.currentTradeDay.day, 100]);
+    let sum = 0;
+    for (let i = 0; i < 50; ++i) {
+      sum += this.stockOrder[i].pe;
+    }
+    let peAvg = sum / 50;
+    this.pechecked = peAvg < 25;
+  }
+
+  protected async checkSell() {
+    let shares = this.emuDetails.shares;
+    let sellCount = 0;
+    let sellAllStocks = [];
+    let i = 0;
+    for (; i < shares.length; ++i) {
+      let si = shares[i];
+      let index = this.peList.findIndex(v=>v.stock===si.stock);
+      let pe: number = undefined;
+      if (index >= 0)
+        pe = this.peList[index].pe;
+      if (pe < 0 || pe >= 30 && si.count <= 1) {
+        let item = si.items[0];
+        //if (item.price >= item.costprice) {
+        sellAllStocks.push(si.stock);
+        //}
+      }
+    }
+    
+    for (i = 0; i < sellAllStocks.length; ++i) {
+      await this.removeStock(sellAllStocks[i]);
+    }
   }
 }

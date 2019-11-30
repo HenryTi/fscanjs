@@ -5,9 +5,6 @@ const gfuncs_1 = require("../gfuncs");
 const const_1 = require("../const");
 const tradeday_1 = require("./tradeday");
 const updateStockStatus_1 = require("./updateStockStatus");
-const checkSell_1 = require("./checkSell");
-const checkOld_1 = require("./checkOld");
-const checkBuyNew_1 = require("./checkBuyNew");
 const cont_amountInit = 3000000;
 const const_EmulatePlanName = 'pe11-full';
 const const_weekMaxBuyCount = 5;
@@ -35,6 +32,7 @@ function dayFromYearMonth(year, month) {
 class EmulateTrades {
     constructor(runner) {
         this.maxWeekBuyCount = const_weekMaxBuyCount;
+        this.pechecked = true;
         this.runner = runner;
         this.weekBuyCount = 0;
         this.weekNo = 0;
@@ -90,6 +88,12 @@ class EmulateTrades {
         catch (err) {
             console.log(err);
         }
+    }
+    async CalculateNextDay() {
+        this.peList = await this.loadNewPE();
+        await this.loadStocksOrder();
+        await updateStockStatus_1.updateStockStatus(this);
+        await this.updateLastStatus();
     }
     checkNewWeek(tradeDay) {
         let weekNo = Math.floor((tradeDay.day % 100) / 3);
@@ -188,45 +192,6 @@ class EmulateTrades {
     async SaveTrade(p) {
         await this.runner.call('tv_emulatetrade$add', [p.type, p.day, p.stock, p.tradeType, p.price, p.volume]);
     }
-    async SelectStocks(dayBegin) {
-        let ret = await this.runner.call('q_calcpeorder', [dayBegin, 0.1, 100]);
-        let arr = ret;
-        let shares = [];
-        let i = 0;
-        for (; i < arr.length; ++i) {
-            let item = arr[i];
-            let { stock, o, pe, roe } = item;
-            let r = { stock: stock, order: o, pe: pe, roe: roe };
-            shares.push(r);
-        }
-        return shares;
-    }
-    CalculatePEAvg(param) {
-        let sum = 0;
-        let count = 0;
-        param.forEach((value) => {
-            ++count;
-            sum += value.pe;
-        });
-        if (count <= 0)
-            return 0;
-        return sum / count;
-    }
-    async GetOneStockResult(stock, dayBegin, dayEnd) {
-        let ret = await this.runner.query('tv_getStockRestoreShare', [stock, dayBegin, dayEnd]);
-        if (ret.length <= 0)
-            return undefined;
-        let { priceBegin, bday, priceEnd, eday, rate, bonus } = ret[0];
-        return {
-            stock: stock,
-            priceBegin: priceBegin,
-            dayBegin: bday,
-            priceEnd: priceEnd,
-            dayEnd: eday,
-            rate: rate,
-            bonus: bonus
-        };
-    }
     async GetStockNextPrice(stock, day) {
         let ret = await this.runner.query('tv_getstockpriceafterday', [stock, day]);
         if (ret.length <= 0)
@@ -273,13 +238,36 @@ class EmulateTrades {
         }
         return pes;
     }
-    async CalculateNextDay() {
-        let pelist = await this.loadNewPE();
-        await updateStockStatus_1.updateStockStatus(this);
-        await checkSell_1.checkSell(this, pelist);
-        await checkOld_1.checkOld(this);
-        await checkBuyNew_1.checkBuyNew(this);
-        await this.updateLastStatus();
+    async loadStocksOrder() {
+        this.stockOrder = await this.runner.call('tv_calcmagicorderdpr', [this.currentTradeDay.day, 100]);
+        let sum = 0;
+        for (let i = 0; i < 50; ++i) {
+            sum += this.stockOrder[i].pe;
+        }
+        let peAvg = sum / 50;
+        this.pechecked = peAvg < 25;
+    }
+    async checkSell() {
+        let shares = this.emuDetails.shares;
+        let sellCount = 0;
+        let sellAllStocks = [];
+        let i = 0;
+        for (; i < shares.length; ++i) {
+            let si = shares[i];
+            let index = this.peList.findIndex(v => v.stock === si.stock);
+            let pe = undefined;
+            if (index >= 0)
+                pe = this.peList[index].pe;
+            if (pe < 0 || pe >= 30 && si.count <= 1) {
+                let item = si.items[0];
+                //if (item.price >= item.costprice) {
+                sellAllStocks.push(si.stock);
+                //}
+            }
+        }
+        for (i = 0; i < sellAllStocks.length; ++i) {
+            await this.removeStock(sellAllStocks[i]);
+        }
     }
 }
 exports.EmulateTrades = EmulateTrades;

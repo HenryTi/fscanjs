@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sina_1 = require("./scan/sina");
 const cheerio = require("cheerio");
 const z = require("zlib");
-const emulate_1 = require("./emulate/emulate");
+const calcuallpeavg_1 = require("./emulatefull/calcuallpeavg");
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 async function testZip() {
     let urlone = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/'
@@ -81,7 +81,8 @@ async function calculateLastOne(code, runner) {
 }
 async function testa() {
     //let runner = await getRunner(Const_dbname);
-    await emulate_1.emulateTrade61(2010, 1, 2019, 1);
+    //await emulateTrade61(2010, 1, 2019, 1);
+    await calcuallpeavg_1.CalculateAllPeAvg();
     debugger;
 }
 testa();
