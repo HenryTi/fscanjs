@@ -130,7 +130,6 @@ export class EmulateTrades {
     this.sellCount = 0;
     this.buyCount = 0;
     this.peList = await this.loadNewPE();
-    await this.loadStocksOrder();
     await updateStockStatus(this);
     await this.checkSell();
     await this.checkBuyNew();
@@ -342,6 +341,7 @@ export class EmulateTrades {
   async checkBuyNew() {
     if (this.emuDetails.moneyCount <= 0 || !this.pechecked && !this.tradeDayisMonthBegin)
       return;
+    await this.loadStocksOrder();
     
     let end = this.stockOrder.length as number;
     if (end > const_stocktotalcount * 2)
