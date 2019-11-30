@@ -13,7 +13,7 @@ async function emulateTradeFull(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
         return;
     gfuncs_1.RemoteRun(true);
-    gfuncs_1.LogWithTime('emulateTrade61 begin');
+    gfuncs_1.LogWithTime('emulateTradeFull begin');
     try {
         let runner = await db_1.getRunner(const_1.Const_dbname);
         let param = { yearBegin: yearBegin, monthBegin: monthBegin, yearEnd: yearEnd, monthEnd: monthEnd };
@@ -23,7 +23,7 @@ async function emulateTradeFull(yearBegin, monthBegin, yearEnd, monthEnd) {
     catch (err) {
         console.log(err);
     }
-    gfuncs_1.LogWithTime('emulateTrade61 end');
+    gfuncs_1.LogWithTime('emulateTradeFull end');
     gfuncs_1.RemoteRun(false);
 }
 exports.emulateTradeFull = emulateTradeFull;

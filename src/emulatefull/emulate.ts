@@ -19,7 +19,7 @@ export async function emulateTradeFull(yearBegin:number, monthBegin:number, year
     return;
   RemoteRun(true);
 
-  LogWithTime('emulateTrade61 begin');
+  LogWithTime('emulateTradeFull begin');
   try {
     let runner: Runner = await getRunner(Const_dbname);
 
@@ -30,7 +30,7 @@ export async function emulateTradeFull(yearBegin:number, monthBegin:number, year
   catch (err) {
     console.log(err);
   }
-  LogWithTime('emulateTrade61 end');
+  LogWithTime('emulateTradeFull end');
   RemoteRun(false);
 }
 
