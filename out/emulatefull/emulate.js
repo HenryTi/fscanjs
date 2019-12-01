@@ -10,7 +10,7 @@ const const_EmulatePlanName = 'full-avgpe9';
 const const_weekMaxChangeCount = 3;
 const const_pe = 9;
 const const_peforsell = 22;
-const const_stocktotalcount = 100;
+const const_stocktotalcount = 30;
 async function emulateTradeFull(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
         return;
