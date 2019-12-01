@@ -6,10 +6,10 @@ const const_1 = require("../const");
 const tradeday_1 = require("./tradeday");
 const updateStockStatus_1 = require("./updateStockStatus");
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'full-avgpe11';
+const const_EmulatePlanName = 'full-avgpe9';
 const const_weekMaxChangeCount = 3;
-const const_pe = 10;
-const const_peforsell = 25;
+const const_pe = 9;
+const const_peforsell = 22;
 const const_stocktotalcount = 100;
 async function emulateTradeFull(yearBegin, monthBegin, yearEnd, monthEnd) {
     if (gfuncs_1.RemoteIsRun())
