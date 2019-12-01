@@ -10,10 +10,10 @@ import { checkOld } from './checkOld';
 import { checkBuyNew } from './checkBuyNew';
 
 const cont_amountInit = 3000000;
-const const_EmulatePlanName = 'full-pe10';
+const const_EmulatePlanName = 'full-avgpe11';
 const const_weekMaxChangeCount = 3;
 const const_pe = 10;
-const const_peforsell = 30;
+const const_peforsell = 25;
 const const_stocktotalcount = 100;
 
 export async function emulateTradeFull(yearBegin:number, monthBegin:number, yearEnd:number, monthEnd:number) {
@@ -302,7 +302,7 @@ export class EmulateTrades {
   pechecked: boolean = true;
   protected async loadStocksOrder() {
     let lastDay = getLastTradeDay(this.currentTradeDay.day);
-    this.stockOrder = await this.runner.call('tv_calcmagicorderdpr', [lastDay, 500]);
+    this.stockOrder = await this.runner.call('tv_calcmagicorderavgdpr', [lastDay, 500]);
     let sum = 0;
     for (let i = 0; i < 50; ++i) {
       sum += this.stockOrder[i].pe;
