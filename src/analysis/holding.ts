@@ -1,19 +1,34 @@
+export interface HoldingItem {
+    buyDate: Date;
+    buyPrice: number;
+    numShares: number;
+    amount: number;
+}
+
 export class Holding {
     readonly stockId: number;
-    readonly buyDate: number;
-    readonly buyPrice: number;
-    readonly numShares: number;
-    readonly amount: number;
+    readonly list: HoldingItem[];
 
-    constructor(stockId:number, buyDate:number, buyPrice:number, numShares:number, amount:number) {
+    constructor(stockId:number) {
         this.stockId = stockId;
-        this.buyDate = buyDate;
-        this.buyPrice = buyPrice;
-        this.numShares = numShares;
-        this.amount = amount;
+        this.list = [];
+    }
+
+    add(buyDate:Date, buyPrice:number, numShares:number, amount:number) {
+        this.list.push({
+            buyDate: buyDate,
+            buyPrice: buyPrice,
+            numShares: numShares,
+            amount: amount,
+        });
+    }
+
+    remove(buyDate:Date) {
+        let index = this.list.findIndex(v => v.buyDate === buyDate);
+        if (index >= 0) this.list.splice(index, 1);
     }
 }
 
 export interface Holdings {
-    [id:number]: Holding | Holding[];
+    [id:number]: Holding;
 }

@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Run Test",
-      "program": "${workspaceFolder}\\out\\runtest.js",
+      "program": "${workspaceFolder}\\out\\analysis\\index.js",
       "env": {
         "NODE_ENV": "development"
       },

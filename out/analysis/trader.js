@@ -1,85 +1,68 @@
-import { Prices } from "./price";
-import { Rank } from "./rank";
-import { Holdings, Holding, HoldingItem } from "./holding";
-import { Stock } from "./stock";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // 检查前一天，是否有应买，有则根据应买买入
 // 检查前一天，是否有应卖，有则根据应卖卖出
 // 然后check，生成新的应买和应卖
-export abstract class Trader {
-    cash:number;            // 帐上现金
-    equity:number;          // 股票净值
-    holdings:Holdings;
-    shouldSell: Holdings;
-    shouldBuy: Holding[];
-
-    initHoldings(cash:number, holdings:Holdings) {
+class Trader {
+    initHoldings(cash, holdings) {
         this.cash = cash;
         this.holdings = holdings;
     }
-
     // 根据应买，买入
     // 根据应卖，卖出
     // check之后，会算出应和应买
-    trade(date:Date, prices:Prices, rank:Rank): void {
+    trade(date, prices, rank) {
         this.calcEquity(prices);
         this.internalDailyTrade(date, prices, rank);
     }
-    
-    protected internalDailyTrade(date:Date, prices:Prices, rank:Rank): void {
+    internalDailyTrade(date, prices, rank) {
     }
-
-    private calcEquity(prices:Prices):void {
+    calcEquity(prices) {
         let equity = 0;
         for (let i in this.holdings) {
             let holding = this.holdings[i];
-            let {stockId, list} = holding;
+            let { stockId, list } = holding;
             let price = prices.map[stockId].close;
             for (let item of list) {
-                let {numShares} = item;
+                let { numShares } = item;
                 equity += numShares * price;
             }
         }
         this.equity = equity;
     }
-
-    protected sellHolding(holding: Holding) {
-        let {stockId, list} = holding;
+    sellHolding(holding) {
+        let { stockId, list } = holding;
         for (let item of list) {
             this.sellHoldingItem(stockId, item);
         }
     }
-
-    protected sellHoldingItem(stockId:number, holdingItem: HoldingItem) {
+    sellHoldingItem(stockId, holdingItem) {
     }
-
-    protected buyStock(stockId:number, price:number, num:number) {        
+    buyStock(stockId, price, num) {
     }
 }
-
-export class Trader6P1 extends Trader {
-
+exports.Trader = Trader;
+class Trader6P1 extends Trader {
 }
-
-export class Trader2X2 extends Trader {
-
+exports.Trader6P1 = Trader6P1;
+class Trader2X2 extends Trader {
 }
-
-export class TraderYearOverYear extends Trader {
-    private year: number = 0;
-
-    protected internalDailyTrade(date:Date, prices:Prices, rank:Rank): void {
+exports.Trader2X2 = Trader2X2;
+class TraderYearOverYear extends Trader {
+    constructor() {
+        super(...arguments);
+        this.year = 0;
+    }
+    internalDailyTrade(date, prices, rank) {
         let year = date.getFullYear();
-        if (year === this.year) return;
+        if (year === this.year)
+            return;
         this.year = year;
-
         this.sellHoldings();
-
         let points = rank.queue.slice(0, 50);
         this.buyStocks(points.map(v => v.stockId));
     }
-
-    private sellHoldings() {
+    sellHoldings() {
         let keys = Object.keys(this.holdings);
         for (let i in keys) {
             let holding = this.holdings[i];
@@ -87,9 +70,8 @@ export class TraderYearOverYear extends Trader {
             this.holdings[i] = undefined;
         }
     }
-
-    private buyStocks(stockIds: number[]) {
-
+    buyStocks(stockIds) {
     }
 }
-
+exports.TraderYearOverYear = TraderYearOverYear;
+//# sourceMappingURL=trader.js.map
