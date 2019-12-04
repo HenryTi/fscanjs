@@ -46,6 +46,114 @@ export function getTradeDayAt(day:number) {
   return undefined;
 }
 
+export function isMonthBegin(day:number) {
+  for (let i = 0; i < tradeDays.length; ++i) {
+    let item = tradeDays[i];
+    if (item.day === day) {
+      if (i <= 0)
+        return false;
+      let lastItem = tradeDays[i-1];
+      if (item.monthno !== lastItem.monthno)
+        return true;
+      return false;
+    }
+    else if (item.day > day)
+      return false;
+  }
+
+  return false;
+}
+
+export function isMonthEnd(day:number) {
+  for (let i = 0; i < tradeDays.length; ++i) {
+    let item = tradeDays[i];
+    if (item.day === day) {
+      if (i >= tradeDays.length - 1)
+        return false;
+      let nextItem = tradeDays[i-1];
+      if (item.monthno !== nextItem.monthno)
+        return true;
+      return false;
+    }
+    else if (item.day > day)
+      return false;
+  }
+
+  return false;
+}
+
+export function isSeasonBegin(day:number) {
+  for (let i = 0; i < tradeDays.length; ++i) {
+    let item = tradeDays[i];
+    if (item.day === day) {
+      if (i <= 0)
+        return false;
+      let lastItem = tradeDays[i-1];
+      if (item.seasonno !== lastItem.seasonno)
+        return true;
+      return false;
+    }
+    else if (item.day > day)
+      return false;
+  }
+
+  return false;
+}
+
+export function isSeasonEnd(day:number) {
+  for (let i = 0; i < tradeDays.length; ++i) {
+    let item = tradeDays[i];
+    if (item.day === day) {
+      if (i >= tradeDays.length - 1)
+        return false;
+      let nextItem = tradeDays[i-1];
+      if (item.seasonno !== nextItem.seasonno)
+        return true;
+      return false;
+    }
+    else if (item.day > day)
+      return false;
+  }
+
+  return false;
+}
+
+export function isYearBegin(day:number) {
+  for (let i = 0; i < tradeDays.length; ++i) {
+    let item = tradeDays[i];
+    if (item.day === day) {
+      if (i <= 0)
+        return false;
+      let lastItem = tradeDays[i-1];
+      if (item.year !== lastItem.year)
+        return true;
+      return false;
+    }
+    else if (item.day > day)
+      return false;
+  }
+
+  return false;
+}
+
+export function isYearEnd(day:number) {
+  for (let i = 0; i < tradeDays.length; ++i) {
+    let item = tradeDays[i];
+    if (item.day === day) {
+      if (i >= tradeDays.length - 1)
+        return false;
+      let nextItem = tradeDays[i-1];
+      if (item.year !== nextItem.year)
+        return true;
+      return false;
+    }
+    else if (item.day > day)
+      return false;
+  }
+
+  return false;
+}
+
 export function getLastTradeDay(day:number) {
   for (let i = 0; i < tradeDays.length; ++i) {
     let item = tradeDays[i];

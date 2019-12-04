@@ -14,6 +14,8 @@ import { updateAllEarning, updateAllLastEarning, updateAllCheckEarningPerYear } 
 import { emulateAll } from "./magic/emulatemagic";
 import * as TradDay from "./emulate/tradeday";
 import { emulateTrade61 } from "./emulate/emulate";
+import { CalculateAllPeAvg } from "./emulatefull/calcuallpeavg";
+import { emulateTradeFull } from "./emulatefull/emulate";
 
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 
@@ -96,10 +98,25 @@ async function calculateLastOne(code: any, runner: Runner) {
   }
 }
 
+interface TestAtr {
+  [id: number]: string;
+}
 
 async function testa() {
-  //let runner = await getRunner(Const_dbname);
-  await emulateTrade61(2010, 1, 2019, 1);
+  let runner = await getRunner(Const_dbname);
+  //await emulateTrade61(2010, 1, 2019, 1);
+  //await emulateTradeFull(2010, 1, 2019, 1);
+  let a: any = {};
+  a[1] = 'jflsa;';
+  a[0] = 'jriewqj;rj1';
+  a[5] = '87319483';
+  delete a[1];
+  a[2] = 'rqjre;jq';
+  a['re'] = '4324';
+  a.bfd = 'rewqjr';
+  a[0] = undefined;
+
+  let b =0;
   debugger
 }
 

@@ -43,7 +43,7 @@ async function scanSinaHistory(len, start) {
             if (!r) {
                 retryArr.push(code);
             }
-            await gfuncs_1.sleep(800);
+            await gfuncs_1.sleep(1500);
         }
         count = retryArr.length;
         for (i = 0; i < count; ++i) {
@@ -52,7 +52,7 @@ async function scanSinaHistory(len, start) {
                 await gfuncs_1.sleep(3000);
                 let r = await sqg.processOne(rc, len);
                 if (r) {
-                    //console.log('sinahistory retry: ' + rc['id'] + ' : ' + rc['symbol']);
+                    console.log('sinahistory retry: ' + rc['symbol']);
                     break;
                 }
             }
