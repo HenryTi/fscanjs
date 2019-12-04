@@ -13,7 +13,7 @@ import { LogWithTime } from "../gfuncs";
   await data.init();
   await initTradeDay(20001201, 20191201);
   let start = getNextTradeDay(20010101);
-  let end = getLastTradeDay(20010101);
+  let end = getLastTradeDay(20190101);
   let step = new Step(start, end);
   let actions = [
     {
