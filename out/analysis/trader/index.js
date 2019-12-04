@@ -5,7 +5,7 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var trader_1 = require("./trader");
 exports.Trader = trader_1.Trader;
+__export(require("./TraderSeasonOverSeason"));
 __export(require("./TraderYearOverYear"));
 __export(require("./TraderMonthOverMonth"));
-__export(require("./TraderSeasonOverSeason"));
 //# sourceMappingURL=index.js.map

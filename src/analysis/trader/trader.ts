@@ -234,4 +234,3 @@ export abstract class Trader {
     await this.recorder.SaveDetails(date, detailStr);
   }
 }
-

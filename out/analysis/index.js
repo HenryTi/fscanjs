@@ -16,30 +16,30 @@ const gfuncs_1 = require("../gfuncs");
     let end = tradeday_1.getLastTradeDay(20190101);
     let step = new step_1.Step(start, end);
     let actions = [
-        // {
-        //   trader: new TraderYearOverYear(),
-        //   rank: new ROE_PE_Dividend_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Dividend_Rank_YearOverYear', start, end)
-        // },
-        // {
-        //   trader: new TraderYearOverYear(),
-        //   rank: new ROE_PE_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Rank_YearOverYear', start, end)
-        // },
-        // {
-        //   trader: new TraderYearOverYear(),
-        //   rank: new ROE_PE_Magic_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Magic_Rank_YearOverYear', start, end)
-        // },
-        // {
-        //   trader: new TraderYearOverYear(),
-        //   rank: new ROE_PE_Magic_CheckE_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_YearOverYear', start, end)
-        // },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Dividend_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_YearOverYear', start, end)
+        },
         {
             trader: new trader_1.TraderSeasonOverSeason(),
             rank: new rank_1.ROE_PE_Dividend_Rank(),

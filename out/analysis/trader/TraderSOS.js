@@ -2,19 +2,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const trader_1 = require("./trader");
 const holding_1 = require("../holding");
-class TraderYearOverYear extends trader_1.Trader {
+class TraderSeasonOSeason extends trader_1.Trader {
     constructor() {
         super(...arguments);
-        this.year = 0;
+        this.season = 0;
     }
     async internalDailyTrade(date, prices, rank, reports) {
-        let year = date.year;
-        if (year === this.year) {
+        let season = date.seasonno;
+        if (season === this.season) {
             await this.checkShouldSell(date, prices);
             await this.checkShouldBuy(date, prices);
             return;
         }
-        this.year = year;
+        this.season = season;
         await rank.sort(date, prices, reports);
         this.sellHoldings(date, prices);
         await this.checkShouldSell(date, prices);
@@ -34,5 +34,5 @@ class TraderYearOverYear extends trader_1.Trader {
         }
     }
 }
-exports.TraderYearOverYear = TraderYearOverYear;
-//# sourceMappingURL=TraderYearOverYear.js.map
+exports.TraderSeasonOSeason = TraderSeasonOSeason;
+//# sourceMappingURL=TraderSOS.js.map

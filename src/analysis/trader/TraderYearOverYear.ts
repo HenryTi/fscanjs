@@ -9,7 +9,7 @@ export class TraderYearOverYear extends Trader {
   private year: number = 0;
 
   protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank, reports: Reports) {
-    let year = date.year; // Math.floor(date.day / 100);
+    let year = date.year;
     if (year === this.year) {
       await this.checkShouldSell(date, prices);
       await this.checkShouldBuy(date, prices);
@@ -39,4 +39,3 @@ export class TraderYearOverYear extends Trader {
     }
   }
 }
-
