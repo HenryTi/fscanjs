@@ -11,9 +11,9 @@ const gfuncs_1 = require("../gfuncs");
 (async function () {
     gfuncs_1.LogWithTime('analysis begin');
     await data_1.data.init();
-    await tradeday_1.initTradeDay(20091201, 20191201);
-    let start = tradeday_1.getNextTradeDay(20100101);
-    let end = tradeday_1.getLastTradeDay(20190101);
+    await tradeday_1.initTradeDay(20001201, 20191201);
+    let start = tradeday_1.getNextTradeDay(20010101);
+    let end = tradeday_1.getLastTradeDay(20010101);
     let step = new step_1.Step(start, end);
     let actions = [
         {
