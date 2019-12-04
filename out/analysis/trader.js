@@ -18,9 +18,9 @@ class Trader {
     // 根据应买，买入
     // 根据应卖，卖出
     // check之后，会算出应和应买
-    async trade(date, prices, rank) {
+    async trade(date, prices, rank, reports) {
         await this.updateStockStatus(date, prices);
-        await this.internalDailyTrade(date, prices, rank);
+        await this.internalDailyTrade(date, prices, rank, reports);
         this.calcEquity(prices);
         await this.recordStatus(date);
     }
@@ -89,7 +89,7 @@ class Trader {
             }
         }
     }
-    async internalDailyTrade(date, prices, rank) {
+    async internalDailyTrade(date, prices, rank, reports) {
     }
     calcEquity(prices) {
         let equity = 0;
@@ -214,6 +214,21 @@ class Trader2X2 extends Trader {
 }
 exports.Trader2X2 = Trader2X2;
 class TraderPerMonth extends Trader {
+    constructor() {
+        super(...arguments);
+        this.monthno = 0;
+    }
+    async internalDailyTrade(date, prices, rank, reports) {
+        if (this.monthno === date.monthno) {
+            await this.checkShouldSell(date, prices);
+            await this.checkShouldBuy(date, prices);
+            return;
+        }
+        this.monthno = date.monthno;
+        await rank.sort(date, prices, reports);
+        //
+        //
+    }
 }
 exports.TraderPerMonth = TraderPerMonth;
 class TraderYearOverYear extends Trader {
@@ -221,14 +236,15 @@ class TraderYearOverYear extends Trader {
         super(...arguments);
         this.year = 0;
     }
-    async internalDailyTrade(date, prices, rank) {
-        let year = Math.floor(date.day / 100);
+    async internalDailyTrade(date, prices, rank, reports) {
+        let year = date.year; // Math.floor(date.day / 100);
         if (year === this.year) {
             await this.checkShouldSell(date, prices);
             await this.checkShouldBuy(date, prices);
             return;
         }
         this.year = year;
+        await rank.sort(date, prices, reports);
         this.sellHoldings(date, prices);
         await this.checkShouldSell(date, prices);
         let points = rank.queue.slice(0, 50);

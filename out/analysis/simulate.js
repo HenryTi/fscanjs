@@ -25,8 +25,8 @@ class Simulate {
             await reports.load(date);
             for (let action of this.actions) {
                 let { trader, rank, recorder } = action;
-                await rank.sort(date, prices, reports);
-                await trader.trade(date, prices, rank);
+                //await rank.sort(date, prices, reports);
+                await trader.trade(date, prices, rank, reports);
             }
         }
     }

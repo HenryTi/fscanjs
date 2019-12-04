@@ -8,6 +8,8 @@ class Reports {
         this.map = {};
     }
     async load(date) {
+        if (this.date !== undefined && date.day === this.date.day)
+            return;
         this.date = date;
         this.map = {};
         //throw new Error('implementing!');

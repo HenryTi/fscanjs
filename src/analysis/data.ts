@@ -69,6 +69,14 @@ class Data {
   async LoadROE_PE_Dividend_Rank(day: number, count: number) {
     return await this.runner.call('tv_calcmagicorderdpr', [day, count]) as {stock:number, no:number, pe:number, roe:number, dv: number, ma:number}[];
   }
+
+  async LoadROE_PE_Magic_Rank(day: number, count: number) {
+    return await this.runner.call('tv_calcmagicorder2', [day, count]) as {stock:number, no:number, pe:number, roe:number, ma:number}[];
+  }
+
+  async LoadROE_PE_Magic_CheckE_Rank(day: number, count: number) {
+    return await this.runner.call('tv_calcmagicorder3', [day, count]) as {stock:number, no:number, pe:number, roe:number, ma:number}[];
+  }
 }
 
 export const data = new Data();

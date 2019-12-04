@@ -56,6 +56,12 @@ class Data {
     async LoadROE_PE_Dividend_Rank(day, count) {
         return await this.runner.call('tv_calcmagicorderdpr', [day, count]);
     }
+    async LoadROE_PE_Magic_Rank(day, count) {
+        return await this.runner.call('tv_calcmagicorder2', [day, count]);
+    }
+    async LoadROE_PE_Magic_CheckE_Rank(day, count) {
+        return await this.runner.call('tv_calcmagicorder3', [day, count]);
+    }
 }
 exports.data = new Data();
 //# sourceMappingURL=data.js.map

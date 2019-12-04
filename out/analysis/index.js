@@ -19,7 +19,19 @@ const data_1 = require("./data");
             rank: new rank_1.ROE_PE_Dividend_Rank(),
             settings: { initcash: 3000000, count: 50 },
             recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_YearOverYear', start, end)
-        }
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_YearOverYear', start, end)
+        },
     ];
     let simulate = new simulate_1.Simulate(step, actions);
     await simulate.run();

@@ -6,6 +6,7 @@ import { TradeDay } from "./tradeday";
 import { Recorder } from "./recorder";
 import { data } from "./data";
 import { EmulateTrade } from "../emulate/emulatetypes";
+import { Reports } from "./reports";
 
 // 检查前一天，是否有应买，有则根据应买买入
 // 检查前一天，是否有应卖，有则根据应卖卖出
@@ -34,9 +35,9 @@ export abstract class Trader {
   // 根据应买，买入
   // 根据应卖，卖出
   // check之后，会算出应和应买
-  async trade(date: TradeDay, prices: Prices, rank: Rank) {
+  async trade(date: TradeDay, prices: Prices, rank: Rank, reports: Reports) {
     await this.updateStockStatus(date, prices);
-    await this.internalDailyTrade(date, prices, rank);
+    await this.internalDailyTrade(date, prices, rank, reports);
     this.calcEquity(prices);
     await this.recordStatus(date);
   }
@@ -108,7 +109,7 @@ export abstract class Trader {
     }
   }
 
-  protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank) {
+  protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank, reports: Reports) {
   }
 
   private calcEquity(prices: Prices) {
@@ -244,20 +245,36 @@ export class Trader2X2 extends Trader {
 }
 
 export class TraderPerMonth extends Trader {
+  private monthno: number = 0;
 
+  protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank, reports: Reports) {
+    if (this.monthno === date.monthno) {
+      await this.checkShouldSell(date, prices);
+      await this.checkShouldBuy(date, prices);
+      return;
+    }
+    this.monthno = date.monthno;
+
+    await rank.sort(date, prices, reports);
+
+    //
+    //
+  }
 }
 
 export class TraderYearOverYear extends Trader {
   private year: number = 0;
 
-  protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank) {
-    let year = Math.floor(date.day / 100);
+  protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank, reports: Reports) {
+    let year = date.year; // Math.floor(date.day / 100);
     if (year === this.year) {
       await this.checkShouldSell(date, prices);
       await this.checkShouldBuy(date, prices);
       return;
     }
     this.year = year;
+
+    await rank.sort(date, prices, reports);
 
     this.sellHoldings(date, prices);
     await this.checkShouldSell(date, prices);
