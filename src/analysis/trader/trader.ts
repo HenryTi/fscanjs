@@ -170,7 +170,7 @@ export abstract class Trader {
 
   protected async sellHoldingItem(stockId: number, holdingItem: HoldingItem, date: TradeDay, prices: Prices) {
     let sellPrice = prices.map[stockId].open;
-    let money = sellPrice * holdingItem.volume * 0.998;
+    let money = sellPrice * holdingItem.volume * 0.999;
     this.cash += money;
     this.cashCount += holdingItem.count;
     let p: EmulateTrade = {
@@ -193,7 +193,7 @@ export abstract class Trader {
     for (let item of list) {
       if (this.cashCount < item.count)
         continue;
-      let volume = Math.floor(money * 0.998 * item.count / buyPrice / 100) * 100;
+      let volume = Math.floor(money * 0.999 * item.count / buyPrice / 100) * 100;
       if (volume > 0) {
         await this.buyStock(stockId, buyPrice, volume, date, item.level, item.count)
       }
@@ -214,7 +214,7 @@ export abstract class Trader {
       price: price,
       volume: num
     }
-    let money = price * num * 1.002;
+    let money = price * num * 1.001;
     this.cash -= money;
     this.cashCount -= count;
     await this.recorder.saveTrade(p);
