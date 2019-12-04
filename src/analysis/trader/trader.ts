@@ -1,12 +1,11 @@
-import { Prices } from "./price";
-import { Rank } from "./rank";
-import { Holdings, Holding, HoldingItem } from "./holding";
-import { Stock } from "./stock";
-import { TradeDay } from "./tradeday";
-import { Recorder } from "./recorder";
-import { data } from "./data";
-import { EmulateTrade } from "../emulate/emulatetypes";
-import { Reports } from "./reports";
+import { Prices } from "../price";
+import { Rank } from "../rank";
+import { Holdings, Holding, HoldingItem } from "../holding";
+import { TradeDay } from "../tradeday";
+import { Recorder } from "../recorder";
+import { data } from "../data";
+import { EmulateTrade } from "../emulatetypes";
+import { Reports } from "../reports";
 
 // 检查前一天，是否有应买，有则根据应买买入
 // 检查前一天，是否有应卖，有则根据应卖卖出
@@ -233,67 +232,6 @@ export abstract class Trader {
     }
     let detailStr = JSON.stringify(detail);
     await this.recorder.SaveDetails(date, detailStr);
-  }
-}
-
-export class Trader6P1 extends Trader {
-
-}
-
-export class Trader2X2 extends Trader {
-
-}
-
-export class TraderPerMonth extends Trader {
-  private monthno: number = 0;
-
-  protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank, reports: Reports) {
-    if (this.monthno === date.monthno) {
-      await this.checkShouldSell(date, prices);
-      await this.checkShouldBuy(date, prices);
-      return;
-    }
-    this.monthno = date.monthno;
-
-    await rank.sort(date, prices, reports);
-
-    //
-    //
-  }
-}
-
-export class TraderYearOverYear extends Trader {
-  private year: number = 0;
-
-  protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank, reports: Reports) {
-    let year = date.year; // Math.floor(date.day / 100);
-    if (year === this.year) {
-      await this.checkShouldSell(date, prices);
-      await this.checkShouldBuy(date, prices);
-      return;
-    }
-    this.year = year;
-
-    await rank.sort(date, prices, reports);
-
-    this.sellHoldings(date, prices);
-    await this.checkShouldSell(date, prices);
-
-    let points = rank.queue.slice(0, 50);
-    points.map(v => {
-      let buyItem = new Holding(v.stockId);
-      buyItem.add(date.day, prices.map[v.stockId].price, 0, 0);
-      this.shouldBuy.push(buyItem)}
-    );
-  }
-
-  private sellHoldings(date: TradeDay, prices: Prices) {
-    let keys = Object.keys(this.holdings);
-    for (let i of keys) {
-      let holding = this.holdings[i];
-      this.shouldSell.push(holding);
-      delete this.holdings[i];
-    }
   }
 }
 
