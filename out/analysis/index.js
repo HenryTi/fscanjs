@@ -7,7 +7,9 @@ const rank_1 = require("./rank");
 const tradeday_1 = require("./tradeday");
 const recorder_1 = require("./recorder");
 const data_1 = require("./data");
+const gfuncs_1 = require("../gfuncs");
 (async function () {
+    gfuncs_1.LogWithTime('analysis begin');
     await data_1.data.init();
     await tradeday_1.initTradeDay(20091201, 20191201);
     let start = tradeday_1.getNextTradeDay(20100101);
@@ -35,5 +37,6 @@ const data_1 = require("./data");
     ];
     let simulate = new simulate_1.Simulate(step, actions);
     await simulate.run();
+    gfuncs_1.LogWithTime('analysis end');
 })();
 //# sourceMappingURL=index.js.map

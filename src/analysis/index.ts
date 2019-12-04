@@ -6,8 +6,10 @@ import { TradeDay, getNextTradeDay, getLastTradeDay, initTradeDay } from "./trad
 import { Recorder } from "./recorder";
 import { Settings } from "./settings";
 import { data } from "./data";
+import { LogWithTime } from "../gfuncs";
 
 (async function () {
+  LogWithTime('analysis begin');
   await data.init();
   await initTradeDay(20091201, 20191201);
   let start = getNextTradeDay(20100101);
@@ -36,4 +38,5 @@ import { data } from "./data";
 
   let simulate = new Simulate(step, actions);
   await simulate.run();
+  LogWithTime('analysis end');
 })();
