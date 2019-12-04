@@ -1,4 +1,5 @@
 import { Stock } from "./stock";
+import { TradeDay } from "./tradeday";
 
 export class Report {
     readonly stockId: number;
@@ -10,10 +11,10 @@ export class Report {
 }
 
 export class Reports {
-    date: Date;
+    date: TradeDay;
     map: {[id:number]: Report} = {};
 
-    async load(date: Date): Promise<void> {
+    async load(date: TradeDay): Promise<void> {
         this.date = date;
         this.map = {};
         //throw new Error('implementing!');

@@ -5,43 +5,43 @@ import { Trader } from "./trader";
 import { Holdings } from "./holding";
 import { data } from "./data";
 import { Step } from "./step";
+import { Recorder } from "./recorder";
+import { Settings } from "./settings"
 
 export class Simulate {
-    private step:Step;
-    private actions:{trader:Trader, rank:Rank}[];
+  private step: Step;
+  private actions: { trader: Trader, rank: Rank, settings: Settings, recorder: Recorder }[];
 
-    constructor(
-        step: Step,
-        actions: {trader:Trader, rank:Rank}[])
-    {
-        this.step = step;
-        this.actions = actions;
+  constructor(
+    step: Step,
+    actions: { trader: Trader, rank: Rank, settings: Settings, recorder: Recorder }[]) {
+    this.step = step;
+    this.actions = actions;
+  }
+
+  async run(): Promise<void> {
+    await data.init();
+
+    let prices = new Prices();
+    let reports = new Reports();
+
+    let holdings: Holdings = {};
+    for (let action of this.actions) {
+      await action.recorder.init();
+      let { initcash, count } = action.settings;
+      action.trader.initHoldings(initcash, count, holdings, action.recorder);
     }
 
-    async run():Promise<void> {
-        await data.init();
+    for (let date = this.step.first; this.step.isGoing; date = this.step.next) {
+      await prices.load(date);
+      if (prices.count <= 0) continue;
 
-        let prices = new Prices();
-        let reports = new Reports();
-
-        let cash = 3000000;
-        let holdings: Holdings = {};
-        for (let action of this.actions) {
-            action.trader.initHoldings(cash, holdings);
-        }
-
-        for (let date=this.step.first; this.step.isGoing; date=this.step.next)
-        {
-            await prices.load(date);
-            console.log(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}: ${prices.count}`);
-            if (prices.count <= 0) continue;
-
-            await reports.load(date);
-            for (let action of this.actions) {
-                let {trader, rank} = action;
-                rank.sort(date, prices, reports);
-                trader.trade(date, prices, rank);
-            }
-        }
+      await reports.load(date);
+      for (let action of this.actions) {
+        let { trader, rank, recorder } = action;
+        await rank.sort(date, prices, reports);
+        await trader.trade(date, prices, rank);
+      }
     }
+  }
 }

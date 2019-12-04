@@ -12,21 +12,21 @@ class Simulate {
         await data_1.data.init();
         let prices = new price_1.Prices();
         let reports = new reports_1.Reports();
-        let cash = 3000000;
         let holdings = {};
         for (let action of this.actions) {
-            action.trader.initHoldings(cash, holdings);
+            await action.recorder.init();
+            let { initcash, count } = action.settings;
+            action.trader.initHoldings(initcash, count, holdings, action.recorder);
         }
         for (let date = this.step.first; this.step.isGoing; date = this.step.next) {
             await prices.load(date);
-            console.log(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}: ${prices.count}`);
             if (prices.count <= 0)
                 continue;
             await reports.load(date);
             for (let action of this.actions) {
-                let { trader, rank } = action;
-                rank.sort(date, prices, reports);
-                trader.trade(date, prices, rank);
+                let { trader, rank, recorder } = action;
+                await rank.sort(date, prices, reports);
+                await trader.trade(date, prices, rank);
             }
         }
     }

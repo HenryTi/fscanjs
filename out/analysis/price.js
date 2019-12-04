@@ -5,14 +5,17 @@ class Price {
 }
 exports.Price = Price;
 class Prices {
-    async load(date) {
-        this.date = date;
+    constructor() {
         this.map = {};
-        let arr = await data_1.data.getPricesFromDay(date);
+    }
+    async load(tradeDay) {
+        let { day } = tradeDay;
+        this.day = day;
+        let arr = await data_1.data.getPricesFromDay(day);
         this.count = arr.length;
         for (let item of arr) {
-            let { id, price } = item;
-            this.map[id] = price;
+            let { id, price, open } = item;
+            this.map[id] = { day: day, price: price, open: open };
         }
     }
 }

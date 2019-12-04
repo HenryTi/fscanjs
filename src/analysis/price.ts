@@ -1,26 +1,25 @@
 import { data } from "./data";
+import { TradeDay } from "./tradeday";
 
 export class Price {
-    date: number;
+    day: number;
+    price: number;
     open: number;
-    close: number;
-    high: number;
-    low: number;
 }
 
 export class Prices {
-    date: Date;
-    map: {[id:number]: Price};
+    day: number;
+    map: {[id:number]: Price} = {};
     count: number;
 
-    async load(date:Date): Promise<void> {
-        this.date = date;
-        this.map = {};
-        let arr = await data.getPricesFromDay(date);
+    async load(tradeDay: TradeDay): Promise<void> {
+        let {day} = tradeDay;
+        this.day = day;
+        let arr = await data.getPricesFromDay(day);
         this.count = arr.length;
         for (let item of arr) {
-            let {id, price} = item;
-            this.map[id] = price;
+            let {id, price, open} = item;
+            this.map[id] = {day: day, price: price, open: open};
         }
     }
 }
