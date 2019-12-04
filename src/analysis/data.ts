@@ -70,6 +70,10 @@ class Data {
     return await this.runner.call('tv_calcmagicorderdpr', [day, count]) as {stock:number, no:number, pe:number, roe:number, dv: number, ma:number}[];
   }
 
+  async LoadROE_PE_Rank(day: number, count: number) {
+    return await this.runner.call('tv_calcmagicorderpr', [day, count]) as {stock:number, no:number, pe:number, roe:number, ma:number}[];
+  }
+
   async LoadROE_PE_Magic_Rank(day: number, count: number) {
     return await this.runner.call('tv_calcmagicorder2', [day, count]) as {stock:number, no:number, pe:number, roe:number, ma:number}[];
   }

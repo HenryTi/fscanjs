@@ -24,6 +24,12 @@ const gfuncs_1 = require("../gfuncs");
         },
         {
             trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
             rank: new rank_1.ROE_PE_Magic_Rank(),
             settings: { initcash: 3000000, count: 50 },
             recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_YearOverYear', start, end)

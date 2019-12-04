@@ -56,6 +56,9 @@ class Data {
     async LoadROE_PE_Dividend_Rank(day, count) {
         return await this.runner.call('tv_calcmagicorderdpr', [day, count]);
     }
+    async LoadROE_PE_Rank(day, count) {
+        return await this.runner.call('tv_calcmagicorderpr', [day, count]);
+    }
     async LoadROE_PE_Magic_Rank(day, count) {
         return await this.runner.call('tv_calcmagicorder2', [day, count]);
     }
