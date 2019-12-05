@@ -5,7 +5,7 @@ export class ROE_PE_Rank extends Rank {
   protected async internalSort() {
     this.queue.splice(0);
     this.map = [];
-    let ret = await data.LoadROE_PE_Magic_Rank(this.date.day, 1000);
+    let ret = await data.LoadROE_PE_Rank(this.date.day, 1000);
     for (let i = 0; i < ret.length; ++i) {
       let item = ret[i];
       let point: Point = new Point(item.stock);

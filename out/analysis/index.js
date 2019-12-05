@@ -16,54 +16,174 @@ const gfuncs_1 = require("../gfuncs");
     let end = tradeday_1.getLastTradeDay(20190101);
     let step = new step_1.Step(start, end);
     let actions = [
-        // {
-        //   trader: new TraderYearOverYear(),
-        //   rank: new ROE_PE_Dividend_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Dividend_Rank_YearOverYear', start, end)
-        // },
-        // {
-        //   trader: new TraderYearOverYear(),
-        //   rank: new ROE_PE_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Rank_YearOverYear', start, end)
-        // },
-        // {
-        //   trader: new TraderYearOverYear(),
-        //   rank: new ROE_PE_Magic_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Magic_Rank_YearOverYear', start, end)
-        // },
-        // {
-        //   trader: new TraderYearOverYear(),
-        //   rank: new ROE_PE_Magic_CheckE_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_YearOverYear', start, end)
-        // },
-        // {
-        //   trader: new TraderSeasonOverSeason(),
-        //   rank: new ROE_PE_Dividend_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Dividend_Rank_SeasonOverSeason', start, end)
-        // },
-        // {
-        //   trader: new TraderSeasonOverSeason(),
-        //   rank: new ROE_PE_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Rank_SeasonOverSeason', start, end)
-        // },
-        // {
-        //   trader: new TraderSeasonOverSeason(),
-        //   rank: new ROE_PE_Magic_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Magic_Rank_SeasonOverSeason', start, end)
-        // },
-        // {
-        //   trader: new TraderSeasonOverSeason(),
-        //   rank: new ROE_PE_Magic_CheckE_Rank(),
-        //   settings: { initcash: 3000000, count: 50 },
-        //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_SeasonOverSeason', start, end)
-        // },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Dividend_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderYearOverYear(),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_YearOverYear', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(3),
+            rank: new rank_1.ROE_PE_Dividend_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_Month_3', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(3),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_Month_3', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(3),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_Month_3', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(3),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_Month_3', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(6),
+            rank: new rank_1.ROE_PE_Dividend_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_Month_6', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(6),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_Month_6', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(6),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_Month_6', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(6),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_Month_6', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(9),
+            rank: new rank_1.ROE_PE_Dividend_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_Month_9', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(9),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_Month_9', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(9),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_Month_9', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(9),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_Month_9', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(15),
+            rank: new rank_1.ROE_PE_Dividend_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_Month_15', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(15),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_Month_15', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(15),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_Month_15', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(15),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_Month_15', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(18),
+            rank: new rank_1.ROE_PE_Dividend_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_Month_18', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(18),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_Month_18', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(18),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_Month_18', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(18),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_Month_18', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(21),
+            rank: new rank_1.ROE_PE_Dividend_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Dividend_Rank_Month_21', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(21),
+            rank: new rank_1.ROE_PE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Rank_Month_21', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(21),
+            rank: new rank_1.ROE_PE_Magic_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_Rank_Month_21', start, end)
+        },
+        {
+            trader: new trader_1.TraderMonthOverMonth(21),
+            rank: new rank_1.ROE_PE_Magic_CheckE_Rank(),
+            settings: { initcash: 3000000, count: 50 },
+            recorder: new recorder_1.Recorder('ROE_PE_Magic_CheckE_Rank_Month_21', start, end)
+        },
         {
             trader: new trader_1.TraderMonthOverMonth(24),
             rank: new rank_1.ROE_PE_Dividend_Rank(),
