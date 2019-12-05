@@ -14,8 +14,8 @@ const share_count = 50;
     gfuncs_1.LogWithTime('analysis begin');
     await data_1.data.init();
     await tradeday_1.initTradeDay(20001201, 20191201);
-    //let start = getNextTradeDay(20010101);
-    let start = tradeday_1.getNextTradeDay(20100101);
+    let start = tradeday_1.getNextTradeDay(20010101);
+    //let start = getNextTradeDay(20100101);
     let end = tradeday_1.getLastTradeDay(20190101);
     let step = new step_1.Step(start, end);
     let actions = [
