@@ -8,4 +8,5 @@ exports.Trader = trader_1.Trader;
 __export(require("./TraderSeasonOverSeason"));
 __export(require("./TraderYearOverYear"));
 __export(require("./TraderMonthOverMonth"));
+__export(require("./TraderPartOfYear"));
 //# sourceMappingURL=index.js.map

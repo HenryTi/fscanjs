@@ -47,6 +47,9 @@ class Data {
     async SaveStatus(typeID, date, money, share, gain) {
         await this.runner.call('tv_emulateresult$save', [typeID, date, money, share, gain]);
     }
+    async SaveLastStatus(typeID, gain) {
+        await this.runner.call('tv_emulatescore$save', [typeID, gain]);
+    }
     async SaveDetail(typeID, day, detail) {
         await this.runner.call('tv_emulateshares$save', [typeID, day, detail]);
     }

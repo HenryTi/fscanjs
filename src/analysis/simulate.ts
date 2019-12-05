@@ -38,10 +38,13 @@ export class Simulate {
 
       await reports.load(date);
       for (let action of this.actions) {
-        let { trader, rank, recorder } = action;
-        //await rank.sort(date, prices, reports);
+        let { trader, rank } = action;
         await trader.trade(date, prices, rank, reports);
       }
+    }
+
+    for (let action of this.actions) {
+      await action.recorder.flush();
     }
   }
 }

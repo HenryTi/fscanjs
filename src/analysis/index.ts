@@ -1,6 +1,6 @@
 import { Simulate } from "./simulate";
 import { Step } from "./step";
-import { TraderYearOverYear, TraderSeasonOverSeason, TraderMonthOverMonth, Trader } from "./trader";
+import { TraderYearOverYear, TraderPartOfYear, TraderSeasonOverSeason, TraderMonthOverMonth, Trader } from "./trader";
 import { ROERank, ROE_PE_Dividend_Rank, ROE_PE_Magic_Rank, ROE_PE_Magic_CheckE_Rank, ROE_PE_Rank } from "./rank";
 import { TradeDay, getNextTradeDay, getLastTradeDay, initTradeDay } from "./tradeday";
 import { Recorder } from "./recorder";
@@ -21,245 +21,269 @@ const share_count: number = 50;
   let step = new Step(start, end);
   let actions = [
     {
-      trader: new TraderYearOverYear(),
+      trader: new TraderPartOfYear(1, 9),
       rank: new ROE_PE_Dividend_Rank(),
       settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_YearOverYear', start, end)
+      recorder: new Recorder('ROE_PE_Dividend_Rank_TraderPartOfYear1_9', start, end)
     },
     {
-      trader: new TraderYearOverYear(),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_YearOverYear', start, end)
-    },
-    {
-      trader: new TraderYearOverYear(),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_YearOverYear', start, end)
-    },
-    {
-      trader: new TraderYearOverYear(),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_YearOverYear', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(3),
+      trader: new TraderPartOfYear(1, 10),
       rank: new ROE_PE_Dividend_Rank(),
       settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_3', start, end)
+      recorder: new Recorder('ROE_PE_Dividend_Rank_TraderPartOfYear1_10', start, end)
     },
     {
-      trader: new TraderMonthOverMonth(3),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_3', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(3),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_3', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(3),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_3', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(6),
+      trader: new TraderPartOfYear(1, 11),
       rank: new ROE_PE_Dividend_Rank(),
       settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_6', start, end)
+      recorder: new Recorder('ROE_PE_Dividend_Rank_TraderPartOfYear1_11', start, end)
     },
     {
-      trader: new TraderMonthOverMonth(6),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_6', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(6),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_6', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(6),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_6', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(9),
+      trader: new TraderPartOfYear(1, 12),
       rank: new ROE_PE_Dividend_Rank(),
       settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_9', start, end)
+      recorder: new Recorder('ROE_PE_Dividend_Rank_TraderPartOfYear1_12', start, end)
     },
-    {
-      trader: new TraderMonthOverMonth(9),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_9', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(9),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_9', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(9),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_9', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(15),
-      rank: new ROE_PE_Dividend_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_15', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(15),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_15', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(15),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_15', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(15),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_15', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(18),
-      rank: new ROE_PE_Dividend_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_18', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(18),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_18', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(18),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_18', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(18),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_18', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(21),
-      rank: new ROE_PE_Dividend_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_21', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(21),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_21', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(21),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_21', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(21),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_21', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(24),
-      rank: new ROE_PE_Dividend_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_24', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(24),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_24', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(24),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_24', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(24),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_24', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(36),
-      rank: new ROE_PE_Dividend_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_36', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(36),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_36', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(36),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_36', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(36),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_36', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(48),
-      rank: new ROE_PE_Dividend_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Dividend_Rank_Month_48', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(48),
-      rank: new ROE_PE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Rank_Month_48', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(48),
-      rank: new ROE_PE_Magic_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_Rank_Month_48', start, end)
-    },
-    {
-      trader: new TraderMonthOverMonth(48),
-      rank: new ROE_PE_Magic_CheckE_Rank(),
-      settings: { initcash: init_cash, count: share_count },
-      recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_48', start, end)
-    },
+    // {
+    //   trader: new TraderYearOverYear(),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_YearOverYear', start, end)
+    // },
+    // {
+    //   trader: new TraderYearOverYear(),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_YearOverYear', start, end)
+    // },
+    // {
+    //   trader: new TraderYearOverYear(),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_YearOverYear', start, end)
+    // },
+    // {
+    //   trader: new TraderYearOverYear(),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_YearOverYear', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(3),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_3', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(3),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_3', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(3),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_3', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(3),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_3', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(6),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_6', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(6),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_6', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(6),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_6', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(6),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_6', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(9),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_9', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(9),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_9', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(9),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_9', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(9),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_9', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(15),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_15', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(15),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_15', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(15),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_15', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(15),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_15', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(18),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_18', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(18),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_18', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(18),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_18', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(18),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_18', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(21),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_21', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(21),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_21', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(21),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_21', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(21),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_21', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(24),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_24', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(24),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_24', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(24),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_24', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(24),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_24', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(36),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_36', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(36),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_36', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(36),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_36', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(36),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_36', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(48),
+    //   rank: new ROE_PE_Dividend_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Dividend_Rank_Month_48', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(48),
+    //   rank: new ROE_PE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Rank_Month_48', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(48),
+    //   rank: new ROE_PE_Magic_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_Rank_Month_48', start, end)
+    // },
+    // {
+    //   trader: new TraderMonthOverMonth(48),
+    //   rank: new ROE_PE_Magic_CheckE_Rank(),
+    //   settings: { initcash: init_cash, count: share_count },
+    //   recorder: new Recorder('ROE_PE_Magic_CheckE_Rank_Month_48', start, end)
+    // },
   ];
 
   let simulate = new Simulate(step, actions);

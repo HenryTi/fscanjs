@@ -8,6 +8,11 @@ export class Recorder {
   private dayBegin: TradeDay;
   private dayEnd: TradeDay;
   typeID: number;
+  private trades: EmulateTrade[] = [];
+  private status: { [index:number]:{money:number, share:number, gain: number} } = {};
+  private laststatus: { gain: number } = { gain: 1 };
+  private details: { day:number, detail: string }[] = [];
+
 
   constructor(name:string, dayBegin:TradeDay, dayEnd:TradeDay) {
     this.name = name;
@@ -20,14 +25,35 @@ export class Recorder {
   }
 
   async saveTrade(p: EmulateTrade) {
-    await data.SaveTrade(p);
+    this.trades.push(p);
   }
 
   async SaveStatus(money: number, date:TradeDay, share: number, gain: number) {
-    await data.SaveStatus(this.typeID, Math.floor(date.day / 100), money, share, gain);
+    this.laststatus.gain = gain;
+    let dayIndex = Math.floor(date.day / 100);
+    this.status[dayIndex] = {money:money, share:share, gain:gain};
   }
 
   async SaveDetails(date:TradeDay, detail: string) {
-    await data.SaveDetail(this.typeID, date.day, detail);
+    this.details.push({day:date.day, detail:detail});
+  }
+
+  async flush() {
+    await data.SaveLastStatus(this.typeID, this.laststatus.gain);
+    for (let p of this.trades) {
+      await data.SaveTrade(p);
+    }
+
+    let keys = Object.keys(this.status);
+    for (let dayIndex of keys) {
+      let item = this.status[dayIndex];
+      let {money, share, gain} = item;
+      let day:number = parseInt(dayIndex);
+      await data.SaveStatus(this.typeID, day, money, share, gain);
+    }
+
+    for (let dItem of this.details) {
+      await data.SaveDetail(this.typeID, dItem.day, dItem.detail);
+    }
   }
 }
