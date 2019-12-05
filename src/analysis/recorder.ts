@@ -25,35 +25,39 @@ export class Recorder {
   }
 
   async saveTrade(p: EmulateTrade) {
-    this.trades.push(p);
+    //this.trades.push(p);
+    await data.SaveTrade(p);
   }
 
   async SaveStatus(money: number, date:TradeDay, share: number, gain: number) {
-    this.laststatus.gain = gain;
-    let dayIndex = Math.floor(date.day / 100);
-    this.status[dayIndex] = {money:money, share:share, gain:gain};
+    // this.laststatus.gain = gain;
+    // let dayIndex = Math.floor(date.day / 100);
+    // this.status[dayIndex] = {money:money, share:share, gain:gain};
+    await data.SaveStatus(this.typeID, date.day, money, share, gain);
+    await data.SaveLastStatus(this.typeID, gain);
   }
 
   async SaveDetails(date:TradeDay, detail: string) {
-    this.details.push({day:date.day, detail:detail});
+    //this.details.push({day:date.day, detail:detail});
+    await data.SaveDetail(this.typeID, date.day, detail);
   }
 
   async flush() {
-    await data.SaveLastStatus(this.typeID, this.laststatus.gain);
-    for (let p of this.trades) {
-      await data.SaveTrade(p);
-    }
+    // await data.SaveLastStatus(this.typeID, this.laststatus.gain);
+    // for (let p of this.trades) {
+    //   await data.SaveTrade(p);
+    // }
 
-    let keys = Object.keys(this.status);
-    for (let dayIndex of keys) {
-      let item = this.status[dayIndex];
-      let {money, share, gain} = item;
-      let day:number = parseInt(dayIndex);
-      await data.SaveStatus(this.typeID, day, money, share, gain);
-    }
+    // let keys = Object.keys(this.status);
+    // for (let dayIndex of keys) {
+    //   let item = this.status[dayIndex];
+    //   let {money, share, gain} = item;
+    //   let day:number = parseInt(dayIndex);
+    //   await data.SaveStatus(this.typeID, day, money, share, gain);
+    // }
 
-    for (let dItem of this.details) {
-      await data.SaveDetail(this.typeID, dItem.day, dItem.detail);
-    }
+    // for (let dItem of this.details) {
+    //   await data.SaveDetail(this.typeID, dItem.day, dItem.detail);
+    // }
   }
 }
