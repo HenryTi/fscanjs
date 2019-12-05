@@ -6,16 +6,25 @@ import { TradeDay } from "../tradeday";
 import { Reports } from "../reports";
 
 export class TraderMonthOverMonth extends Trader {
-  private month: number = 0;
+  private monthno: number = 0;
+  private tradeMonthno: number = -1;
+  private intervalCount: number;
+
+  constructor (intervalCount: number = 1) {
+    super();
+    this.intervalCount = intervalCount;
+  }
 
   protected async internalDailyTrade(date: TradeDay, prices: Prices, rank: Rank, reports: Reports) {
-    let month = date.monthno;
-    if (month === this.month) {
+    let monthno = date.monthno;
+    if (monthno === this.monthno || (this.tradeMonthno >= 0 && monthno - this.tradeMonthno < this.intervalCount)) {
       await this.checkShouldSell(date, prices);
       await this.checkShouldBuy(date, prices);
       return;
     }
-    this.month = month;
+
+    this.monthno = monthno;
+    this.tradeMonthno = monthno;
 
     await rank.sort(date, prices, reports);
 

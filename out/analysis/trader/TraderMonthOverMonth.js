@@ -3,18 +3,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const trader_1 = require("./trader");
 const holding_1 = require("../holding");
 class TraderMonthOverMonth extends trader_1.Trader {
-    constructor() {
-        super(...arguments);
-        this.month = 0;
+    constructor(intervalCount = 1) {
+        super();
+        this.monthno = 0;
+        this.tradeMonthno = -1;
+        this.intervalCount = intervalCount;
     }
     async internalDailyTrade(date, prices, rank, reports) {
-        let month = date.monthno;
-        if (month === this.month) {
+        let monthno = date.monthno;
+        if (monthno === this.monthno || (this.tradeMonthno >= 0 && monthno - this.tradeMonthno < this.intervalCount)) {
             await this.checkShouldSell(date, prices);
             await this.checkShouldBuy(date, prices);
             return;
         }
-        this.month = month;
+        this.monthno = monthno;
+        this.tradeMonthno = monthno;
         await rank.sort(date, prices, reports);
         this.sellHoldings(date, prices);
         await this.checkShouldSell(date, prices);
