@@ -17,7 +17,9 @@ const share_count: number = 50;
   await initTradeDay(20001201, 20191201);
   //let start = getNextTradeDay(20010101);
   //let start = getNextTradeDay(20100101);
-  let start = getNextTradeDay(20010201);
+  for (let sday = 20010301; sday <= 20011201; sday += 100) {
+    LogWithTime('analysis begin ' + sday);
+    let start = getNextTradeDay(sday);
   let end = getLastTradeDay(20190101);
   let step = new Step(start, end);
   let actions = [
@@ -314,5 +316,7 @@ const share_count: number = 50;
 
   let simulate = new Simulate(step, actions);
   await simulate.run();
-  LogWithTime('analysis end');
+  LogWithTime('analysis end ' + sday);
+}
+LogWithTime('analysis end');
 })();
