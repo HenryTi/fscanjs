@@ -58,6 +58,10 @@ class Data {
     await this.runner.call('tv_emulateresult$save', [typeID, date, money, share, gain]);
   }
 
+  async SaveLastStatus(typeID: number, gain: number) {
+    await this.runner.call('tv_emulatescore$save', [typeID, gain]);
+  }
+
   async SaveDetail(typeID:number, day:number, detail: string) {
     await this.runner.call('tv_emulateshares$save', [typeID, day, detail]);
   }
@@ -68,6 +72,10 @@ class Data {
 
   async LoadROE_PE_Dividend_Rank(day: number, count: number) {
     return await this.runner.call('tv_calcmagicorderdpr', [day, count]) as {stock:number, no:number, pe:number, roe:number, dv: number, ma:number}[];
+  }
+
+  async LoadROE_PE_Rank(day: number, count: number) {
+    return await this.runner.call('tv_calcmagicorderpr', [day, count]) as {stock:number, no:number, pe:number, roe:number, ma:number}[];
   }
 
   async LoadROE_PE_Magic_Rank(day: number, count: number) {
