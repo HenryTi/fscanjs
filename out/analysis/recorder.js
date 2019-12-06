@@ -22,7 +22,7 @@ class Recorder {
         // this.laststatus.gain = gain;
         // let dayIndex = Math.floor(date.day / 100);
         // this.status[dayIndex] = {money:money, share:share, gain:gain};
-        await data_1.data.SaveStatus(this.typeID, date.day, money, share, gain);
+        await data_1.data.SaveStatus(this.typeID, Math.floor(date.day / 100), money, share, gain);
         await data_1.data.SaveLastStatus(this.typeID, gain);
     }
     async SaveDetails(date, detail) {
