@@ -10,6 +10,7 @@ const data_1 = require("./data");
 const gfuncs_1 = require("../gfuncs");
 const init_cash = 3000000;
 const share_count = 50;
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
 (async function () {
     gfuncs_1.LogWithTime('analysis begin');
     await data_1.data.init();

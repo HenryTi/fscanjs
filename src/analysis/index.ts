@@ -10,6 +10,7 @@ import { LogWithTime } from "../gfuncs";
 
 const init_cash: number = 3000000;
 const share_count: number = 50;
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
 
 (async function () {
   LogWithTime('analysis begin');
