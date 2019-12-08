@@ -18,10 +18,11 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
   await initTradeDay(20001201, 20191201);
   //let start = getNextTradeDay(20010101);
   //let start = getNextTradeDay(20100101);
-  for (let sday = 20010701; sday <= 20011201; sday += 100) {
+  for (let sday = 20100101; sday <= 20101201; sday += 100) {
     LogWithTime('analysis begin ' + sday);
     let start = getNextTradeDay(sday);
-  let end = getLastTradeDay(20190101);
+  //let end = getLastTradeDay(20190101);
+  let end = getLastTradeDay(201901101);
   let step = new Step(start, end);
   let actions = [
     // {
