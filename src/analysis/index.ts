@@ -22,7 +22,7 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
     LogWithTime('analysis begin ' + sday);
     let start = getNextTradeDay(sday);
   //let end = getLastTradeDay(20190101);
-  let end = getLastTradeDay(201901101);
+  let end = getLastTradeDay(20191101);
   let step = new Step(start, end);
   let actions = [
     // {

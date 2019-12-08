@@ -21,7 +21,7 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
         gfuncs_1.LogWithTime('analysis begin ' + sday);
         let start = tradeday_1.getNextTradeDay(sday);
         //let end = getLastTradeDay(20190101);
-        let end = tradeday_1.getLastTradeDay(201901101);
+        let end = tradeday_1.getLastTradeDay(20191101);
         let step = new step_1.Step(start, end);
         let actions = [
             // {
