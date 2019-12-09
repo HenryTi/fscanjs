@@ -3,3 +3,4 @@ export * from './TraderSeasonOverSeason';
 export * from './TraderYearOverYear';
 export * from './TraderMonthOverMonth';
 export * from './TraderPartOfYear';
+export * from './TraderReplacePerMonth';

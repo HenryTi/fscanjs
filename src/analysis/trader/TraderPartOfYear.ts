@@ -28,7 +28,7 @@ export class TraderPartOfYear extends Trader {
 
     if (month === this.begin) {
       await this.checkShouldSell(date, prices);
-      await rank.sort(date, prices, reports);
+      await rank.getAt(date, prices, reports);
       let points = rank.queue.slice(0, 50);
       points.map(v => {
         let buyItem = new Holding(v.stockId);

@@ -20,7 +20,7 @@ class TraderPartOfYear extends trader_1.Trader {
         let month = Math.floor((date.day % 10000) / 100);
         if (month === this.begin) {
             await this.checkShouldSell(date, prices);
-            await rank.sort(date, prices, reports);
+            await rank.getAt(date, prices, reports);
             let points = rank.queue.slice(0, 50);
             points.map(v => {
                 let buyItem = new holding_1.Holding(v.stockId);

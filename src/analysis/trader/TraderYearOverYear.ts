@@ -17,7 +17,7 @@ export class TraderYearOverYear extends Trader {
     }
     this.year = year;
 
-    await rank.sort(date, prices, reports);
+    await rank.getAt(date, prices, reports);
 
     this.sellHoldings(date, prices);
     await this.checkShouldSell(date, prices);

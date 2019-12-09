@@ -19,6 +19,18 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Run Analysis at LocalCentos",
+      "program": "${workspaceFolder}\\out\\analysis\\index.js",
+      "env": {
+        "NODE_ENV": "localrun"
+      },
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Run Test",
       "program": "${workspaceFolder}\\out\\runtest.js",
       "env": {

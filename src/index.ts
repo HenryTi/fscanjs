@@ -12,7 +12,7 @@ import { startTimer } from './timedtask';
 let dt = new Date();
 console.log('fscanjs start at - ' + dt.toLocaleString());
 console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
-const c_isDevelopment = process.env.NODE_ENV === 'development';
+const c_isDevelopment = process.env.NODE_ENV !== 'prodution';
 (async function () {
 
   let connection = config.get<any>("connection");
