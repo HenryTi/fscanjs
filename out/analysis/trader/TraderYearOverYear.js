@@ -15,7 +15,7 @@ class TraderYearOverYear extends trader_1.Trader {
             return;
         }
         this.year = year;
-        await rank.sort(date, prices, reports);
+        await rank.getAt(date, prices, reports);
         this.sellHoldings(date, prices);
         await this.checkShouldSell(date, prices);
         let points = rank.queue.slice(0, 50);

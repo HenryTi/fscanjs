@@ -26,7 +26,7 @@ export class TraderMonthOverMonth extends Trader {
     this.monthno = monthno;
     this.tradeMonthno = monthno;
 
-    await rank.sort(date, prices, reports);
+    await rank.getAt(date, prices, reports);
 
     this.sellHoldings(date, prices);
     await this.checkShouldSell(date, prices);

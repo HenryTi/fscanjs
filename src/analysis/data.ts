@@ -17,6 +17,10 @@ class Data {
     return await this.runner.tableFromProc('getPricesFromDay', [dayNum]);
   }
 
+  async getPeAtDay(stockId: number, dayNum: number): Promise<any[]> {
+    return await this.runner.tableFromProc('q_getstockpeatday', [stockId, dayNum]);
+  }
+
   async getTradDays(begin: number, end: number) {
     try {
       let sqlStr = `select \`day\`, \`dayno\`, \`year\`, \`seasonno\`, \`monthno\` 

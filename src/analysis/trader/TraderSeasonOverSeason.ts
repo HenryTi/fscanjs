@@ -17,7 +17,7 @@ export class TraderSeasonOverSeason extends Trader {
     }
     this.season = season;
 
-    await rank.sort(date, prices, reports);
+    await rank.getAt(date, prices, reports);
 
     this.sellHoldings(date, prices);
     await this.checkShouldSell(date, prices);

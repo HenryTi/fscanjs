@@ -9,4 +9,5 @@ __export(require("./TraderSeasonOverSeason"));
 __export(require("./TraderYearOverYear"));
 __export(require("./TraderMonthOverMonth"));
 __export(require("./TraderPartOfYear"));
+__export(require("./TraderReplacePerMonth"));
 //# sourceMappingURL=index.js.map

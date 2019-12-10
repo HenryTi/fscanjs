@@ -12,6 +12,9 @@ class Data {
     async getPricesFromDay(dayNum) {
         return await this.runner.tableFromProc('getPricesFromDay', [dayNum]);
     }
+    async getPeAtDay(stockId, dayNum) {
+        return await this.runner.tableFromProc('q_getstockpeatday', [stockId, dayNum]);
+    }
     async getTradDays(begin, end) {
         try {
             let sqlStr = `select \`day\`, \`dayno\`, \`year\`, \`seasonno\`, \`monthno\` 
